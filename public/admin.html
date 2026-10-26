@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Admin | Perfectevent4u</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        :root {
+            --bg: #F9F8F6;
+            --text: #202946;
+            --text-light: rgba(32, 41, 70, 0.6);
+            --border: rgba(32, 41, 70, 0.15);
+            --card: #ffffff;
+            --danger: #a3302b;
+            --ok: #2f6b4f;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.5;
+        }
+
+        h1, h2, h3 { font-family: 'Playfair Display', serif; font-weight: 400; }
+        [hidden] { display: none !important; }
+
+        /* Buttons */
+        .btn {
+            font-family: inherit;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            padding: 0.7rem 1.4rem;
+            border: 1px solid var(--text);
+            background: transparent;
+            color: var(--text);
+            cursor: pointer;
+            transition: all 0.25s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn:hover { background: var(--text); color: var(--bg); }
+        .btn.primary { background: var(--text); color: var(--bg); }
+        .btn.primary:hover { opacity: 0.88; }
+        .btn.danger { border-color: var(--danger); color: var(--danger); }
+        .btn.danger:hover { background: var(--danger); color: #fff; }
+        .btn.small { padding: 0.45rem 0.8rem; font-size: 0.62rem; }
+        .btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+        /* Forms */
+        label.field { display: block; margin-bottom: 1.1rem; }
+        .field > span {
+            display: block;
+            font-size: 0.68rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-light);
+            margin-bottom: 0.35rem;
+        }
+        input[type=text], input[type=password], textarea, select {
+            width: 100%;
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text);
+            background: #fff;
+            border: 1px solid var(--border);
+            padding: 0.65rem 0.75rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        input:focus, textarea:focus, select:focus { border-color: var(--text); }
+        textarea { resize: vertical; min-height: 96px; }
+        .check { display: flex; gap: 0.6rem; align-items: center; font-size: 0.92rem; margin-bottom: 1.1rem; cursor: pointer; }
+        .check input { width: 1.05rem; height: 1.05rem; accent-color: var(--text); }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        @media (max-width: 640px) { .row { grid-template-columns: 1fr; } }
+
+        /* Login */
+        .login-wrap { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 1.5rem; }
+        .login-card { width: 100%; max-width: 400px; background: var(--card); border: 1px solid var(--border); padding: 2.5rem 2rem; }
+        .login-card h1 { font-size: 1.8rem; margin-bottom: 0.4rem; }
+        .login-card p.sub { color: var(--text-light); margin-bottom: 1.8rem; font-size: 0.92rem; }
+        .msg { font-size: 0.88rem; margin-top: 0.9rem; min-height: 1.2rem; }
+        .msg.err { color: var(--danger); }
+
+        /* App shell */
+        header.top {
+            display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+            padding: 1.1rem 1.5rem; border-bottom: 1px solid var(--border); background: var(--bg);
+            position: sticky; top: 0; z-index: 20;
+        }
+        header.top .brand { font-family: 'Playfair Display', serif; font-size: 1.15rem; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 600; }
+        header.top .brand small { display: block; font-family: 'Lato', sans-serif; font-size: 0.62rem; letter-spacing: 0.25em; color: var(--text-light); font-weight: 400; }
+        header.top nav { display: flex; gap: 0.6rem; flex-wrap: wrap; justify-content: flex-end; }
+
+        main { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem 5rem; }
+
+        .tabs { display: flex; gap: 2rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+        .tab {
+            background: none; border: none; font-family: inherit; font-size: 0.75rem; text-transform: uppercase;
+            letter-spacing: 0.18em; color: var(--text-light); padding: 0.8rem 0; cursor: pointer; position: relative;
+        }
+        .tab.active { color: var(--text); }
+        .tab.active::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: var(--text); }
+
+        .panel-card { background: var(--card); border: 1px solid var(--border); padding: 1.75rem; margin-bottom: 2.5rem; }
+        .panel-card h2 { font-size: 1.5rem; margin-bottom: 0.3rem; }
+        .panel-card p.hint { color: var(--text-light); font-size: 0.9rem; margin-bottom: 1.5rem; }
+
+        /* Dropzone */
+        .drop {
+            border: 1.5px dashed var(--border); padding: 2rem 1rem; text-align: center; cursor: pointer;
+            transition: all 0.2s; margin-bottom: 1.25rem; background: var(--bg);
+        }
+        .drop:hover, .drop.over { border-color: var(--text); background: #fff; }
+        .drop strong { display: block; font-family: 'Playfair Display', serif; font-weight: 400; font-size: 1.2rem; margin-bottom: 0.25rem; }
+        .drop span { color: var(--text-light); font-size: 0.85rem; }
+        .drop input { display: none; }
+
+        .pending { display: grid; gap: 0.75rem; margin-bottom: 1.25rem; }
+        .pending-item { display: grid; grid-template-columns: 72px 1fr auto; gap: 0.9rem; align-items: center; border: 1px solid var(--border); padding: 0.6rem; background: #fff; }
+        .pending-item img { width: 72px; height: 72px; object-fit: cover; display: block; }
+        .pending-item .x { background: none; border: none; font-size: 1.4rem; color: var(--text-light); cursor: pointer; padding: 0 0.5rem; }
+        .pending-item .x:hover { color: var(--danger); }
+
+        /* Photo grid */
+        .section-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+        .section-head h2 { font-size: 1.5rem; }
+        .count { color: var(--text-light); font-size: 0.85rem; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 1.25rem; }
+        .photo { background: var(--card); border: 1px solid var(--border); display: flex; flex-direction: column; }
+        .photo .img { position: relative; aspect-ratio: 4 / 3; background: #e9e7e3; }
+        .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .badge {
+            position: absolute; top: 0.5rem; left: 0.5rem; background: var(--text); color: var(--bg);
+            font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.15em; padding: 0.25rem 0.5rem;
+        }
+        .photo .meta { padding: 0.8rem 0.9rem 0.4rem; flex: 1; }
+        .photo .meta h3 { font-size: 1.05rem; margin-bottom: 0.15rem; word-break: break-word; }
+        .photo .meta p { font-size: 0.78rem; color: var(--text-light); }
+        .photo .actions { display: flex; gap: 0.4rem; padding: 0.6rem 0.9rem 0.9rem; flex-wrap: wrap; }
+
+        /* Service list */
+        .service-list { display: grid; gap: 1rem; }
+        .service {
+            background: var(--card); border: 1px solid var(--border); padding: 1.2rem; display: grid;
+            grid-template-columns: 44px 1fr auto; gap: 1.1rem; align-items: start;
+        }
+        .service .ico { width: 44px; height: 44px; color: var(--text-light); border: 1px solid var(--border); display: grid; place-items: center; }
+        .service .ico svg { width: 24px; height: 24px; }
+        .service h3 { font-size: 1.15rem; margin-bottom: 0.25rem; }
+        .service p { color: var(--text-light); font-size: 0.9rem; }
+        .service .actions { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: flex-end; }
+        @media (max-width: 640px) { .service { grid-template-columns: 44px 1fr; } .service .actions { grid-column: 1 / -1; justify-content: flex-start; } }
+
+        .icon-picker { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.1rem; }
+        .icon-picker label { cursor: pointer; }
+        .icon-picker input { position: absolute; opacity: 0; pointer-events: none; }
+        .icon-picker .opt {
+            width: 52px; height: 52px; border: 1px solid var(--border); display: grid; place-items: center;
+            color: var(--text-light); transition: all 0.2s; background: #fff;
+        }
+        .icon-picker .opt svg { width: 24px; height: 24px; }
+        .icon-picker input:checked + .opt { border-color: var(--text); color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
+        .icon-picker input:focus-visible + .opt { outline: 2px solid var(--text); outline-offset: 2px; }
+
+        .empty { text-align: center; color: var(--text-light); padding: 2.5rem 1rem; border: 1px dashed var(--border); }
+
+        /* Dialog */
+        dialog { border: 1px solid var(--border); padding: 1.75rem; width: min(520px, calc(100vw - 2rem)); background: var(--bg); color: var(--text); margin: auto; }
+        dialog::backdrop { background: rgba(32, 41, 70, 0.45); }
+        dialog h2 { font-size: 1.4rem; margin-bottom: 1.2rem; }
+        .dialog-actions { display: flex; gap: 0.6rem; justify-content: flex-end; margin-top: 0.5rem; }
+
+        /* Toast */
+        #toast {
+            position: fixed; left: 50%; bottom: 1.5rem; transform: translate(-50%, 20px); opacity: 0;
+            background: var(--text); color: var(--bg); padding: 0.75rem 1.25rem; font-size: 0.88rem;
+            transition: all 0.3s; z-index: 100; pointer-events: none; max-width: calc(100vw - 2rem);
+        }
+        #toast.show { opacity: 1; transform: translate(-50%, 0); }
+        #toast.bad { background: var(--danger); }
+    </style>
+</head>
+<body>
+
+    <!-- Login -->
+    <div class="login-wrap" id="loginView" hidden>
+        <form class="login-card" id="loginForm">
+            <h1>Perfectevent4u</h1>
+            <p class="sub">Sign in to manage your photos and services.</p>
+            <label class="field">
+                <span>Password</span>
+                <input type="password" id="password" autocomplete="current-password" required autofocus>
+            </label>
+            <button class="btn primary" type="submit" style="width:100%">Sign in</button>
+            <p class="msg err" id="loginMsg" role="alert"></p>
+        </form>
+    </div>
+
+    <!-- App -->
+    <div id="appView" hidden>
+        <header class="top">
+            <div class="brand">Perfectevent4u<small>Admin</small></div>
+            <nav>
+                <a class="btn small" href="/" target="_blank" rel="noopener">View site</a>
+                <button class="btn small" id="logoutBtn" type="button">Log out</button>
+            </nav>
+        </header>
+
+        <main>
+            <div class="tabs" role="tablist">
+                <button class="tab active" data-tab="portfolio" role="tab">Portfolio</button>
+                <button class="tab" data-tab="services" role="tab">Services</button>
+            </div>
+
+            <!-- Portfolio -->
+            <section id="tab-portfolio">
+                <div class="panel-card">
+                    <h2>Add photos</h2>
+                    <p class="hint">Choose one or more photos. They appear on the Portfolio page straight away. Photos are resized automatically before upload.</p>
+
+                    <div class="drop" id="drop">
+                        <strong>Click to choose photos</strong>
+                        <span>or drag and drop them here &middot; JPG, PNG, WebP or GIF</span>
+                        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+                    </div>
+
+                    <div class="pending" id="pending"></div>
+
+                    <div class="row">
+                        <label class="field">
+                            <span>Location (optional)</span>
+                            <input type="text" id="upLocation" maxlength="60" placeholder="e.g. Essex">
+                        </label>
+                        <label class="field">
+                            <span>Category</span>
+                            <select id="upCategory">
+                                <option>Weddings</option>
+                                <option>Receptions</option>
+                                <option>Corporate</option>
+                                <option>Celebrations</option>
+                            </select>
+                        </label>
+                    </div>
+                    <label class="check"><input type="checkbox" id="upFeatured"> Feature on the home page</label>
+
+                    <button class="btn primary" id="uploadBtn" type="button" disabled>Upload photos</button>
+                </div>
+
+                <div class="section-head">
+                    <h2>Your photos</h2>
+                    <span class="count" id="photoCount"></span>
+                </div>
+                <div class="photo-grid" id="photoGrid"></div>
+            </section>
+
+            <!-- Services -->
+            <section id="tab-services" hidden>
+                <div class="panel-card">
+                    <h2 id="svcFormTitle">Add a service</h2>
+                    <p class="hint">Services appear in the "Our Services" section on the home page, in the order shown below.</p>
+                    <form id="svcForm">
+                        <input type="hidden" id="svcId">
+                        <label class="field">
+                            <span>Title</span>
+                            <input type="text" id="svcTitle" maxlength="80" required placeholder="e.g. Venue Styling">
+                        </label>
+                        <label class="field">
+                            <span>Description</span>
+                            <textarea id="svcDesc" maxlength="500" required placeholder="A short description of this service"></textarea>
+                        </label>
+                        <span class="field"><span>Icon</span></span>
+                        <div class="icon-picker" id="iconPicker"></div>
+                        <div style="display:flex; gap:0.6rem; flex-wrap:wrap">
+                            <button class="btn primary" type="submit" id="svcSave">Add service</button>
+                            <button class="btn" type="button" id="svcCancel" hidden>Cancel editing</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="section-head">
+                    <h2>Your services</h2>
+                    <span class="count" id="svcCount"></span>
+                </div>
+                <div class="service-list" id="svcList"></div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Edit photo dialog -->
+    <dialog id="editDialog">
+        <form method="dialog" id="editForm">
+            <h2>Edit photo</h2>
+            <label class="field"><span>Title</span><input type="text" id="edTitle" maxlength="80" required></label>
+            <div class="row">
+                <label class="field"><span>Location</span><input type="text" id="edLocation" maxlength="60"></label>
+                <label class="field">
+                    <span>Category</span>
+                    <select id="edCategory">
+                        <option>Weddings</option><option>Receptions</option><option>Corporate</option><option>Celebrations</option>
+                    </select>
+                </label>
+            </div>
+            <label class="check"><input type="checkbox" id="edFeatured"> Feature on the home page</label>
+            <div class="dialog-actions">
+                <button class="btn" type="button" id="edCancel">Cancel</button>
+                <button class="btn primary" type="submit">Save</button>
+            </div>
+        </form>
+    </dialog>
+
+    <div id="toast" role="status"></div>
+
+    <script src="js/icons.js"></script>
+    <script>
+    (function () {
+        'use strict';
+
+        var $ = function (id) { return document.getElementById(id); };
+        var esc = function (s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+                return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+            });
+        };
+
+        // ---- API ------------------------------------------------------------
+        function api(method, url, body) {
+            var opts = { method: method, headers: { 'X-Requested-With': 'pe4u' }, credentials: 'same-origin' };
+            if (body instanceof FormData) {
+                opts.body = body;
+            } else if (body !== undefined) {
+                opts.headers['Content-Type'] = 'application/json';
+                opts.body = JSON.stringify(body);
+            }
+            return fetch(url, opts).then(function (r) {
+                return r.json().catch(function () { return {}; }).then(function (data) {
+                    if (r.status === 401 && url !== '/api/admin/login') showLogin();
+                    if (!r.ok) throw new Error(data.error || 'Something went wrong.');
+                    return data;
+                });
+            });
+        }
+
+        var toastTimer;
+        function toast(msg, bad) {
+            var t = $('toast');
+            t.textContent = msg;
+            t.className = 'show' + (bad ? ' bad' : '');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(function () { t.className = ''; }, 3200);
+        }
+        function fail(e) { toast(e.message || 'Something went wrong.', true); }
+
+        // ---- Views ----------------------------------------------------------
+        function showLogin() { $('appView').hidden = true; $('loginView').hidden = false; $('password').focus(); }
+        function showApp() { $('loginView').hidden = true; $('appView').hidden = false; loadPhotos(); loadServices(); }
+
+        $('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            $('loginMsg').textContent = '';
+            api('POST', '/api/admin/login', { password: $('password').value })
+                .then(function () { $('password').value = ''; showApp(); })
+                .catch(function (err) { $('loginMsg').textContent = err.message; });
+        });
+
+        $('logoutBtn').addEventListener('click', function () {
+            api('POST', '/api/admin/logout').then(showLogin).catch(fail);
+        });
+
+        document.querySelectorAll('.tab').forEach(function (tab) {
+            tab.addEventListener('click', function () {
+                document.querySelectorAll('.tab').forEach(function (t) { t.classList.toggle('active', t === tab); });
+                $('tab-portfolio').hidden = tab.dataset.tab !== 'portfolio';
+                $('tab-services').hidden = tab.dataset.tab !== 'services';
+            });
+        });
+
+        // ---- Portfolio: choose files ---------------------------------------
+        var pendingFiles = []; // { file, title, url }
+
+        function titleFromName(name) {
+            return name.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, 80);
+        }
+
+        function addFiles(list) {
+            Array.prototype.forEach.call(list, function (f) {
+                if (!/^image\/(jpeg|png|webp|gif)$/.test(f.type)) { toast('Skipped ' + f.name + ' (not a supported image)', true); return; }
+                if (pendingFiles.length >= 20) { toast('You can upload up to 20 photos at a time.', true); return; }
+                pendingFiles.push({ file: f, title: titleFromName(f.name), url: URL.createObjectURL(f) });
+            });
+            renderPending();
+        }
+
+        function renderPending() {
+            var box = $('pending');
+            box.innerHTML = '';
+            pendingFiles.forEach(function (p, i) {
+                var row = document.createElement('div');
+                row.className = 'pending-item';
+                row.innerHTML = '<img alt=""><input type="text" maxlength="80" aria-label="Photo title" placeholder="Title"><button class="x" type="button" aria-label="Remove">&times;</button>';
+                row.querySelector('img').src = p.url;
+                var input = row.querySelector('input');
+                input.value = p.title;
+                input.addEventListener('input', function () { p.title = input.value; });
+                row.querySelector('.x').addEventListener('click', function () {
+                    URL.revokeObjectURL(p.url);
+                    pendingFiles.splice(i, 1);
+                    renderPending();
+                });
+                box.appendChild(row);
+            });
+            $('uploadBtn').disabled = !pendingFiles.length;
+            $('uploadBtn').textContent = pendingFiles.length > 1 ? 'Upload ' + pendingFiles.length + ' photos' : 'Upload photo' + (pendingFiles.length ? '' : 's');
+        }
+
+        var drop = $('drop');
+        drop.addEventListener('click', function () { $('fileInput').click(); });
+        $('fileInput').addEventListener('change', function (e) { addFiles(e.target.files); e.target.value = ''; });
+        ['dragenter', 'dragover'].forEach(function (ev) {
+            drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('over'); });
+        });
+        ['dragleave', 'drop'].forEach(function (ev) {
+            drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('over'); });
+        });
+        drop.addEventListener('drop', function (e) { addFiles(e.dataTransfer.files); });
+
+        // Shrink big camera photos in the browser so the site stays fast
+        function shrink(file) {
+            if (file.type === 'image/gif') return Promise.resolve(file);
+            var MAX = 2000;
+            return createImageBitmap(file).then(function (bmp) {
+                var scale = Math.min(1, MAX / Math.max(bmp.width, bmp.height));
+                if (scale === 1 && file.size < 1.5 * 1024 * 1024) return file;
+                var c = document.createElement('canvas');
+                c.width = Math.round(bmp.width * scale);
+                c.height = Math.round(bmp.height * scale);
+                c.getContext('2d').drawImage(bmp, 0, 0, c.width, c.height);
+                return new Promise(function (resolve) {
+                    c.toBlob(function (blob) {
+                        resolve(blob && blob.size < file.size ? blob : file);
+                    }, 'image/jpeg', 0.88);
+                });
+            }).catch(function () { return file; });
+        }
+
+        $('uploadBtn').addEventListener('click', function () {
+            if (!pendingFiles.length) return;
+            var btn = $('uploadBtn');
+            btn.disabled = true;
+            btn.textContent = 'Uploading…';
+
+            Promise.all(pendingFiles.map(function (p) { return shrink(p.file); })).then(function (blobs) {
+                var fd = new FormData();
+                blobs.forEach(function (b, i) {
+                    var isJpeg = b.type === 'image/jpeg';
+                    var name = pendingFiles[i].file.name.replace(/\.[^.]+$/, '') + (isJpeg ? '.jpg' : '');
+                    fd.append('images', b, name);
+                    fd.append('titles', pendingFiles[i].title || titleFromName(pendingFiles[i].file.name));
+                });
+                fd.append('location', $('upLocation').value);
+                fd.append('category', $('upCategory').value);
+                fd.append('featured', $('upFeatured').checked ? 'true' : 'false');
+                return api('POST', '/api/admin/portfolio', fd);
+            }).then(function (res) {
+                pendingFiles.forEach(function (p) { URL.revokeObjectURL(p.url); });
+                pendingFiles = [];
+                renderPending();
+                toast(res.added.length === 1 ? 'Photo uploaded.' : res.added.length + ' photos uploaded.');
+                loadPhotos();
+            }).catch(function (e) {
+                fail(e);
+                renderPending();
+            });
+        });
+
+        // ---- Portfolio: list -------------------------------------------------
+        var photos = [];
+
+        function loadPhotos() {
+            api('GET', '/api/portfolio').then(function (items) { photos = items; renderPhotos(); }).catch(fail);
+        }
+
+        function renderPhotos() {
+            var grid = $('photoGrid');
+            $('photoCount').textContent = photos.length + (photos.length === 1 ? ' photo' : ' photos');
+            if (!photos.length) { grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No photos yet. Add your first one above.</div>'; return; }
+            grid.innerHTML = photos.map(function (p, i) {
+                return '<article class="photo" data-id="' + esc(p.id) + '">' +
+                    '<div class="img"><img src="' + esc(p.image) + '" alt="' + esc(p.title) + '" loading="lazy">' +
+                    (p.featured ? '<span class="badge">Home page</span>' : '') + '</div>' +
+                    '<div class="meta"><h3>' + esc(p.title) + '</h3><p>' + esc(p.category) + (p.location ? ' &middot; ' + esc(p.location) : '') + '</p></div>' +
+                    '<div class="actions">' +
+                    '<button class="btn small" data-act="edit">Edit</button>' +
+                    '<button class="btn small" data-act="up" aria-label="Move earlier"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>' +
+                    '<button class="btn small" data-act="down" aria-label="Move later"' + (i === photos.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
+                    '<button class="btn small danger" data-act="delete">Delete</button>' +
+                    '</div></article>';
+            }).join('');
+        }
+
+        var editingId = null;
+        $('photoGrid').addEventListener('click', function (e) {
+            var btn = e.target.closest('button[data-act]');
+            if (!btn) return;
+            var id = btn.closest('.photo').dataset.id;
+            var p = photos.find(function (x) { return x.id === id; });
+            var act = btn.dataset.act;
+
+            if (act === 'edit') {
+                editingId = id;
+                $('edTitle').value = p.title;
+                $('edLocation').value = p.location || '';
+                $('edCategory').value = p.category;
+                $('edFeatured').checked = !!p.featured;
+                $('editDialog').showModal();
+            } else if (act === 'delete') {
+                if (!confirm('Delete "' + p.title + '"? This removes it from the website.')) return;
+                api('DELETE', '/api/admin/portfolio/' + id).then(function () { toast('Photo deleted.'); loadPhotos(); }).catch(fail);
+            } else {
+                api('POST', '/api/admin/portfolio/' + id + '/move', { dir: act }).then(loadPhotos).catch(fail);
+            }
+        });
+
+        $('edCancel').addEventListener('click', function () { $('editDialog').close(); });
+        $('editForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            api('PUT', '/api/admin/portfolio/' + editingId, {
+                title: $('edTitle').value,
+                location: $('edLocation').value,
+                category: $('edCategory').value,
+                featured: $('edFeatured').checked
+            }).then(function () { $('editDialog').close(); toast('Saved.'); loadPhotos(); }).catch(fail);
+        });
+
+        // ---- Services --------------------------------------------------------
+        var services = [];
+
+        $('iconPicker').innerHTML = Object.keys(window.PE_ICONS).map(function (k, i) {
+            return '<label title="' + esc(window.PE_ICON_LABELS[k]) + '"><input type="radio" name="svcIcon" value="' + k + '"' + (i === 0 ? ' checked' : '') + '>' +
+                '<span class="opt">' + window.peIcon(k) + '</span></label>';
+        }).join('');
+
+        function chosenIcon() { return document.querySelector('input[name=svcIcon]:checked').value; }
+
+        function resetServiceForm() {
+            $('svcId').value = '';
+            $('svcTitle').value = '';
+            $('svcDesc').value = '';
+            document.querySelector('input[name=svcIcon]').checked = true;
+            $('svcFormTitle').textContent = 'Add a service';
+            $('svcSave').textContent = 'Add service';
+            $('svcCancel').hidden = true;
+        }
+
+        function loadServices() {
+            api('GET', '/api/services').then(function (items) { services = items; renderServices(); }).catch(fail);
+        }
+
+        function renderServices() {
+            var list = $('svcList');
+            $('svcCount').textContent = services.length + (services.length === 1 ? ' service' : ' services');
+            if (!services.length) { list.innerHTML = '<div class="empty">No services yet. Add your first one above.</div>'; return; }
+            list.innerHTML = services.map(function (s, i) {
+                return '<article class="service" data-id="' + esc(s.id) + '">' +
+                    '<div class="ico">' + window.peIcon(s.icon) + '</div>' +
+                    '<div><h3>' + esc(s.title) + '</h3><p>' + esc(s.description) + '</p></div>' +
+                    '<div class="actions">' +
+                    '<button class="btn small" data-act="edit">Edit</button>' +
+                    '<button class="btn small" data-act="up" aria-label="Move up"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>' +
+                    '<button class="btn small" data-act="down" aria-label="Move down"' + (i === services.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
+                    '<button class="btn small danger" data-act="delete">Delete</button>' +
+                    '</div></article>';
+            }).join('');
+        }
+
+        $('svcForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            var id = $('svcId').value;
+            var body = { title: $('svcTitle').value, description: $('svcDesc').value, icon: chosenIcon() };
+            var req = id ? api('PUT', '/api/admin/services/' + id, body) : api('POST', '/api/admin/services', body);
+            req.then(function () {
+                toast(id ? 'Service updated.' : 'Service added.');
+                resetServiceForm();
+                loadServices();
+            }).catch(fail);
+        });
+
+        $('svcCancel').addEventListener('click', resetServiceForm);
+
+        $('svcList').addEventListener('click', function (e) {
+            var btn = e.target.closest('button[data-act]');
+            if (!btn) return;
+            var id = btn.closest('.service').dataset.id;
+            var s = services.find(function (x) { return x.id === id; });
+            var act = btn.dataset.act;
+
+            if (act === 'edit') {
+                $('svcId').value = id;
+                $('svcTitle').value = s.title;
+                $('svcDesc').value = s.description;
+                var radio = document.querySelector('input[name=svcIcon][value="' + s.icon + '"]');
+                if (radio) radio.checked = true;
+                $('svcFormTitle').textContent = 'Edit service';
+                $('svcSave').textContent = 'Save changes';
+                $('svcCancel').hidden = false;
+                $('svcForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (act === 'delete') {
+                if (!confirm('Delete "' + s.title + '"? This removes it from the website.')) return;
+                api('DELETE', '/api/admin/services/' + id).then(function () { toast('Service deleted.'); resetServiceForm(); loadServices(); }).catch(fail);
+            } else {
+                api('POST', '/api/admin/services/' + id + '/move', { dir: act }).then(loadServices).catch(fail);
+            }
+        });
+
+        // ---- Start -----------------------------------------------------------
+        fetch('/api/admin/session', { credentials: 'same-origin' })
+            .then(function (r) { return r.json(); })
+            .then(function (s) {
+                if (!s.configured) {
+                    $('loginMsg').textContent = 'The admin password has not been set on the server yet. See the README.';
+                }
+                s.authenticated ? showApp() : showLogin();
+            })
+            .catch(showLogin);
+
+        renderPending();
+    })();
+    </script>
+</body>
+</html>

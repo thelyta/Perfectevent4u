@@ -1,0 +1,23 @@
+[
+  {
+    "id": "e0673a944142",
+    "title": "Full-Service Planning & Design",
+    "description": "From the initial concept to the final farewell, we manage every intricate detail. We curate your vendor team, design your aesthetic, and orchestrate the timeline so you can remain present and joyful.",
+    "icon": "planning",
+    "created": "2026-10-26T10:18:50.633Z"
+  },
+  {
+    "id": "a28ebe74490b",
+    "title": "Customised Floral Design",
+    "description": "Bespoke floral artistry that tells your story. We create immersive environments using texture, colour, and scent to transform your venue into a breathtaking, living masterpiece.",
+    "icon": "floral",
+    "created": "2026-10-26T10:18:50.633Z"
+  },
+  {
+    "id": "504e7cc35861",
+    "title": "Celebration Day Management",
+    "description": "For the couple who has planned the details but needs a professional to execute. We step in during the final weeks to ensure your celebration unfolds with seamless precision.",
+    "icon": "management",
+    "created": "2026-10-26T10:18:50.633Z"
+  }
+]

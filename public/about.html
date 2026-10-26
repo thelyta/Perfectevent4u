@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About | Perfectevent4u</title>
+    <meta name="description" content="Luxury wedding planning and event design in London, Essex, and throughout the UK.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #F9F8F6;
+            --text: #202946;
+            --text-light: rgba(32, 41, 70, 0.6);
+            --border: rgba(32, 41, 70, 0.15);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            font-family: 'Playfair Display', serif;
+            font-weight: 400;
+        }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            transition: all 0.5s ease;
+            padding: 1.5rem 0;
+        }
+
+        nav.scrolled {
+            background: rgba(249, 248, 246, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 1rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: var(--text);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            transition: opacity 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            opacity: 0.6;
+        }
+
+        .nav-links a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--text);
+        }
+
+        .nav-btn {
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--text);
+            color: var(--text);
+            text-decoration: none;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            transition: all 0.3s;
+        }
+
+        .nav-btn:hover {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .mobile-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .mobile-menu.active {
+            display: block;
+        }
+
+        .mobile-menu a {
+            display: block;
+            padding: 1rem 0;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        /* Hero */
+        .hero {
+            position: relative;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .hero-bg video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(3px) brightness(0.85);
+        }
+
+        .hero-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(3px) brightness(0.85);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(249,248,246,0.3), transparent, var(--bg));
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 1.5rem;
+            max-width: 900px;
+            margin-top: 5rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease 0.3s forwards;
+        }
+
+        .hero-subtitle {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            margin-bottom: 1.5rem;
+            color: var(--text);
+            text-shadow: 0 1px 3px rgba(255,255,255,0.3);
+        }
+
+        .hero-title {
+            font-size: clamp(2.5rem, 6vw, 5.5rem);
+            line-height: 1.1;
+            margin-bottom: 2rem;
+            color: var(--text);
+            text-shadow: 0 2px 10px rgba(255,255,255,0.4);
+        }
+
+        .hero-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: var(--text);
+            color: var(--bg);
+            text-decoration: none;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            transition: opacity 0.3s;
+        }
+
+        .hero-btn:hover {
+            opacity: 0.85;
+        }
+
+        /* Page Header (for non-home pages) */
+        .page-header {
+            position: relative;
+            height: 60vh;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            margin-top: 0;
+        }
+
+        .page-header-bg {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+
+        .page-header-bg img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: blur(2px) brightness(0.8);
+        }
+
+        .page-header-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(249,248,246,0.2), rgba(249,248,246,0.6));
+            z-index: 1;
+        }
+
+        .page-header-content {
+            position: relative;
+            z-index: 2;
+            text-align: center;
+            padding: 0 1.5rem;
+        }
+
+        .page-header-title {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 1rem;
+        }
+
+        .page-header-subtitle {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            color: var(--text-light);
+        }
+
+        /* Sections */
+        section {
+            padding: 6rem 1.5rem;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        /* Intro */
+        .intro {
+            text-align: center;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .intro-quote {
+            font-size: clamp(1.5rem, 3vw, 2.8rem);
+            line-height: 1.3;
+            margin-bottom: 2rem;
+            color: var(--text);
+        }
+
+        .intro-divider {
+            width: 4rem;
+            height: 1px;
+            background: var(--border);
+            margin: 0 auto 2rem;
+        }
+
+        .intro-text {
+            color: var(--text-light);
+            line-height: 1.8;
+            max-width: 600px;
+            margin: 0 auto;
+            font-size: 1rem;
+        }
+
+        /* Portfolio */
+        .portfolio-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            margin-bottom: 4rem;
+        }
+
+        .portfolio-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 0.5rem;
+        }
+
+        .portfolio-subtitle {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--text-light);
+        }
+
+        .portfolio-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--text);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+        }
+
+        .masonry {
+            columns: 1;
+            column-gap: 2rem;
+        }
+
+        @media (min-width: 768px) {
+            .masonry {
+                columns: 2;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .masonry {
+                columns: 3;
+            }
+        }
+
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 2rem;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+        }
+
+        .masonry-item img {
+            width: 100%;
+            display: block;
+            transition: transform 0.7s ease;
+        }
+
+        .masonry-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .masonry-overlay {
+            position: absolute;
+            inset: 0;
+            background: rgba(32, 41, 70, 0);
+            transition: background 0.5s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 1.5rem;
+        }
+
+        .masonry-item:hover .masonry-overlay {
+            background: rgba(32, 41, 70, 0.3);
+        }
+
+        .masonry-info {
+            color: white;
+            opacity: 0;
+            transform: translateY(1rem);
+            transition: all 0.5s ease;
+        }
+
+        .masonry-item:hover .masonry-info {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .masonry-location {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            margin-bottom: 0.3rem;
+        }
+
+        .masonry-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+        }
+
+        /* Services */
+        .services-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .services-grid {
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2rem;
+            }
+        }
+
+        .service-card {
+            border-top: 1px solid var(--border);
+            padding-top: 2rem;
+        }
+
+        .service-icon {
+            color: var(--text-light);
+            margin-bottom: 1.5rem;
+        }
+
+        .service-icon svg {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+
+        .service-title {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .service-desc {
+            color: var(--text-light);
+            line-height: 1.7;
+            font-size: 0.9rem;
+        }
+
+        /* About */
+        .about-section {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .about-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .about-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .about-image {
+            position: relative;
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transition: filter 0.7s ease;
+        }
+
+        .about-image:hover img {
+            filter: grayscale(0%);
+        }
+
+        .about-badge {
+            position: absolute;
+            bottom: -1.5rem;
+            right: -1.5rem;
+            width: 12rem;
+            height: 12rem;
+            background: rgba(249, 248, 246, 0.1);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(249, 248, 246, 0.2);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        @media (max-width: 768px) {
+            .about-badge {
+                right: 1rem;
+                bottom: 1rem;
+                width: 10rem;
+                height: 10rem;
+            }
+        }
+
+        .about-badge-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .about-badge-text {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            opacity: 0.7;
+        }
+
+        .about-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.3em;
+            opacity: 0.6;
+            margin-bottom: 1rem;
+        }
+
+        .about-name {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 2rem;
+            line-height: 1.2;
+        }
+
+        .about-text {
+            opacity: 0.8;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+        }
+
+        .about-btn {
+            display: inline-block;
+            padding: 0.75rem 2rem;
+            border: 1px solid var(--bg);
+            color: var(--bg);
+            text-decoration: none;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            transition: all 0.3s;
+        }
+
+        .about-btn:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        /* Testimonials */
+        .testimonials {
+            text-align: center;
+        }
+
+        .testimonials-heart {
+            width: 2rem;
+            height: 2rem;
+            color: var(--border);
+            margin: 0 auto 2rem;
+        }
+
+        .testimonial-slider {
+            position: relative;
+            min-height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .testimonial-item {
+            position: absolute;
+            width: 100%;
+            max-width: 800px;
+            padding: 0 1rem;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            pointer-events: none;
+        }
+
+        .testimonial-item.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .testimonial-quote {
+            font-size: clamp(1.2rem, 2.5vw, 2rem);
+            line-height: 1.5;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+
+        .testimonial-author {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            font-size: 0.8rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .testimonial-role {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-light);
+        }
+
+        .testimonial-dots {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+            margin-top: 2rem;
+        }
+
+        .testimonial-dot {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 50%;
+            background: var(--border);
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .testimonial-dot.active {
+            background: var(--text);
+            width: 2rem;
+            border-radius: 1rem;
+        }
+
+        /* Contact */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4rem;
+        }
+
+        @media (min-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .contact-title {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-text {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 3rem;
+        }
+
+        .contact-info-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .contact-info-icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            color: var(--text-light);
+            margin-top: 0.2rem;
+            flex-shrink: 0;
+        }
+
+        .contact-info-label {
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            font-size: 0.75rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .contact-info-value {
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 640px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-light);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 0;
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus {
+            border-bottom-color: var(--text);
+        }
+
+        .form-input::placeholder {
+            color: var(--text-light);
+        }
+
+        select.form-input {
+            cursor: pointer;
+            color: var(--text-light);
+        }
+
+        select.form-input option {
+            color: var(--text);
+        }
+
+        textarea.form-input {
+            resize: none;
+            min-height: 80px;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 1rem;
+            background: var(--text);
+            color: var(--bg);
+            border: none;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            cursor: pointer;
+            transition: opacity 0.3s;
+            margin-top: 1rem;
+        }
+
+        .form-submit:hover {
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--text);
+            color: var(--bg);
+            padding: 4rem 1.5rem;
+            border-top: 1px solid rgba(249, 248, 246, 0.1);
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .footer-grid {
+                grid-template-columns: 2fr 1fr 1fr;
+            }
+        }
+
+        .footer-brand {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .footer-desc {
+            opacity: 0.6;
+            line-height: 1.7;
+            font-size: 0.9rem;
+            max-width: 300px;
+        }
+
+        .footer-title {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            opacity: 0.5;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.75rem;
+        }
+
+        .footer-links a {
+            color: var(--bg);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: opacity 0.3s;
+        }
+
+        .footer-links a:hover {
+            opacity: 0.7;
+        }
+
+        .social-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            border: 1px solid rgba(249, 248, 246, 0.2);
+            color: var(--bg);
+            transition: all 0.3s;
+        }
+
+        .social-link:hover {
+            background: var(--bg);
+            color: var(--text);
+        }
+
+        .social-link svg {
+            width: 1rem;
+            height: 1rem;
+        }
+
+        .footer-bottom {
+            max-width: 1280px;
+            margin: 0 auto;
+            margin-top: 4rem;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(249, 248, 246, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            opacity: 0.4;
+        }
+
+        @media (min-width: 768px) {
+            .footer-bottom {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* About Page Specific */
+        .about-hero-text {
+            max-width: 700px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .about-hero-text h2 {
+            font-size: clamp(2rem, 4vw, 3rem);
+            margin-bottom: 1.5rem;
+        }
+
+        .about-hero-text p {
+            color: var(--text-light);
+            line-height: 1.8;
+            font-size: 1.05rem;
+        }
+
+        .about-story {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        @media (min-width: 768px) {
+            .about-story {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        .about-story-image img {
+            width: 100%;
+            height: 600px;
+            object-fit: cover;
+        }
+
+        .about-story-content h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .about-story-content p {
+            color: var(--text-light);
+            line-height: 1.8;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+        }
+
+        .values-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        @media (min-width: 768px) {
+            .values-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .value-card {
+            text-align: center;
+            padding: 2rem;
+            border: 1px solid var(--border);
+        }
+
+        .value-number {
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            opacity: 0.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .value-title {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .value-desc {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        /* Portfolio Page */
+        .portfolio-filters {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+
+        .portfolio-filter {
+            background: none;
+            border: none;
+            font-family: 'Lato', sans-serif;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.15em;
+            color: var(--text-light);
+            cursor: pointer;
+            padding: 0.5rem 0;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .portfolio-filter:hover,
+        .portfolio-filter.active {
+            color: var(--text);
+        }
+
+        .portfolio-filter.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: var(--text);
+        }
+
+        /* Mobile */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-toggle {
+                display: block;
+            }
+
+            .portfolio-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+
+            .portfolio-link {
+                display: none;
+            }
+
+            .mobile-portfolio-link {
+                display: block;
+                text-align: center;
+                margin-top: 2rem;
+            }
+
+            .about-badge {
+                position: relative;
+                bottom: auto;
+                right: auto;
+                margin-top: 1rem;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-portfolio-link {
+                display: none;
+            }
+        }
+
+
+        /* Instagram Horizontal Scroll Section */
+        .instagram-section {
+            padding: 6rem 0;
+            overflow: hidden;
+        }
+
+        .instagram-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 0 1.5rem;
+        }
+
+        .instagram-header h2 {
+            font-size: clamp(2rem, 4vw, 3.5rem);
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .instagram-header p {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        .instagram-header a {
+            color: var(--text);
+            text-decoration: none;
+            border-bottom: 1px solid var(--text);
+            padding-bottom: 2px;
+        }
+
+        .instagram-scroll-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .instagram-scroll-container {
+            display: flex;
+            gap: 1.5rem;
+            padding: 0 1.5rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            cursor: grab;
+            padding-bottom: 1rem;
+        }
+
+        .instagram-scroll-container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .instagram-scroll-container:active {
+            cursor: grabbing;
+        }
+
+        .instagram-card {
+            flex-shrink: 0;
+            width: 320px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .instagram-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .instagram-card-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 1rem;
+        }
+
+        .instagram-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 1px solid var(--border);
+        }
+
+        .instagram-user-info {
+            flex: 1;
+        }
+
+        .instagram-username {
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--text);
+        }
+
+        .instagram-date {
+            font-size: 0.75rem;
+            color: var(--text-light);
+        }
+
+        .instagram-logo {
+            width: 20px;
+            height: 20px;
+            color: var(--text-light);
+        }
+
+        .instagram-card-image {
+            width: 100%;
+            height: 320px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .instagram-card-caption {
+            padding: 1rem;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--text);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .instagram-card-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-top: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .instagram-actions-left {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .instagram-action-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text-light);
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.8rem;
+            transition: color 0.3s;
+        }
+
+        .instagram-action-btn:hover {
+            color: var(--text);
+        }
+
+        .instagram-action-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .instagram-scroll-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+
+        .instagram-scroll-btn:hover {
+            background: var(--text);
+            color: var(--bg);
+            border-color: var(--text);
+        }
+
+        .instagram-scroll-btn.prev {
+            left: 1rem;
+        }
+
+        .instagram-scroll-btn.next {
+            right: 1rem;
+        }
+
+        .instagram-scroll-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .instagram-card {
+                width: 280px;
+            }
+
+            .instagram-card-image {
+                height: 280px;
+            }
+
+            .instagram-scroll-btn {
+                display: none;
+            }
+        }
+    </style>
+<base target="_blank">
+</head>
+<body>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Perfectevent4u</a>
+            <div class="nav-links">
+                <a href="index.html" class="active" target="_self">Home</a>
+<a href="portfolio.html" class="" target="_self">Portfolio</a>
+<a href="services.html" class="" target="_self">Services</a>
+<a href="about.html" class="" target="_self">About</a>
+<a href="contact.html" class="" target="_self">Contact</a>
+<a href="contact.html" class="nav-btn" target="_self">Inquire</a>
+            </div>
+            <button class="mobile-toggle" onclick="toggleMenu()" aria-label="Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html" onclick="toggleMenu()" target="_self">Home</a>
+<a href="portfolio.html" onclick="toggleMenu()" target="_self">Portfolio</a>
+<a href="services.html" onclick="toggleMenu()" target="_self">Services</a>
+<a href="about.html" onclick="toggleMenu()" target="_self">About</a>
+<a href="contact.html" onclick="toggleMenu()" target="_self">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <section class="page-header" style="margin-top: 0;">
+        <div class="page-header-bg">
+            <img src="wed2.webp" alt="About Perfectevent4u">
+        </div>
+        <div class="page-header-overlay"></div>
+        <div class="page-header-content">
+            <p class="page-header-subtitle">Our Story</p>
+            <h1 class="page-header-title">About Us</h1>
+        </div>
+    </section>
+
+    <!-- Company Intro -->
+    <section>
+        <div class="container">
+            <div class="about-hero-text fade-in">
+                <h2>A Bespoken Experience</h2>
+                <p>Perfectevent4u is a full service wedding and event planning and design company located in Essex. We are known for curating detailed and beautiful weddings and celebrations for clients with refined tastes throughout the UK.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Story -->
+    <section style="background: rgba(32, 41, 70, 0.02);">
+        <div class="container">
+            <div class="about-story">
+                <div class="about-story-image fade-in">
+                    <img src="abi.png" alt="Abi Shobowale - Founder">
+                </div>
+                <div class="about-story-content fade-in">
+                    <p class="about-label" style="color: var(--text-light);">Our Company</p>
+                    <h3 style="font-size: 2rem; margin-bottom: 1.5rem;">Excellence in Every Detail</h3>
+                    <p>Perfectevent4u offers a hands-on approach to every event we produce whilst focussing on our clients brief and ensuring that every event is executed per excellence.</p>
+                    <p>We are known for our professional expertise, in the delivery of opulent and tailor made events for our clients.</p>
+                    <p>An unforgettable experience is what we aim to give our clients and their guests at their celebrations and on their wedding day.</p>
+                    <p>We specialise in full wedding planning and designs. We have an array of stellar vendors that we partner with to create your dream event.</p>
+                    <p>Working with you and for you every step on the way to create an exceptional and unforgettable wedding and event is our promise to you.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Meet Abi -->
+    <section class="about-section">
+        <div class="container">
+            <div class="about-grid">
+                <div>
+                    <div class="fade-in">
+                        <p class="about-label">Get to Know Abi</p>
+                        <h2 class="about-name">The Woman Behind<br>the Magic</h2>
+                    </div>
+                    <div class="fade-in">
+                        <p class="about-text">Abi is the founder of Perfectevent4u. Her passion for organising and planning has established her as an outstanding wedding and party planner and designer.</p>
+                        <p class="about-text">She passionately produces unique and opulent events. Known for her patient, calm, and professional approach, Abi treats every client like family.</p>
+                        <p class="about-text">"I believe every celebration should tell a story — your story. My mission is to take your vision and elevate it beyond what you imagined possible."</p>
+                        <p class="about-text" style="font-style: italic; opacity: 0.6;">— Abi Shobowale, Founder</p>
+                        <a href="contact.html" class="about-btn" style="margin-top: 1rem;">Work With Abi</a>
+                    </div>
+                </div>
+                <div class="about-image fade-in">
+                    <img src="abi.png" alt="Abi Shobowale">
+                    <div class="about-badge">
+                        <span class="about-badge-number">10+</span>
+                        <span class="about-badge-text">Years of<br>Excellence</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Values -->
+    <section>
+        <div class="container">
+            <div style="text-align: center; margin-bottom: 3rem;" class="fade-in">
+                <p class="about-label" style="color: var(--text-light); margin-bottom: 1rem;">What We Stand For</p>
+                <h2 style="font-size: clamp(1.8rem, 3vw, 2.5rem);">Our Values</h2>
+            </div>
+            <div class="values-grid">
+                <div class="value-card fade-in">
+                    <div class="value-number">01</div>
+                    <h3 class="value-title">Excellence</h3>
+                    <p class="value-desc">Every detail matters. We pursue perfection in every element of your celebration.</p>
+                </div>
+                <div class="value-card fade-in">
+                    <div class="value-number">02</div>
+                    <h3 class="value-title">Personalisation</h3>
+                    <p class="value-desc">No two events are the same. Your celebration is uniquely tailored to your story.</p>
+                </div>
+                <div class="value-card fade-in">
+                    <div class="value-number">03</div>
+                    <h3 class="value-title">Calmness</h3>
+                    <p class="value-desc">We remain composed under pressure so you can enjoy every moment stress-free.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="testimonials" style="background: rgba(32, 41, 70, 0.02);">
+        <div class="container">
+            <div class="fade-in">
+                <svg class="testimonials-heart" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                </svg>
+            </div>
+            <div class="testimonial-slider">
+                <div class="testimonial-item active" data-index="0">
+                    <p class="testimonial-quote">"You were a patient, understanding, loving, funny and an adviser. I can go on and on about your caring attributes. You made my day an unforgettable and eventful one."</p>
+                    <p class="testimonial-author">Lizzy & Kenny</p>
+                    <p class="testimonial-role">London Wedding</p>
+                </div>
+                <div class="testimonial-item" data-index="1">
+                    <p class="testimonial-quote">"Abi was very professional and helpful and our guests were just as impressed as we were! Forever grateful to her and her team."</p>
+                    <p class="testimonial-author">Cloudier & Ryan</p>
+                    <p class="testimonial-role">Essex Celebration</p>
+                </div>
+                <div class="testimonial-item" data-index="2">
+                    <p class="testimonial-quote">"Perfect as how the company is named. Transformed an ordinary hall into something magical and exceptional. Attention to detail was amazing."</p>
+                    <p class="testimonial-author">Miranda (MOB)</p>
+                    <p class="testimonial-role">Priscilla & James Wedding</p>
+                </div>
+            </div>
+            <div class="testimonial-dots">
+                <button class="testimonial-dot active" onclick="showTestimonial(0)" aria-label="Testimonial 1"></button>
+                <button class="testimonial-dot" onclick="showTestimonial(1)" aria-label="Testimonial 2"></button>
+                <button class="testimonial-dot" onclick="showTestimonial(2)" aria-label="Testimonial 3"></button>
+            </div>
+        </div>
+    </section>
+
+    
+    <!-- Instagram Feed Section -->
+    <section class="instagram-section">
+        <div class="instagram-header fade-in">
+            <h2>Follow Our Journey</h2>
+            <p>Behind the scenes on <a href="https://www.instagram.com/perfectevent4u/" target="_blank" rel="noopener">@perfectevent4u</a></p>
+        </div>
+        <div class="instagram-scroll-wrapper">
+            <button class="instagram-scroll-btn prev" onclick="scrollInstagram(-1)" aria-label="Previous">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="15 18 9 12 15 6"></polyline>
+                </svg>
+            </button>
+            <div class="instagram-scroll-container" id="instagramScroll">
+                <div class="instagram-card fade-in">
+                    <div class="instagram-card-header">
+                        <img src="abi.png" alt="Perfectevent4u" class="instagram-avatar">
+                        <div class="instagram-user-info">
+                            <div class="instagram-username">perfectevent4u</div>
+                            <div class="instagram-date">2 days ago</div>
+                        </div>
+                        <svg class="instagram-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop" alt="Wedding setup" class="instagram-card-image">
+                    <div class="instagram-card-caption">Beautiful table settings for our lovely couple at The Royal Exchange. Every detail carefully curated for their special day.</div>
+                    <div class="instagram-card-actions">
+                        <div class="instagram-actions-left">
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                124
+                            </button>
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                                </svg>
+                                8
+                            </button>
+                        </div>
+                        <button class="instagram-action-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="instagram-card fade-in">
+                    <div class="instagram-card-header">
+                        <img src="abi.png" alt="Perfectevent4u" class="instagram-avatar">
+                        <div class="instagram-user-info">
+                            <div class="instagram-username">perfectevent4u</div>
+                            <div class="instagram-date">5 days ago</div>
+                        </div>
+                        <svg class="instagram-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </div>
+                    <img src="deco1.webp" alt="Floral arrangement" class="instagram-card-image">
+                    <div class="instagram-card-caption">Stunning floral installations for our Garden Estate wedding. Soft blush and ivory tones creating the perfect romantic atmosphere.</div>
+                    <div class="instagram-card-actions">
+                        <div class="instagram-actions-left">
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                89
+                            </button>
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                                </svg>
+                                12
+                            </button>
+                        </div>
+                        <button class="instagram-action-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="instagram-card fade-in">
+                    <div class="instagram-card-header">
+                        <img src="abi.png" alt="Perfectevent4u" class="instagram-avatar">
+                        <div class="instagram-user-info">
+                            <div class="instagram-username">perfectevent4u</div>
+                            <div class="instagram-date">1 week ago</div>
+                        </div>
+                        <svg class="instagram-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1511795409834-ef04bbd61622?q=80&w=600&auto=format&fit=crop" alt="Wedding ceremony" class="instagram-card-image">
+                    <div class="instagram-card-caption">The Orangery looking absolutely magical for our weekend celebration. Nothing beats natural light and beautiful architecture.</div>
+                    <div class="instagram-card-actions">
+                        <div class="instagram-actions-left">
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                156
+                            </button>
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                                </svg>
+                                15
+                            </button>
+                        </div>
+                        <button class="instagram-action-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="instagram-card fade-in">
+                    <div class="instagram-card-header">
+                        <img src="abi.png" alt="Perfectevent4u" class="instagram-avatar">
+                        <div class="instagram-user-info">
+                            <div class="instagram-username">perfectevent4u</div>
+                            <div class="instagram-date">2 weeks ago</div>
+                        </div>
+                        <svg class="instagram-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?q=80&w=600&auto=format&fit=crop" alt="Beach wedding" class="instagram-card-image">
+                    <div class="instagram-card-caption">Seaside Soirée in Brighton was an absolute dream. The sunset ceremony was everything our couple hoped for and more.</div>
+                    <div class="instagram-card-actions">
+                        <div class="instagram-actions-left">
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                203
+                            </button>
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                                </svg>
+                                22
+                            </button>
+                        </div>
+                        <button class="instagram-action-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="instagram-card fade-in">
+                    <div class="instagram-card-header">
+                        <img src="abi.png" alt="Perfectevent4u" class="instagram-avatar">
+                        <div class="instagram-user-info">
+                            <div class="instagram-username">perfectevent4u</div>
+                            <div class="instagram-date">3 weeks ago</div>
+                        </div>
+                        <svg class="instagram-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </div>
+                    <img src="hall.jpg" alt="Urban wedding" class="instagram-card-image">
+                    <div class="instagram-card-caption">Industrial chic in Shoreditch. Loving how the exposed brick and fairy lights created such an intimate atmosphere for our couple.</div>
+                    <div class="instagram-card-actions">
+                        <div class="instagram-actions-left">
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                178
+                            </button>
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                                </svg>
+                                18
+                            </button>
+                        </div>
+                        <button class="instagram-action-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="instagram-card fade-in">
+                    <div class="instagram-card-header">
+                        <img src="abi.png" alt="Perfectevent4u" class="instagram-avatar">
+                        <div class="instagram-user-info">
+                            <div class="instagram-username">perfectevent4u</div>
+                            <div class="instagram-date">1 month ago</div>
+                        </div>
+                        <svg class="instagram-logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </div>
+                    <img src="https://images.unsplash.com/photo-1515934751635-c81c6bc9a2d8?q=80&w=600&auto=format&fit=crop" alt="Manor wedding" class="instagram-card-image">
+                    <div class="instagram-card-caption">The Cotswolds Manor House wedding was pure elegance. Classic white and green palette with touches of gold throughout.</div>
+                    <div class="instagram-card-actions">
+                        <div class="instagram-actions-left">
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                245
+                            </button>
+                            <button class="instagram-action-btn">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                                </svg>
+                                31
+                            </button>
+                        </div>
+                        <button class="instagram-action-btn">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <button class="instagram-scroll-btn next" onclick="scrollInstagram(1)" aria-label="Next">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6"></polyline>
+                </svg>
+            </button>
+        </div>
+    </section>
+
+<!-- CTA -->
+    <section style="text-align: center;">
+        <div class="container">
+            <div class="fade-in">
+                <h2 style="font-size: clamp(1.5rem, 3vw, 2.5rem); margin-bottom: 1.5rem;">Let's Create Something Beautiful Together</h2>
+                <p style="color: var(--text-light); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">We would love to hear about your vision and discuss how we can bring it to life.</p>
+                <a href="contact.html" class="hero-btn">Get In Touch</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3 class="footer-brand">Perfectevent4u</h3>
+                    <p class="footer-desc">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
+                </div>
+                <div>
+                    <h4 class="footer-title">Explore</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html" target="_self">Home</a></li>
+<li><a href="portfolio.html" target="_self">Portfolio</a></li>
+<li><a href="services.html" target="_self">Services</a></li>
+<li><a href="about.html" target="_self">About</a></li>
+<li><a href="contact.html" target="_self">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Social</h4>
+                    <a href="#" class="social-link" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                        </svg>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Perfectevent4u. All rights reserved.</p>
+            <p>Designed with Quiet Luxury</p>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        function toggleMenu() {
+            const menu = document.getElementById('mobileMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Navbar scroll effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Testimonial slider
+        let currentTestimonial = 0;
+        const testimonials = document.querySelectorAll('.testimonial-item');
+        const dots = document.querySelectorAll('.testimonial-dot');
+
+        function showTestimonial(index) {
+            if (testimonials.length === 0) return;
+            testimonials[currentTestimonial].classList.remove('active');
+            dots[currentTestimonial].classList.remove('active');
+            currentTestimonial = index;
+            testimonials[currentTestimonial].classList.add('active');
+            dots[currentTestimonial].classList.add('active');
+        }
+
+        // Auto-rotate testimonials
+        if (testimonials.length > 0) {
+            setInterval(() => {
+                const next = (currentTestimonial + 1) % testimonials.length;
+                showTestimonial(next);
+            }, 6000);
+        }
+
+        // Scroll fade-in animation
+        const fadeElements = document.querySelectorAll('.fade-in');
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '-50px'
+        });
+
+        fadeElements.forEach(el => observer.observe(el));
+
+        // Instagram horizontal scroll
+        function scrollInstagram(direction) {
+            const container = document.getElementById('instagramScroll');
+            const scrollAmount = 340;
+            container.scrollBy({
+                left: direction * scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+
+        // Drag to scroll for Instagram feed
+        (function() {
+            const slider = document.getElementById('instagramScroll');
+            if (!slider) return;
+
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            slider.addEventListener('mousedown', (e) => {
+                isDown = true;
+                slider.style.cursor = 'grabbing';
+                startX = e.pageX - slider.offsetLeft;
+                scrollLeft = slider.scrollLeft;
+            });
+
+            slider.addEventListener('mouseleave', () => {
+                isDown = false;
+                slider.style.cursor = 'grab';
+            });
+
+            slider.addEventListener('mouseup', () => {
+                isDown = false;
+                slider.style.cursor = 'grab';
+            });
+
+            slider.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - slider.offsetLeft;
+                const walk = (x - startX) * 2;
+                slider.scrollLeft = scrollLeft - walk;
+            });
+        })();
+            // Dynamic active nav highlighting
+    (function() {
+        const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+        const navLinks = document.querySelectorAll('.nav-links a[href], .mobile-menu a[href]');
+        
+        navLinks.forEach(link => {
+            const href = link.getAttribute('href');
+            // Remove active class from all links first
+            link.classList.remove('active');
+            // Add active class only to the link matching current page
+            if (href === currentPage || (currentPage === '' && href === 'index.html')) {
+                link.classList.add('active');
+            }
+        });
+    })();
+    </script>
+
+    <script src="js/chatbot.js"></script>
+</body>
+</html>

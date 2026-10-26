@@ -1,0 +1,83 @@
+[
+  {
+    "id": "0d914b503f66",
+    "title": "The Royal Exchange",
+    "location": "London",
+    "category": "Weddings",
+    "image": "image/segun_and_ore/segunandore.jpg",
+    "featured": true,
+    "created": "2026-10-26T10:18:50.632Z"
+  },
+  {
+    "id": "9e06beea98a0",
+    "title": "Garden Estate",
+    "location": "Essex",
+    "category": "Weddings",
+    "image": "deco1.webp",
+    "featured": true,
+    "created": "2026-10-26T10:18:50.632Z"
+  },
+  {
+    "id": "e8c2a4205a16",
+    "title": "The Orangery",
+    "location": "Kent",
+    "category": "Weddings",
+    "image": "image/raemakinde/raemakinde.jpg",
+    "featured": true,
+    "created": "2026-10-26T10:18:50.632Z"
+  },
+  {
+    "id": "cc6d6876cf5d",
+    "title": "Seaside Soirée",
+    "location": "Brighton",
+    "category": "Receptions",
+    "image": "image/aiyela and pete/aiyela_and_pete.jpg",
+    "featured": true,
+    "created": "2026-10-26T10:18:50.632Z"
+  },
+  {
+    "id": "7e393b607de9",
+    "title": "Urban Loft",
+    "location": "Shoreditch",
+    "category": "Receptions",
+    "image": "image/chika and rose/chika_and_rose.jpg",
+    "featured": true,
+    "created": "2026-10-26T10:18:50.632Z"
+  },
+  {
+    "id": "bf314e934e81",
+    "title": "Manor House",
+    "location": "Cotswolds",
+    "category": "Weddings",
+    "image": "image/don't know/dontknow.jpg",
+    "featured": true,
+    "created": "2026-10-26T10:18:50.632Z"
+  },
+  {
+    "id": "7319764a89e6",
+    "title": "Vineyard Wedding",
+    "location": "Surrey",
+    "category": "Weddings",
+    "image": "https://images.unsplash.com/photo-1460978812857-470ed1c77af0?q=80&w=800&auto=format&fit=crop",
+    "featured": false,
+    "created": "2026-10-26T10:18:50.632Z"
+  },
+  {
+    "id": "dbfcac60f653",
+    "title": "Winter Gala",
+    "location": "Mayfair",
+    "category": "Corporate",
+    "image": "https://images.unsplash.com/photo-1510076857177-7470076d4098?q=80&w=800&auto=format&fit=crop",
+    "featured": false,
+    "created": "2026-10-26T10:18:50.632Z"
+  },
+  {
+    "id": "568e05663b95",
+    "title": "Garden Party",
+    "location": "Hertfordshire",
+    "category": "Celebrations",
+    "image": "https://images.unsplash.com/photo-1530023367847-a683933f4172?q=80&w=800&auto=format&fit=crop",
+    "featured": false,
+    "created": "2026-10-26T10:18:50.632Z"
+  }
+]
