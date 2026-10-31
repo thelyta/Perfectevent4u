@@ -1,0 +1,9 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "pnpm install --frozen-lockfile && pnpm build"
+
+[deploy]
+preDeployCommand = "pnpm db:migrate"
+startCommand = "pnpm start"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 120

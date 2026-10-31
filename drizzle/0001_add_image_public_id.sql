@@ -1,0 +1,1 @@
+ALTER TABLE "portfolio_items" ADD COLUMN "image_public_id" text;

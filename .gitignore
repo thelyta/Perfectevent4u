@@ -1,3 +1,9 @@
 node_modules
+.next/
 .env
 data/.session-secret
+
+
+/docs
+/scripts
+admin-route-availability.json
