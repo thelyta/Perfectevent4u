@@ -40,24 +40,67 @@ const files = {
 
 const newId = () => crypto.randomBytes(6).toString('hex');
 
-function load(name) {
+// With DATABASE_URL set, data lives in Postgres (table "kv", one JSON document
+// per collection). Reads come from an in-memory copy; every save writes through.
+// Without it, the JSON files in DATA_DIR are used as before.
+const DATABASE_URL = process.env.DATABASE_URL || '';
+const cache = {};
+let pool = null;
+let writeQueue = Promise.resolve();
+
+function readFileOrSeed(name) {
   try {
     return JSON.parse(fs.readFileSync(files[name], 'utf8'));
   } catch (e) {
-    const items = seed[name].map(i => ({ id: newId(), ...i, created: new Date().toISOString() }));
+    return seed[name].map(i => ({ id: newId(), ...i, created: new Date().toISOString() }));
+  }
+}
+
+async function initStore() {
+  if (!DATABASE_URL) return;
+  const { Pool } = require('pg');
+  pool = new Pool({ connectionString: DATABASE_URL, ssl: process.env.PGSSL === 'true' ? { rejectUnauthorized: false } : undefined });
+  await pool.query('CREATE TABLE IF NOT EXISTS kv (name text PRIMARY KEY, data jsonb NOT NULL, updated_at timestamptz NOT NULL DEFAULT now())');
+  for (const name of Object.keys(files)) {
+    const { rows } = await pool.query('SELECT data FROM kv WHERE name = $1', [name]);
+    if (rows.length) {
+      cache[name] = rows[0].data;
+    } else {
+      // First run on Postgres: import the existing JSON file (or seed content)
+      cache[name] = readFileOrSeed(name);
+      await pool.query('INSERT INTO kv (name, data) VALUES ($1, $2) ON CONFLICT (name) DO NOTHING', [name, JSON.stringify(cache[name])]);
+    }
+  }
+  console.log('Storage: Postgres');
+}
+
+function load(name) {
+  if (pool) return cache[name];
+  try {
+    return JSON.parse(fs.readFileSync(files[name], 'utf8'));
+  } catch (e) {
+    const items = readFileOrSeed(name);
     save(name, items);
     return items;
   }
 }
 
 function save(name, items) {
+  if (pool) {
+    cache[name] = items;
+    const json = JSON.stringify(items);
+    writeQueue = writeQueue
+      .then(() => pool.query(
+        'INSERT INTO kv (name, data) VALUES ($1, $2) ON CONFLICT (name) DO UPDATE SET data = EXCLUDED.data, updated_at = now()',
+        [name, json]))
+      .catch(err => console.error(`Failed to save ${name} to Postgres:`, err.message));
+    return;
+  }
   const tmp = files[name] + '.tmp';
   fs.writeFileSync(tmp, JSON.stringify(items, null, 2));
   fs.renameSync(tmp, files[name]);
 }
 
-load('portfolio');
-load('services');
 
 // ---------------------------------------------------------------------------
 // Auth: signed, expiring, HttpOnly cookie
@@ -358,8 +401,15 @@ app.use((err, req, res, next) => {
   next(err);
 });
 
-app.listen(PORT, () => {
-  console.log(`Perfectevent4u running on http://localhost:${PORT}`);
-  console.log(`Admin panel:           http://localhost:${PORT}/admin`);
-  if (!ADMIN_PASSWORD) console.warn('\n  ! ADMIN_PASSWORD is not set. Set it (see README) before using the admin panel.\n');
+initStore().then(() => {
+  load('portfolio');
+  load('services');
+  app.listen(PORT, () => {
+    console.log(`Perfectevent4u running on http://localhost:${PORT}`);
+    console.log(`Admin panel:           http://localhost:${PORT}/admin`);
+    if (!ADMIN_PASSWORD) console.warn('\n  ! ADMIN_PASSWORD is not set. Set it (see README) before using the admin panel.\n');
+  });
+}).catch(err => {
+  console.error('Failed to initialise storage:', err);
+  process.exit(1);
 });
