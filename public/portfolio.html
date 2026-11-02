@@ -1045,6 +1045,32 @@
             background: var(--text);
         }
 
+        .portfolio-tools {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            justify-content: center;
+            margin-bottom: 3rem;
+        }
+
+        .portfolio-search,
+        .portfolio-select {
+            font-family: 'Lato', sans-serif;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            color: var(--text);
+            background: transparent;
+            border: 1px solid var(--border);
+            padding: 0.75rem 1rem;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .portfolio-search { min-width: 260px; }
+        .portfolio-search:focus,
+        .portfolio-select:focus { border-color: var(--text); }
+        .portfolio-select { cursor: pointer; text-transform: uppercase; letter-spacing: 0.12em; font-size: 0.72rem; }
+
         /* Mobile */
         @media (max-width: 768px) {
             .nav-links {
@@ -1086,7 +1112,7 @@
         }
 
     </style>
-<base target="_blank">
+<base target="_self">
 </head>
 <body>
 
@@ -1135,10 +1161,17 @@
         <div class="container">
             <div class="portfolio-filters fade-in">
                 <button class="portfolio-filter active" data-filter="all">All</button>
-                <button class="portfolio-filter" data-filter="Weddings">Weddings</button>
-                <button class="portfolio-filter" data-filter="Receptions">Receptions</button>
-                <button class="portfolio-filter" data-filter="Corporate">Corporate</button>
-                <button class="portfolio-filter" data-filter="Celebrations">Celebrations</button>
+                <button class="portfolio-filter" data-filter="Wedding Ceremony">Wedding Ceremony</button>
+                <button class="portfolio-filter" data-filter="Wedding Reception">Wedding Reception</button>
+                <button class="portfolio-filter" data-filter="Milestone Celebration">Milestone Celebration</button>
+                <button class="portfolio-filter" data-filter="Corporate Event">Corporate Event</button>
+            </div>
+
+            <div class="portfolio-tools fade-in">
+                <input type="search" id="portfolioSearch" class="portfolio-search" placeholder="Search by event or venue" aria-label="Search portfolio">
+                <select id="portfolioLocation" class="portfolio-select" aria-label="Filter by location">
+                    <option value="all">All locations</option>
+                </select>
             </div>
 
             <div class="masonry" data-portfolio="all">
@@ -1231,9 +1264,9 @@
     <section style="text-align: center;">
         <div class="container">
             <div class="fade-in">
-                <h2 style="font-size: clamp(1.5rem, 3vw, 2.5rem); margin-bottom: 1.5rem;">Ready to Create Your Dream Event?</h2>
-                <p style="color: var(--text-light); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">Let's discuss how we can bring your vision to life with our bespoke planning and design services.</p>
-                <a href="contact.html" class="hero-btn">Start Your Journey</a>
+                <h2 data-cms-copy="ctaHeading" style="font-size: clamp(1.5rem, 3vw, 2.5rem); margin-bottom: 1.5rem;">Ready to Create Your Dream Event?</h2>
+                <p data-cms-copy="ctaText" style="color: var(--text-light); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">Let's discuss how we can bring your vision to life with our bespoke planning and design services.</p>
+                <a href="contact.html" class="hero-btn" data-cms-copy="ctaButton">Start Your Journey</a>
             </div>
         </div>
     </section>
@@ -1243,7 +1276,7 @@
             <div class="footer-grid">
                 <div>
                     <h3 class="footer-brand">Perfectevent4u</h3>
-                    <p class="footer-desc">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
+                    <p class="footer-desc" data-cms-copy="footerDescription">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
                 </div>
                 <div>
                     <h4 class="footer-title">Explore</h4>
@@ -1257,13 +1290,15 @@
                 </div>
                 <div>
                     <h4 class="footer-title">Social</h4>
-                    <a href="#" class="social-link" aria-label="Instagram">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                        </svg>
-                    </a>
+                    <div class="social-links" data-socials>
+                        <a href="https://www.instagram.com/perfectevent4u/" class="social-link" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

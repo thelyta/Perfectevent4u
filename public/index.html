@@ -179,7 +179,7 @@
     height: 100%;
     object-fit: cover;
     /* Remove the blur — let the image be sharp and beautiful */
-    filter: brightness(0.75);
+    filter: brightness(0.9);
 }
 
 /* Subtle dark gradient — fades to the section bg without washing out the image */
@@ -206,10 +206,10 @@
     margin-top: 2rem;
     opacity: 0;
     animation: fadeInUp 1s ease 0.3s forwards;
-    /* Elegant dark glass background — text pops, image still visible around edges */
-    background: rgba(32, 41, 70, 0.55);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    /* Keep the couple visible behind the headline while retaining text contrast. */
+    background: rgba(32, 41, 70, 0.34);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
     border: 1px solid rgba(249, 248, 246, 0.15);
 }
 
@@ -1451,7 +1451,7 @@
             }
         }
     </style>
-<base target="_blank">
+<base target="_self">
 </head>
 <body>
 
@@ -1502,9 +1502,9 @@
     <section>
         <div class="container">
             <div class="intro fade-in">
-                <p class="intro-quote">"We specialise in creating beautiful celebrations for clients with refined tastes throughout England."</p>
+                <p class="intro-quote" data-cms-copy="introQuote">"We specialise in creating beautiful celebrations for clients with refined tastes throughout England."</p>
                 <div class="intro-divider"></div>
-                <p class="intro-text">At Perfectevent4u, we believe your celebration should be a reflection of your unique story. We offer a hands-on approach to every event, focusing on your brief to ensure every detail is executed with excellence.</p>
+                <p class="intro-text" data-cms-copy="introText">At Perfectevent4u, we believe your celebration should be a reflection of your unique story. We offer a hands-on approach to every event, focusing on your brief to ensure every detail is executed with excellence.</p>
             </div>
         </div>
     </section>
@@ -1517,7 +1517,7 @@
             <h2 style="font-size: clamp(1.5rem, 3vw, 2.2rem);">Award-Winning Service</h2>
         </div>
         <div class="awards-marquee fade-in">
-            <div class="awards-track">
+            <div class="awards-track" data-awards>
                 <div class="award-item">
                     <img src="image/awards/hitched-2026.png" alt="2026 Hitched Wedding Awards Winner">
                     <p class="award-label">2026 Winner</p>
@@ -1616,8 +1616,8 @@
         <div class="container">
             <div class="portfolio-header fade-in">
                 <div>
-                    <h2 class="portfolio-title">The Lookbook</h2>
-                    <p class="portfolio-subtitle">Selected Works</p>
+                    <h2 class="portfolio-title" data-cms-copy="portfolioTitle">The Lookbook</h2>
+                    <p class="portfolio-subtitle" data-cms-copy="portfolioSubtitle">Selected Works</p>
                 </div>
                 <a href="portfolio.html" class="portfolio-link">
                     View All Stories
@@ -1697,8 +1697,8 @@
     <section id="services">
         <div class="container">
             <div style="text-align: center; margin-bottom: 4rem;" class="fade-in">
-                <p style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.3em; color: var(--text-light); margin-bottom: 1rem;">What We Do</p>
-                <h2 style="font-size: clamp(2rem, 4vw, 3rem);">Our Services</h2>
+                <p data-cms-copy="serviceEyebrow" style="font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.3em; color: var(--text-light); margin-bottom: 1rem;">What We Do</p>
+                <h2 data-cms-copy="serviceTitle" style="font-size: clamp(2rem, 4vw, 3rem);">Our Services</h2>
             </div>
             <div class="services-grid" data-services>
                 <div class="service-card fade-in">
@@ -1757,11 +1757,11 @@
                 <div>
                     <div class="fade-in">
                         <p class="about-label">Meet The Founder</p>
-                        <h2 class="about-name">Abi Shobowale</h2>
+                        <h2 class="about-name" data-cms-copy="aboutName">Abi Shobowale</h2>
                     </div>
                     <div class="fade-in">
-                        <p class="about-text">Abi is the founder of Perfectevent4u. Her passion for organising and planning has established her as an outstanding wedding and party planner and designer.</p>
-                        <p class="about-text">She passionately produces unique and opulent events. Known for her patient, calm, and professional approach, Abi treats every client like family, ensuring your day is not just perfect, but unforgettable.</p>
+                        <p class="about-text" data-cms-copy="aboutTextOne">Abi is the founder of Perfectevent4u. Her passion for organising and planning has established her as an outstanding wedding and party planner and designer.</p>
+                        <p class="about-text" data-cms-copy="aboutTextTwo">She passionately produces unique and opulent events. Known for her patient, calm, and professional approach, Abi treats every client like family, ensuring your day is not just perfect, but unforgettable.</p>
                         <a href="about.html" class="about-btn">Learn More About Abi</a>
                     </div>
                 </div>
@@ -1777,7 +1777,7 @@
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
             </div>
-            <div class="testimonial-slider">
+            <div class="testimonial-slider" data-testimonial-slider>
                 <div class="testimonial-item active" data-index="0">
                     <p class="testimonial-quote">"You were a patient, understanding, loving, funny and an adviser. I can go on and on about your caring attributes. You made my day an unforgettable and eventful one."</p>
                     <p class="testimonial-author">Lizzy & Kenny</p>
@@ -1815,7 +1815,7 @@
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
             </button>
-            <div class="instagram-scroll-container" id="instagramScroll">
+            <div class="instagram-scroll-container" id="instagramScroll" data-instagram>
                 <div class="instagram-card fade-in">
                     <div class="instagram-card-header">
                         <img src="abi.png" alt="Perfectevent4u" class="instagram-avatar">
@@ -2092,8 +2092,8 @@ Book a consultation with us now using the link in our bio to find out how we can
         <div class="container">
             <div class="contact-grid">
                 <div class="fade-in">
-                    <h2 class="contact-title">Begin Your Journey</h2>
-                    <p class="contact-text">We would be honoured to hear about your vision. Please share a few details with us, and we will be in touch to schedule a complimentary consultation.</p>
+                    <h2 class="contact-title" data-cms-copy="contactTitle">Begin Your Journey</h2>
+                    <p class="contact-text" data-cms-copy="contactText">We would be honoured to hear about your vision. Please share a few details with us, and we will be in touch to schedule a complimentary consultation.</p>
 
                     <div class="contact-info-item">
                         <svg class="contact-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -2120,35 +2120,42 @@ Book a consultation with us now using the link in our bio to find out how we can
                 </div>
 
                 <div class="fade-in">
-                    <form onsubmit="event.preventDefault(); alert('Thank you for your inquiry! We will be in touch soon.');">
+                    <form data-inquiry>
+                        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" placeholder="Website">
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label">First Name</label>
-                                <input type="text" class="form-input" required>
+                                <label class="form-label" for="homeFirstName">First Name</label>
+                                <input type="text" id="homeFirstName" name="firstName" class="form-input" autocomplete="given-name" required>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" class="form-input" required>
+                                <label class="form-label" for="homeLastName">Last Name</label>
+                                <input type="text" id="homeLastName" name="lastName" class="form-input" autocomplete="family-name" required>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" class="form-input" required>
+                            <label class="form-label" for="homeEmail">Email Address</label>
+                            <input type="email" id="homeEmail" name="email" class="form-input" autocomplete="email" required>
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label">Event Date</label>
-                                <input type="date" class="form-input">
+                                <label class="form-label" for="homeEventDate">Event Date</label>
+                                <input type="date" id="homeEventDate" name="eventDate" class="form-input">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Guest Count</label>
-                                <input type="number" placeholder="Approx." class="form-input">
+                                <label class="form-label" for="homeGuests">Guest Count</label>
+                                <input type="number" id="homeGuests" name="guests" placeholder="Approx." class="form-input" min="0">
                             </div>
                         </div>
 
+                        <div class="form-group">
+                            <label class="form-label" for="homeMessage">Tell us about your event</label>
+                            <textarea id="homeMessage" name="message" class="form-input" rows="3"></textarea>
+                        </div>
+
                         <button type="submit" class="form-submit">Send Inquiry</button>
+                        <p class="form-status" role="status" aria-live="polite"></p>
                     </form>
                 </div>
             </div>
@@ -2160,7 +2167,7 @@ Book a consultation with us now using the link in our bio to find out how we can
             <div class="footer-grid">
                 <div>
                     <h3 class="footer-brand">Perfectevent4u</h3>
-                    <p class="footer-desc">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
+                    <p class="footer-desc" data-cms-copy="footerDescription">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
                 </div>
                 <div>
                     <h4 class="footer-title">Explore</h4>
@@ -2174,13 +2181,15 @@ Book a consultation with us now using the link in our bio to find out how we can
                 </div>
                 <div>
                     <h4 class="footer-title">Social</h4>
-                    <a href="https://www.instagram.com/perfectevent4u/" class="social-link" aria-label="Instagram">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                        </svg>
-                    </a>
+                    <div class="social-links" data-socials>
+                        <a href="https://www.instagram.com/perfectevent4u/" class="social-link" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

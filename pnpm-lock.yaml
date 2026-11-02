@@ -26,6 +26,9 @@ dependencies:
   next:
     specifier: 16.4.3
     version: 16.4.3(@babel/core@7.29.7)(@opentelemetry/api@1.10.0)(@types/node@20.19.0)(react-dom@19.1.0)(react@19.1.0)
+  nodemailer:
+    specifier: ^6.9.16
+    version: 6.10.1
   pg:
     specifier: ^8.13.0
     version: 8.23.1
@@ -40,6 +43,9 @@ devDependencies:
   '@types/node':
     specifier: ^20.19.0
     version: 20.19.0
+  '@types/nodemailer':
+    specifier: ^8.0.2
+    version: 8.0.2
   '@types/pg':
     specifier: ^8.23.1
     version: 8.23.1
@@ -1978,6 +1984,12 @@ packages:
     resolution: {integrity: sha512-hfrc+1tud1xcdVTABC2JiomZJEklMcXYNTVtZLAeqTVWD+qL5jkHKT+1lOtqDdGxt+mB53DTtiz673vfjU8D1Q==}
     dependencies:
       undici-types: 6.21.0
+
+  /@types/nodemailer@8.0.2:
+    resolution: {integrity: sha512-c7M5ox8p0nEOfbJ2E9Qcmt8/QCu/VzsiAhzBiZbvky2PhKZDHpKB3sQHBM5MEZNkCfBOaS6S9//AGPRTNB7IaA==}
+    dependencies:
+      '@types/node': 20.19.0
+    dev: true
 
   /@types/pg@8.23.1:
     resolution: {integrity: sha512-fKVHpikPdg4GKks3JuLEhvwSyvwzF23hnabPy6DD8ljVbC7+6J5dQzdv4arV6jqq57djnMgs1HKBxX4P8aBI3A==}
@@ -5222,6 +5234,11 @@ packages:
   /node-releases@2.0.63:
     resolution: {integrity: sha512-6li2QanLsAXpIH2R6j77MzRyvOyrvdTqlKtO4CgBdHGNvN99ZZfyxszHc5o5+IZBWD5u6Hzwg83JoGXmqZNG9Q==}
     engines: {node: '>=18'}
+
+  /nodemailer@6.10.1:
+    resolution: {integrity: sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==}
+    engines: {node: '>=6.0.0'}
+    dev: false
 
   /npm-run-path@6.0.0:
     resolution: {integrity: sha512-9qny7Z9DsQU8Ou39ERsPU4OZQlSTP47ShQzuKZ6PRXpYLtIFgl/DEBYEXKlvcEa+9tHVcK8CF81Y2V72qaZhWA==}

@@ -23,12 +23,40 @@ const PUBLIC_DIR = path.join(__dirname, 'public');
 const DATA_DIR = process.env.DATA_DIR || path.join(__dirname, 'data');
 const UPLOAD_DIR = process.env.UPLOAD_DIR || path.join(PUBLIC_DIR, 'uploads');
 const ADMIN_PASSWORD = process.env.ADMIN_PASSWORD || '';
+const CLOUDINARY_URL = process.env.CLOUDINARY_URL || '';
+const CLOUDINARY_CLOUD_NAME = process.env.CLOUDINARY_CLOUD_NAME || '';
+const CLOUDINARY_API_KEY = process.env.CLOUDINARY_API_KEY || '';
+const CLOUDINARY_API_SECRET = process.env.CLOUDINARY_API_SECRET || '';
+const CLOUDINARY_FOLDER = process.env.CLOUDINARY_FOLDER || 'perfectevent4u';
 const SESSION_HOURS = 12;
 const CATEGORIES = ['Weddings', 'Receptions', 'Corporate', 'Celebrations'];
 const ICONS = ['planning', 'floral', 'management', 'venue', 'decor', 'catering', 'photo', 'music'];
 
 fs.mkdirSync(DATA_DIR, { recursive: true });
 fs.mkdirSync(UPLOAD_DIR, { recursive: true });
+
+// ---------------------------------------------------------------------------
+// Image storage: Cloudinary when configured, otherwise the local uploads dir.
+// Set CLOUDINARY_URL (or the three CLOUDINARY_* values) to enable it.
+// ---------------------------------------------------------------------------
+const CLOUDINARY_ENABLED = Boolean(
+  CLOUDINARY_URL || (CLOUDINARY_CLOUD_NAME && CLOUDINARY_API_KEY && CLOUDINARY_API_SECRET)
+);
+let cloudinary = null;
+if (CLOUDINARY_ENABLED) {
+  cloudinary = require('cloudinary').v2;
+  if (!CLOUDINARY_URL) {
+    cloudinary.config({
+      cloud_name: CLOUDINARY_CLOUD_NAME,
+      api_key: CLOUDINARY_API_KEY,
+      api_secret: CLOUDINARY_API_SECRET,
+      secure: true
+    });
+  } else {
+    // The SDK reads CLOUDINARY_URL from the environment automatically.
+    cloudinary.config({ secure: true });
+  }
+}
 
 // ---------------------------------------------------------------------------
 // Tiny JSON file store
@@ -205,12 +233,9 @@ const category = v => (CATEGORIES.includes(v) ? v : CATEGORIES[0]);
 const EXT = { 'image/jpeg': '.jpg', 'image/png': '.png', 'image/webp': '.webp', 'image/gif': '.gif' };
 
 // Check the real file signature, not just the browser-reported type
-function looksLikeImage(file) {
-  const fd = fs.openSync(file, 'r');
-  const buf = Buffer.alloc(12);
-  fs.readSync(fd, buf, 0, 12, 0);
-  fs.closeSync(fd);
-  const hex = buf.toString('hex');
+function looksLikeImage(buf) {
+  if (!Buffer.isBuffer(buf) || buf.length < 12) return false;
+  const hex = buf.toString('hex', 0, 12);
   return (
     hex.startsWith('ffd8ff') ||
     hex.startsWith('89504e47') ||
@@ -219,19 +244,47 @@ function looksLikeImage(file) {
   );
 }
 
-function removeUpload(imagePath) {
-  if (typeof imagePath !== 'string' || !imagePath.startsWith('/uploads/')) return;
-  const file = path.join(UPLOAD_DIR, path.basename(imagePath));
+function readHead(file) {
+  const fd = fs.openSync(file, 'r');
+  const buf = Buffer.alloc(12);
+  fs.readSync(fd, buf, 0, 12, 0);
+  fs.closeSync(fd);
+  return buf;
+}
+
+function uploadToCloudinary(buffer) {
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      { folder: CLOUDINARY_FOLDER, resource_type: 'image', unique_filename: true },
+      (err, result) => (err ? reject(err) : resolve(result))
+    );
+    stream.end(buffer);
+  });
+}
+
+function removeUpload(item) {
+  if (!item || typeof item !== 'object') return;
+
+  // Cloudinary uploads are removed by public id.
+  if (item.imagePublicId && cloudinary) {
+    cloudinary.uploader.destroy(item.imagePublicId).catch(() => {});
+    return;
+  }
+
+  if (typeof item.image !== 'string' || !item.image.startsWith('/uploads/')) return;
+  const file = path.join(UPLOAD_DIR, path.basename(item.image));
   fs.promises.unlink(file).catch(() => {});
 }
 
 const upload = multer({
-  storage: multer.diskStorage({
-    destination: UPLOAD_DIR,
-    filename: (req, file, cb) => {
-      cb(null, `${Date.now().toString(36)}-${crypto.randomBytes(5).toString('hex')}${EXT[file.mimetype]}`);
-    }
-  }),
+  storage: cloudinary
+    ? multer.memoryStorage()
+    : multer.diskStorage({
+        destination: UPLOAD_DIR,
+        filename: (req, file, cb) => {
+          cb(null, `${Date.now().toString(36)}-${crypto.randomBytes(5).toString('hex')}${EXT[file.mimetype]}`);
+        }
+      }),
   limits: { fileSize: 12 * 1024 * 1024, files: 20 },
   fileFilter: (req, file, cb) =>
     EXT[file.mimetype] ? cb(null, true) : cb(new Error('Only JPG, PNG, WebP or GIF images are allowed.'))
@@ -246,29 +299,56 @@ function move(list, id, dir) {
 }
 
 // ---- Admin: portfolio -----------------------------------------------------
-app.post('/api/admin/portfolio', requireAuth, upload.array('images', 20), (req, res) => {
+app.post('/api/admin/portfolio', requireAuth, upload.array('images', 20), async (req, res, next) => {
   const uploaded = req.files || [];
   if (!uploaded.length) return res.status(400).json({ error: 'Please choose at least one photo.' });
 
-  const bad = uploaded.filter(f => !looksLikeImage(f.path));
+  const bad = uploaded.filter(f =>
+    cloudinary ? !looksLikeImage(f.buffer) : !looksLikeImage(readHead(f.path))
+  );
   if (bad.length) {
-    uploaded.forEach(f => fs.promises.unlink(f.path).catch(() => {}));
+    uploaded.forEach(f => f.path && fs.promises.unlink(f.path).catch(() => {}));
     return res.status(400).json({ error: 'One of the files is not a valid image.' });
   }
 
-  const titles = [].concat(req.body.titles || []);
-  const items = load('portfolio');
-  const added = uploaded.map((f, i) => ({
-    id: newId(),
-    title: clean(titles[i], 80) || 'Untitled event',
-    location: clean(req.body.location, 60),
-    category: category(req.body.category),
-    image: `/uploads/${f.filename}`,
-    featured: asBool(req.body.featured),
-    created: new Date().toISOString()
-  }));
-  save('portfolio', [...added, ...items]);
-  res.json({ ok: true, added });
+  const stored = [];
+  try {
+    if (cloudinary) {
+      for (const f of uploaded) {
+        const result = await uploadToCloudinary(f.buffer);
+        stored.push({
+          image: cloudinary.url(result.public_id, {
+            secure: true,
+            fetch_format: 'auto',
+            quality: 'auto'
+          }),
+          imagePublicId: result.public_id
+        });
+      }
+    } else {
+      uploaded.forEach(f => stored.push({ image: `/uploads/${f.filename}` }));
+    }
+
+    const titles = [].concat(req.body.titles || []);
+    const items = load('portfolio');
+    const added = stored.map((s, i) => ({
+      id: newId(),
+      title: clean(titles[i], 80) || 'Untitled event',
+      location: clean(req.body.location, 60),
+      category: category(req.body.category),
+      image: s.image,
+      ...(s.imagePublicId ? { imagePublicId: s.imagePublicId } : {}),
+      featured: asBool(req.body.featured),
+      created: new Date().toISOString()
+    }));
+    save('portfolio', [...added, ...items]);
+    res.json({ ok: true, added });
+  } catch (err) {
+    // Do not leave orphaned files behind if part of the batch failed.
+    uploaded.forEach(f => f.path && fs.promises.unlink(f.path).catch(() => {}));
+    stored.forEach(s => s.imagePublicId && cloudinary.uploader.destroy(s.imagePublicId).catch(() => {}));
+    next(err);
+  }
 });
 
 app.put('/api/admin/portfolio/:id', requireAuth, (req, res) => {
@@ -289,7 +369,7 @@ app.delete('/api/admin/portfolio/:id', requireAuth, (req, res) => {
   const item = items.find(x => x.id === req.params.id);
   if (!item) return res.status(404).json({ error: 'Photo not found.' });
   save('portfolio', items.filter(x => x.id !== item.id));
-  removeUpload(item.image);
+  removeUpload(item);
   res.json({ ok: true });
 });
 
@@ -361,5 +441,6 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Perfectevent4u running on http://localhost:${PORT}`);
   console.log(`Admin panel:           http://localhost:${PORT}/admin`);
+  console.log(`Image storage:         ${cloudinary ? 'Cloudinary' : 'local (public/uploads)'}`);
   if (!ADMIN_PASSWORD) console.warn('\n  ! ADMIN_PASSWORD is not set. Set it (see README) before using the admin panel.\n');
 });

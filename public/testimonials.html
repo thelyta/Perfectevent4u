@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Testimonials | Perfectevent4u</title>
+    <meta name="description" content="Kind words from couples and families who trusted Perfectevent4u with their celebrations.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root { --bg:#F9F8F6; --text:#202946; --text-light:rgba(32,41,70,.6); --border:rgba(32,41,70,.15); }
+        html { scroll-behavior: smooth; }
+        body { font-family:'Lato',sans-serif; background:var(--bg); color:var(--text); overflow-x:hidden; }
+        h1,h2,h3,h4,h5,h6 { font-family:'Playfair Display',serif; font-weight:400; }
+
+        nav { position:fixed; top:0; left:0; right:0; z-index:1000; transition:all .5s ease; padding:1.5rem 0; }
+        nav.scrolled { background:rgba(249,248,246,.85); backdrop-filter:blur(12px); -webkit-backdrop-filter:blur(12px); padding:1rem 0; border-bottom:1px solid var(--border); }
+        .nav-container { max-width:1280px; margin:0 auto; padding:0 1.5rem; display:flex; justify-content:space-between; align-items:center; }
+        .logo { font-family:'Playfair Display',serif; font-size:1.5rem; letter-spacing:.15em; text-transform:uppercase; color:var(--text); text-decoration:none; font-weight:600; }
+        .nav-links { display:flex; gap:2rem; align-items:center; }
+        .nav-links a { text-decoration:none; color:var(--text); font-size:.7rem; text-transform:uppercase; letter-spacing:.2em; transition:opacity .3s; position:relative; }
+        .nav-links a:hover { opacity:.6; }
+        .nav-links a.active::after { content:''; position:absolute; bottom:-4px; left:0; right:0; height:1px; background:var(--text); }
+        .nav-btn { padding:.5rem 1.5rem; border:1px solid var(--text); color:var(--text); text-decoration:none; font-size:.7rem; text-transform:uppercase; letter-spacing:.15em; transition:all .3s; }
+        .nav-btn:hover { background:var(--text); color:var(--bg); }
+        .mobile-toggle { display:none; background:none; border:none; cursor:pointer; color:var(--text); }
+        .mobile-menu { display:none; position:absolute; top:100%; left:0; right:0; background:var(--bg); border-bottom:1px solid var(--border); padding:2rem; text-align:center; }
+        .mobile-menu.active { display:block; }
+        .mobile-menu a { display:block; padding:1rem 0; text-decoration:none; color:var(--text); font-size:.85rem; text-transform:uppercase; letter-spacing:.15em; }
+
+        .page-header { position:relative; height:60vh; min-height:400px; display:flex; align-items:center; justify-content:center; overflow:hidden; }
+        .page-header-bg { position:absolute; inset:0; z-index:0; }
+        .page-header-bg img { width:100%; height:100%; object-fit:cover; filter:blur(2px) brightness(.8); }
+        .page-header-overlay { position:absolute; inset:0; background:linear-gradient(to bottom, rgba(249,248,246,.2), rgba(249,248,246,.6)); z-index:1; }
+        .page-header-content { position:relative; z-index:2; text-align:center; padding:0 1.5rem; }
+        .page-header-title { font-size:clamp(2.5rem,5vw,4rem); margin-bottom:1rem; }
+        .page-header-subtitle { font-size:.8rem; text-transform:uppercase; letter-spacing:.3em; color:var(--text-light); }
+
+        section { padding:6rem 1.5rem; }
+        .container { max-width:1280px; margin:0 auto; }
+        .intro { text-align:center; max-width:720px; margin:0 auto 4rem; }
+        .intro h2 { font-size:clamp(1.6rem,3vw,2.4rem); margin-bottom:1rem; }
+        .intro p { color:var(--text-light); line-height:1.8; }
+
+        .testimonial-grid { display:grid; grid-template-columns:1fr; gap:2rem; }
+        @media (min-width:768px) { .testimonial-grid { grid-template-columns:repeat(2,1fr); } }
+        .testimonial-card { border:1px solid var(--border); background:#fff; padding:2rem; display:flex; flex-direction:column; gap:1rem; }
+        .testimonial-card .pe-quote { font-family:'Playfair Display',serif; font-size:1.2rem; line-height:1.55; font-style:italic; }
+        .testimonial-card .pe-author { font-weight:700; text-transform:uppercase; letter-spacing:.18em; font-size:.75rem; }
+        .testimonial-card .pe-role { font-size:.7rem; text-transform:uppercase; letter-spacing:.15em; color:var(--text-light); }
+        .testimonial-card .pe-review { font-size:.7rem; text-transform:uppercase; letter-spacing:.16em; color:var(--text); text-decoration:none; border-bottom:1px solid currentColor; align-self:flex-start; margin-top:auto; }
+
+        .hero-btn { display:inline-block; padding:1rem 2rem; background:var(--text); color:var(--bg); text-decoration:none; font-size:.7rem; text-transform:uppercase; letter-spacing:.2em; transition:opacity .3s; }
+        .hero-btn:hover { opacity:.85; }
+
+        footer { background:var(--text); color:var(--bg); padding:4rem 1.5rem; border-top:1px solid rgba(249,248,246,.1); }
+        .footer-grid { display:grid; grid-template-columns:1fr; gap:3rem; }
+        @media (min-width:768px) { .footer-grid { grid-template-columns:2fr 1fr 1fr; } }
+        .footer-brand { font-family:'Playfair Display',serif; font-size:1.5rem; margin-bottom:1rem; }
+        .footer-desc { opacity:.6; line-height:1.7; font-size:.9rem; max-width:300px; }
+        .footer-title { font-size:.7rem; text-transform:uppercase; letter-spacing:.2em; opacity:.5; margin-bottom:1.5rem; }
+        .footer-links { list-style:none; }
+        .footer-links li { margin-bottom:.75rem; }
+        .footer-links a { color:var(--bg); text-decoration:none; font-size:.9rem; }
+        .footer-links a:hover { opacity:.7; }
+        .footer-bottom { max-width:1280px; margin:4rem auto 0; padding-top:2rem; border-top:1px solid rgba(249,248,246,.1); display:flex; flex-direction:column; align-items:center; gap:1rem; font-size:.7rem; text-transform:uppercase; letter-spacing:.15em; opacity:.4; }
+        @media (min-width:768px) { .footer-bottom { flex-direction:row; justify-content:space-between; } }
+
+        .fade-in { opacity:0; transform:translateY(30px); transition:opacity .8s ease, transform .8s ease; }
+        .fade-in.visible { opacity:1; transform:translateY(0); }
+
+        @media (max-width:768px) {
+            .nav-links { display:none; }
+            .mobile-toggle { display:block; }
+        }
+        @media (max-width:640px) {
+            section { padding:3.5rem 1.25rem; }
+            .page-header { height:52vh; min-height:320px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">Perfectevent4u</a>
+            <div class="nav-links">
+                <a href="index.html">Home</a>
+                <a href="portfolio.html">Portfolio</a>
+                <a href="services.html">Services</a>
+                <a href="about.html">About</a>
+                <a href="testimonials.html" class="active">Testimonials</a>
+                <a href="contact.html">Contact</a>
+                <a href="contact.html" class="nav-btn">Inquire</a>
+            </div>
+            <button class="mobile-toggle" onclick="toggleMenu()" aria-label="Menu">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <line x1="3" y1="12" x2="21" y2="12"></line>
+                    <line x1="3" y1="18" x2="21" y2="18"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="mobile-menu" id="mobileMenu">
+            <a href="index.html" onclick="toggleMenu()">Home</a>
+            <a href="portfolio.html" onclick="toggleMenu()">Portfolio</a>
+            <a href="services.html" onclick="toggleMenu()">Services</a>
+            <a href="about.html" onclick="toggleMenu()">About</a>
+            <a href="testimonials.html" onclick="toggleMenu()">Testimonials</a>
+            <a href="contact.html" onclick="toggleMenu()">Contact</a>
+        </div>
+    </nav>
+
+    <section class="page-header">
+        <div class="page-header-bg"><img src="wed2.webp" alt="Testimonials from Perfectevent4u clients"></div>
+        <div class="page-header-overlay"></div>
+        <div class="page-header-content">
+            <p class="page-header-subtitle">Kind Words</p>
+            <h1 class="page-header-title">Testimonials</h1>
+        </div>
+    </section>
+
+    <section>
+        <div class="container">
+            <div class="intro fade-in">
+                <h2>Loved by our couples and families</h2>
+                <p>Every celebration is personal. Here are a few words from the people we have had the honour of planning for.</p>
+            </div>
+
+            <div class="testimonial-grid" data-testimonials-list>
+                <article class="testimonial-card fade-in">
+                    <p class="pe-quote">"You were a patient, understanding, loving, funny and an adviser. I can go on and on about your caring attributes. You made my day an unforgettable and eventful one."</p>
+                    <p class="pe-author">Lizzy &amp; Kenny</p>
+                    <p class="pe-role">London Wedding</p>
+                </article>
+                <article class="testimonial-card fade-in">
+                    <p class="pe-quote">"Abi was very professional and helpful and our guests were just as impressed as we were! Forever grateful to her and her team."</p>
+                    <p class="pe-author">Cloudier &amp; Ryan</p>
+                    <p class="pe-role">Essex Celebration</p>
+                </article>
+                <article class="testimonial-card fade-in">
+                    <p class="pe-quote">"Perfect as how the company is named. Transformed an ordinary hall into something magical and exceptional. Attention to detail was amazing."</p>
+                    <p class="pe-author">Miranda (MOB)</p>
+                    <p class="pe-role">Priscilla &amp; James Wedding</p>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section style="text-align:center;">
+        <div class="container">
+            <div class="fade-in">
+                <h2 style="font-size:clamp(1.5rem,3vw,2.5rem); margin-bottom:1.5rem;">Ready to Create Your Dream Event?</h2>
+                <p style="color:var(--text-light); margin-bottom:2rem; max-width:500px; margin-left:auto; margin-right:auto;">Let's discuss how we can bring your vision to life with our bespoke planning and design services.</p>
+                <a href="contact.html" class="hero-btn">Start Your Journey</a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <h3 class="footer-brand">Perfectevent4u</h3>
+                    <p class="footer-desc" data-cms-copy="footerDescription">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
+                </div>
+                <div>
+                    <h4 class="footer-title">Explore</h4>
+                    <ul class="footer-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="portfolio.html">Portfolio</a></li>
+                        <li><a href="services.html">Services</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="testimonials.html">Testimonials</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="footer-title">Social</h4>
+                    <div class="social-links" data-socials>
+                        <a href="https://www.instagram.com/perfectevent4u/" class="social-link" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>© 2026 Perfectevent4u. All rights reserved.</p>
+            <p>Designed with Quiet Luxury</p>
+        </div>
+    </footer>
+
+    <script>
+        function toggleMenu() { document.getElementById('mobileMenu').classList.toggle('active'); }
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => { navbar.classList.toggle('scrolled', window.scrollY > 50); });
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach((entry) => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
+        }, { threshold: 0.1, rootMargin: '-50px' });
+        document.querySelectorAll('.fade-in').forEach((el) => observer.observe(el));
+    </script>
+    <script src="js/icons.js"></script>
+    <script src="js/site.js"></script>
+    <script src="js/chatbot.js"></script>
+</body>
+</html>

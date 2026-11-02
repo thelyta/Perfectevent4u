@@ -1086,7 +1086,7 @@
         }
 
     </style>
-<base target="_blank">
+<base target="_self">
 </head>
 <body>
 
@@ -1134,8 +1134,8 @@
     <section>
         <div class="container">
             <div class="about-hero-text fade-in">
-                <h2>Tailored to Your Celebration</h2>
-                <p>Whether you need us from the very first idea or only for the final weeks, every service is shaped around your story, your guests and your budget. Choose the support that suits you, and we will take care of the rest.</p>
+                <h2 data-cms-copy="introHeading">Tailored to Your Celebration</h2>
+                <p data-cms-copy="introText">Whether you need us from the very first idea or only for the final weeks, every service is shaped around your story, your guests and your budget. Choose the support that suits you, and we will take care of the rest.</p>
             </div>
         </div>
     </section>
@@ -1187,24 +1187,24 @@
     <section>
         <div class="container">
             <div style="text-align: center; margin-bottom: 3rem;" class="fade-in">
-                <p class="about-label" style="color: var(--text-light); margin-bottom: 1rem;">How It Works</p>
-                <h2 style="font-size: clamp(1.8rem, 3vw, 2.5rem);">Your Journey With Us</h2>
+                <p class="about-label" data-cms-copy="processEyebrow" style="color: var(--text-light); margin-bottom: 1rem;">How It Works</p>
+                <h2 data-cms-copy="processHeading" style="font-size: clamp(1.8rem, 3vw, 2.5rem);">Your Journey With Us</h2>
             </div>
             <div class="values-grid">
                 <div class="value-card fade-in">
                     <div class="value-number">01</div>
-                    <h3 class="value-title">Consultation</h3>
-                    <p class="value-desc">We chat about your vision, date, guest list and budget in a complimentary consultation.</p>
+                    <h3 class="value-title" data-cms-copy="stepOneTitle">Consultation</h3>
+                    <p class="value-desc" data-cms-copy="stepOneText">We chat about your vision, date, guest list and budget in a complimentary consultation.</p>
                 </div>
                 <div class="value-card fade-in">
                     <div class="value-number">02</div>
-                    <h3 class="value-title">Design &amp; Planning</h3>
-                    <p class="value-desc">We create your concept, curate your vendors and build a clear plan and timeline.</p>
+                    <h3 class="value-title" data-cms-copy="stepTwoTitle">Design &amp; Planning</h3>
+                    <p class="value-desc" data-cms-copy="stepTwoText">We create your concept, curate your vendors and build a clear plan and timeline.</p>
                 </div>
                 <div class="value-card fade-in">
                     <div class="value-number">03</div>
-                    <h3 class="value-title">Your Celebration</h3>
-                    <p class="value-desc">We run everything on the day, calmly and professionally, so you can enjoy every moment.</p>
+                    <h3 class="value-title" data-cms-copy="stepThreeTitle">Your Celebration</h3>
+                    <p class="value-desc" data-cms-copy="stepThreeText">We run everything on the day, calmly and professionally, so you can enjoy every moment.</p>
                 </div>
             </div>
         </div>
@@ -1243,9 +1243,9 @@
     <section style="text-align: center;">
         <div class="container">
             <div class="fade-in">
-                <h2 style="font-size: clamp(1.5rem, 3vw, 2.5rem); margin-bottom: 1.5rem;">Not Sure Which Service Is Right for You?</h2>
-                <p style="color: var(--text-light); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">Tell us about your event and we will recommend the best way to support you.</p>
-                <a href="contact.html" class="hero-btn">Book a Consultation</a>
+                <h2 data-cms-copy="ctaHeading" style="font-size: clamp(1.5rem, 3vw, 2.5rem); margin-bottom: 1.5rem;">Not Sure Which Service Is Right for You?</h2>
+                <p data-cms-copy="ctaText" style="color: var(--text-light); margin-bottom: 2rem; max-width: 500px; margin-left: auto; margin-right: auto;">Tell us about your event and we will recommend the best way to support you.</p>
+                <a href="contact.html" class="hero-btn" data-cms-copy="ctaButton">Book a Consultation</a>
             </div>
         </div>
     </section>
@@ -1255,7 +1255,7 @@
             <div class="footer-grid">
                 <div>
                     <h3 class="footer-brand">Perfectevent4u</h3>
-                    <p class="footer-desc">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
+                    <p class="footer-desc" data-cms-copy="footerDescription">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
                 </div>
                 <div>
                     <h4 class="footer-title">Explore</h4>
@@ -1269,13 +1269,15 @@
                 </div>
                 <div>
                     <h4 class="footer-title">Social</h4>
-                    <a href="#" class="social-link" aria-label="Instagram">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                        </svg>
-                    </a>
+                    <div class="social-links" data-socials>
+                        <a href="https://www.instagram.com/perfectevent4u/" class="social-link" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>

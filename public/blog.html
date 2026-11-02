@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Stories and inspiration from Perfectevent4u.">
+    <title>Journal | Perfectevent4u</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg:#F9F8F6; --text:#202946; --muted:rgba(32,41,70,.62); --border:rgba(32,41,70,.15); }
+        * { box-sizing:border-box; }
+        html { scroll-behavior:smooth; }
+        body { margin:0; background:var(--bg); color:var(--text); font-family:Lato,sans-serif; }
+        h1,h2 { font-family:'Playfair Display',serif; font-weight:400; }
+        nav { position:sticky; top:0; z-index:5; background:rgba(249,248,246,.94); border-bottom:1px solid var(--border); }
+        .nav { min-height:76px; max-width:1280px; margin:auto; padding:0 24px; display:flex; align-items:center; justify-content:space-between; gap:24px; }
+        .logo { color:var(--text); font:600 1.25rem 'Playfair Display',serif; letter-spacing:.12em; text-decoration:none; text-transform:uppercase; }
+        .links { display:flex; gap:24px; flex-wrap:wrap; }
+        .links a { color:var(--text); text-decoration:none; font-size:.72rem; text-transform:uppercase; letter-spacing:.12em; }
+        .hero { min-height:380px; position:relative; display:grid; place-items:center; text-align:center; overflow:hidden; padding:60px 24px; }
+        .hero img { position:absolute; inset:0; width:100%; height:100%; object-fit:cover; filter:brightness(.62); }
+        .hero-content { position:relative; color:white; max-width:850px; }
+        .hero-content p { text-transform:uppercase; letter-spacing:.22em; font-size:.75rem; }
+        .hero-content h1 { font-size:clamp(2.6rem,6vw,5rem); margin:14px 0; white-space:pre-line; }
+        main { max-width:1160px; margin:auto; padding:72px 24px 96px; }
+        .intro { max-width:680px; margin:0 auto 44px; text-align:center; color:var(--muted); line-height:1.75; }
+        .blog-grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:26px; }
+        .blog-card { border-bottom:1px solid var(--border); padding-bottom:22px; }
+        .blog-card img { width:100%; aspect-ratio:4/3; object-fit:cover; display:block; margin-bottom:18px; }
+        .blog-card h2 { font-size:1.55rem; margin:0 0 10px; }
+        .blog-card p,.blog-article p { color:var(--muted); line-height:1.75; }
+        .blog-card a,.back-link { color:var(--text); text-transform:uppercase; letter-spacing:.12em; font-size:.7rem; text-decoration:none; border-bottom:1px solid currentColor; padding-bottom:4px; }
+        .blog-empty { grid-column:1/-1; text-align:center; padding:60px 16px; border-top:1px solid var(--border); border-bottom:1px solid var(--border); color:var(--muted); }
+        .blog-article { max-width:780px; margin:auto; }
+        .blog-article .blog-cover { width:100%; max-height:560px; object-fit:cover; margin-bottom:30px; }
+        .blog-article h1 { font-size:clamp(2.2rem,5vw,4rem); line-height:1.12; }
+        .blog-date { color:var(--muted); text-transform:uppercase; letter-spacing:.1em; font-size:.72rem; margin-bottom:36px; }
+        .blog-article p { font-size:1.06rem; }
+        footer { padding:28px 24px; border-top:1px solid var(--border); text-align:center; color:var(--muted); font-size:.8rem; }
+        @media(max-width:760px) { .nav { align-items:flex-start; flex-direction:column; padding:18px 20px; gap:14px; } .links { gap:12px 18px; } .blog-grid { grid-template-columns:1fr; } main { padding:50px 20px 70px; } .hero { min-height:320px; } }
+    </style>
+</head>
+<body>
+    <nav><div class="nav"><a class="logo" href="index.html">Perfectevent4u</a><div class="links"><a href="index.html">Home</a><a href="portfolio.html">Portfolio</a><a href="services.html">Services</a><a href="about.html">About</a><a href="testimonials.html">Testimonials</a><a href="contact.html">Contact</a><a href="blog.html">Journal</a></div></div></nav>
+    <header class="hero"><img src="wed2.webp" alt="Wedding inspiration"><div class="hero-content"><p class="page-header-subtitle">Stories &amp; Inspiration</p><h1 class="page-header-title">The Journal</h1></div></header>
+    <main>
+        <p class="intro" data-cms-copy="introText">Ideas, thoughtful details, and real celebrations from the Perfectevent4u team.</p>
+        <div class="blog-grid" data-blog-list><p class="blog-empty" data-cms-copy="emptyText">New stories are coming soon.</p></div>
+    </main>
+    <footer>
+        <div>Perfectevent4u · London, Essex &amp; throughout the UK</div>
+        <div class="social-links" data-socials style="justify-content:center;margin-top:14px">
+            <a href="https://www.instagram.com/perfectevent4u/" class="social-link" aria-label="Instagram">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </a>
+        </div>
+    </footer>
+    <script src="js/site.js"></script>
+    <script src="js/chatbot.js"></script>
+</body>
+</html>

@@ -1298,7 +1298,7 @@
             }
         }
     </style>
-<base target="_blank">
+<base target="_self">
 </head>
 <body>
 
@@ -1346,8 +1346,8 @@
     <section>
         <div class="container">
             <div class="about-hero-text fade-in">
-                <h2>A Bespoken Experience</h2>
-                <p>Perfectevent4u is a full service wedding and event planning and design company located in Essex. We are known for curating detailed and beautiful weddings and celebrations for clients with refined tastes throughout the UK.</p>
+                <h2 data-cms-copy="introHeading">A Bespoken Experience</h2>
+                <p data-cms-copy="introText">Perfectevent4u is a full service wedding and event planning and design company located in Essex. We are known for curating detailed and beautiful weddings and celebrations for clients with refined tastes throughout the UK.</p>
             </div>
         </div>
     </section>
@@ -1361,12 +1361,12 @@
                 </div>
                 <div class="about-story-content fade-in">
                     <p class="about-label" style="color: var(--text-light);">Our Company</p>
-                    <h3 style="font-size: 2rem; margin-bottom: 1.5rem;">Excellence in Every Detail</h3>
-                    <p>Perfectevent4u offers a hands-on approach to every event we produce whilst focussing on our clients brief and ensuring that every event is executed per excellence.</p>
-                    <p>We are known for our professional expertise, in the delivery of opulent and tailor made events for our clients.</p>
-                    <p>An unforgettable experience is what we aim to give our clients and their guests at their celebrations and on their wedding day.</p>
-                    <p>We specialise in full wedding planning and designs. We have an array of stellar vendors that we partner with to create your dream event.</p>
-                    <p>Working with you and for you every step on the way to create an exceptional and unforgettable wedding and event is our promise to you.</p>
+                    <h3 data-cms-copy="storyHeading" style="font-size: 2rem; margin-bottom: 1.5rem;">Excellence in Every Detail</h3>
+                    <p data-cms-copy="storyParagraphOne">Perfectevent4u offers a hands-on approach to every event we produce whilst focussing on our clients brief and ensuring that every event is executed per excellence.</p>
+                    <p data-cms-copy="storyParagraphTwo">We are known for our professional expertise, in the delivery of opulent and tailor made events for our clients.</p>
+                    <p data-cms-copy="storyParagraphThree">An unforgettable experience is what we aim to give our clients and their guests at their celebrations and on their wedding day.</p>
+                    <p data-cms-copy="storyParagraphFour">We specialise in full wedding planning and designs. We have an array of stellar vendors that we partner with to create your dream event.</p>
+                    <p data-cms-copy="storyParagraphFive">Working with you and for you every step on the way to create an exceptional and unforgettable wedding and event is our promise to you.</p>
                 </div>
             </div>
         </div>
@@ -1410,18 +1410,18 @@
             <div class="values-grid">
                 <div class="value-card fade-in">
                     <div class="value-number">01</div>
-                    <h3 class="value-title">Excellence</h3>
-                    <p class="value-desc">Every detail matters. We pursue perfection in every element of your celebration.</p>
+                    <h3 class="value-title" data-cms-copy="valueOneTitle">Excellence</h3>
+                    <p class="value-desc" data-cms-copy="valueOneText">Every detail matters. We pursue perfection in every element of your celebration.</p>
                 </div>
                 <div class="value-card fade-in">
                     <div class="value-number">02</div>
-                    <h3 class="value-title">Personalisation</h3>
-                    <p class="value-desc">No two events are the same. Your celebration is uniquely tailored to your story.</p>
+                    <h3 class="value-title" data-cms-copy="valueTwoTitle">Personalisation</h3>
+                    <p class="value-desc" data-cms-copy="valueTwoText">No two events are the same. Your celebration is uniquely tailored to your story.</p>
                 </div>
                 <div class="value-card fade-in">
                     <div class="value-number">03</div>
-                    <h3 class="value-title">Calmness</h3>
-                    <p class="value-desc">We remain composed under pressure so you can enjoy every moment stress-free.</p>
+                    <h3 class="value-title" data-cms-copy="valueThreeTitle">Calmness</h3>
+                    <p class="value-desc" data-cms-copy="valueThreeText">We remain composed under pressure so you can enjoy every moment stress-free.</p>
                 </div>
             </div>
         </div>
@@ -1435,7 +1435,7 @@
                     <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                 </svg>
             </div>
-            <div class="testimonial-slider">
+            <div class="testimonial-slider" data-testimonial-slider>
                 <div class="testimonial-item active" data-index="0">
                     <p class="testimonial-quote">"You were a patient, understanding, loving, funny and an adviser. I can go on and on about your caring attributes. You made my day an unforgettable and eventful one."</p>
                     <p class="testimonial-author">Lizzy & Kenny</p>
@@ -1473,7 +1473,7 @@
                     <polyline points="15 18 9 12 15 6"></polyline>
                 </svg>
             </button>
-            <div class="instagram-scroll-container" id="instagramScroll">
+            <div class="instagram-scroll-container" id="instagramScroll" data-instagram>
                 <div class="instagram-card fade-in">
                     <div class="instagram-card-header">
                         <img src="abi.png" alt="Perfectevent4u" class="instagram-avatar">
@@ -1732,7 +1732,7 @@
             <div class="footer-grid">
                 <div>
                     <h3 class="footer-brand">Perfectevent4u</h3>
-                    <p class="footer-desc">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
+                    <p class="footer-desc" data-cms-copy="footerDescription">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
                 </div>
                 <div>
                     <h4 class="footer-title">Explore</h4>
@@ -1746,13 +1746,15 @@
                 </div>
                 <div>
                     <h4 class="footer-title">Social</h4>
-                    <a href="#" class="social-link" aria-label="Instagram">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                        </svg>
-                    </a>
+                    <div class="social-links" data-socials>
+                        <a href="https://www.instagram.com/perfectevent4u/" class="social-link" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1878,6 +1880,7 @@
     })();
     </script>
 
+    <script src="js/site.js"></script>
     <script src="js/chatbot.js"></script>
 </body>
 </html>

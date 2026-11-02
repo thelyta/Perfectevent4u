@@ -1086,7 +1086,7 @@
         }
 
     </style>
-<base target="_blank">
+<base target="_self">
 </head>
 <body>
 
@@ -1135,8 +1135,8 @@
         <div class="container">
             <div class="contact-grid">
                 <div class="fade-in">
-                    <h2 class="contact-title">We'd Love to Hear From You</h2>
-                    <p class="contact-text">We would be honoured to hear about your vision. Please share a few details with us, and we will be in touch to schedule a complimentary consultation.</p>
+                    <h2 class="contact-title" data-cms-copy="contactTitle">We'd Love to Hear From You</h2>
+                    <p class="contact-text" data-cms-copy="contactText">We would be honoured to hear about your vision. Please share a few details with us, and we will be in touch to schedule a complimentary consultation.</p>
 
                     <div class="contact-info-item">
                         <svg class="contact-info-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -1145,7 +1145,7 @@
                         </svg>
                         <div>
                             <p class="contact-info-label">Location</p>
-                            <p class="contact-info-value">Essex, United Kingdom</p>
+                            <p class="contact-info-value" data-cms-copy="location">Essex, United Kingdom</p>
                         </div>
                     </div>
                     <div class="contact-info-item">
@@ -1156,7 +1156,7 @@
                         </svg>
                         <div>
                             <p class="contact-info-label">Social</p>
-                            <p class="contact-info-value">@perfectevent4u</p>
+                            <p class="contact-info-value" data-cms-copy="social">@perfectevent4u</p>
                         </div>
                     </div>
                     <div class="contact-info-item">
@@ -1166,7 +1166,7 @@
                         </svg>
                         <div>
                             <p class="contact-info-label">Email</p>
-                            <p class="contact-info-value">hello@perfectevent4u.co.uk</p>
+                            <p class="contact-info-value" data-cms-copy="email">hello@perfectevent4u.co.uk</p>
                         </div>
                     </div>
                     <div class="contact-info-item">
@@ -1175,50 +1175,58 @@
                         </svg>
                         <div>
                             <p class="contact-info-label">Phone</p>
-                            <p class="contact-info-value">+44 (0) 7700 000000</p>
+                            <p class="contact-info-value" data-cms-copy="phone">+44 (0) 7700 000000</p>
                         </div>
                     </div>
                 </div>
 
                 <div class="fade-in">
-                    <form onsubmit="event.preventDefault(); alert('Thank you for your inquiry! We will be in touch soon.');">
+                    <form data-inquiry>
+                        <input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0" placeholder="Website">
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label">First Name</label>
-                                <input type="text" class="form-input" required>
+                                <label class="form-label" for="contactFirstName">First Name</label>
+                                <input type="text" id="contactFirstName" name="firstName" class="form-input" autocomplete="given-name" required>
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Last Name</label>
-                                <input type="text" class="form-input" required>
+                                <label class="form-label" for="contactLastName">Last Name</label>
+                                <input type="text" id="contactLastName" name="lastName" class="form-input" autocomplete="family-name" required>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Email Address</label>
-                            <input type="email" class="form-input" required>
+                            <label class="form-label" for="contactEmail">Email Address</label>
+                            <input type="email" id="contactEmail" name="email" class="form-input" autocomplete="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="contactPhone">Phone (optional)</label>
+                            <input type="tel" id="contactPhone" name="phone" class="form-input" autocomplete="tel">
                         </div>
 
                         <div class="form-row">
                             <div class="form-group">
-                                <label class="form-label">Event Date</label>
-                                <input type="date" class="form-input">
+                                <label class="form-label" for="contactEventDate">Event Date</label>
+                                <input type="date" id="contactEventDate" name="eventDate" class="form-input">
                             </div>
                             <div class="form-group">
-                                <label class="form-label">Guest Count</label>
-                                <input type="number" placeholder="Approx." class="form-input">
+                                <label class="form-label" for="contactGuests">Guest Count</label>
+                                <input type="number" id="contactGuests" name="guests" placeholder="Approx." class="form-input" min="0">
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Venue / Location</label>
-                            <input type="text" class="form-input">
+                            <label class="form-label" for="contactVenue">Venue / Location</label>
+                            <input type="text" id="contactVenue" name="venue" class="form-input">
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">How did you hear about us?</label>
-                            <select class="form-input">
+                            <label class="form-label" for="contactSource">How did you hear about us?</label>
+                            <select id="contactSource" name="source" class="form-input">
                                 <option value="">Select an option</option>
                                 <option>Instagram</option>
+                                <option>TikTok</option>
+                                <option>Facebook</option>
                                 <option>Google Search</option>
                                 <option>Referral</option>
                                 <option>Wedding Fair</option>
@@ -1227,33 +1235,36 @@
                         </div>
 
                         <div class="form-group">
-                            <label class="form-label">Tell us your vision</label>
-                            <textarea class="form-input" rows="4"></textarea>
+                            <label class="form-label" for="contactMessage">Tell us your vision</label>
+                            <textarea id="contactMessage" name="message" class="form-input" rows="4"></textarea>
                         </div>
 
-                        <button type="submit" class="form-submit">Send Inquiry</button>
+                        <button type="submit" class="form-submit" data-cms-copy="formButton">Send Inquiry</button>
+                        <p class="form-status" role="status" aria-live="polite"></p>
                     </form>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Map Placeholder -->
-    <section style="padding: 0; height: 400px; overflow: hidden;">
-        <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #e8e6e3 0%, #d5d3cf 100%); display: flex; align-items: center; justify-content: center;">
-            <div style="text-align: center; color: var(--text-light);">
-                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="margin: 0 auto 1rem;">
-                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                </svg>
-                <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em;">Essex, United Kingdom</p>
-                <p style="font-size: 0.75rem; margin-top: 0.5rem;">Serving London, Essex & Throughout the UK</p>
+    <!-- Location map -->
+    <section style="padding: 0; overflow: hidden;">
+        <div data-map>
+            <div style="height: 400px; background: linear-gradient(135deg, #e8e6e3 0%, #d5d3cf 100%); display: flex; align-items: center; justify-content: center;">
+                <div style="text-align: center; color: var(--text-light);">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1" style="margin: 0 auto 1rem;">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                        <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                    <p style="font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.2em;">Harlow, Essex, United Kingdom</p>
+                    <p style="font-size: 0.75rem; margin-top: 0.5rem;">Serving London, Essex &amp; Throughout the UK</p>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- FAQ -->
-    <section style="background: rgba(32, 41, 70, 0.02);">
+    <section id="faq" style="background: rgba(32, 41, 70, 0.02);">
         <div class="container">
             <div style="text-align: center; margin-bottom: 3rem;" class="fade-in">
                 <p class="about-label" style="color: var(--text-light); margin-bottom: 1rem;">Common Questions</p>
@@ -1285,7 +1296,7 @@
             <div class="footer-grid">
                 <div>
                     <h3 class="footer-brand">Perfectevent4u</h3>
-                    <p class="footer-desc">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
+                    <p class="footer-desc" data-cms-copy="footerDescription">Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.</p>
                 </div>
                 <div>
                     <h4 class="footer-title">Explore</h4>
@@ -1299,13 +1310,15 @@
                 </div>
                 <div>
                     <h4 class="footer-title">Social</h4>
-                    <a href="#" class="social-link" aria-label="Instagram">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
-                            <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
-                            <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
-                        </svg>
-                    </a>
+                    <div class="social-links" data-socials>
+                        <a href="https://www.instagram.com/perfectevent4u/" class="social-link" aria-label="Instagram">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"/>
+                                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/>
+                                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/>
+                            </svg>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1386,6 +1399,7 @@
     })();
     </script>
 
+    <script src="js/site.js"></script>
     <script src="js/chatbot.js"></script>
 </body>
 </html>

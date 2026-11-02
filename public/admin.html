@@ -114,6 +114,20 @@
         .panel-card { background: var(--card); border: 1px solid var(--border); padding: 1.75rem; margin-bottom: 2.5rem; }
         .panel-card h2 { font-size: 1.5rem; margin-bottom: 0.3rem; }
         .panel-card p.hint { color: var(--text-light); font-size: 0.9rem; margin-bottom: 1.5rem; }
+        #tab-content .actions, #tab-blog .actions { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 1rem; }
+        .faq-editor, .blog-admin-list { display: grid; gap: 0.8rem; }
+        .page-copy-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 1rem; }
+        .page-copy-fields textarea { min-height: 100px; }
+        .faq-row, .blog-admin-row { border-top: 1px solid var(--border); padding: 1rem 0; }
+        .faq-row .field:last-of-type { margin-bottom: 0; }
+        .blog-admin-row { display: flex; align-items: center; justify-content: space-between; gap: 1rem; }
+        .blog-admin-row h3 { margin: 0 0 .25rem; font-size: 1.05rem; }
+        .blog-admin-row p { margin: 0; color: var(--text-light); font-size: .82rem; }
+        .publish-state { display: inline-block; margin-left: .5rem; font-size: .62rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ok); }
+        .publish-state.draft { color: var(--danger); }
+        #pageTitle { min-height: 80px; }
+        #blogBody { min-height: 220px; }
+        @media (max-width: 640px) { .blog-admin-row { align-items: flex-start; flex-direction: column; } .page-copy-fields { grid-template-columns: 1fr; } }
 
         /* Dropzone */
         .drop {
@@ -147,6 +161,20 @@
         .photo .meta h3 { font-size: 1.05rem; margin-bottom: 0.15rem; word-break: break-word; }
         .photo .meta p { font-size: 0.78rem; color: var(--text-light); }
         .photo .actions { display: flex; gap: 0.4rem; padding: 0.6rem 0.9rem 0.9rem; flex-wrap: wrap; }
+
+        .cover-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; max-height: 55vh; overflow: auto; margin-bottom: 1rem; }
+        .cover-grid img { width: 100%; height: 100px; object-fit: cover; cursor: pointer; border: 2px solid transparent; display: block; }
+        .cover-grid img.selected { border-color: var(--text); }
+
+        .order-list { display: grid; gap: 0.5rem; }
+        .order-row { display: flex; align-items: center; gap: 0.8rem; border: 1px solid var(--border); background: #fff; padding: 0.5rem 0.7rem; }
+        .order-row img { width: 48px; height: 48px; object-fit: cover; flex-shrink: 0; background: #e9e7e3; }
+        .order-row .t { flex: 1; font-size: 0.9rem; min-width: 0; }
+        .order-row .t small { display: block; color: var(--text-light); font-size: 0.72rem; }
+        .order-row .n { color: var(--text-light); font-size: 0.75rem; width: 1.6rem; text-align: right; }
+        .order-row .k { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-light); }
+        .order-empty { color: var(--text-light); padding: 1rem; border: 1px dashed var(--border); text-align: center; font-size: 0.85rem; }
+        @media (max-width: 640px) { .tabs { gap: 1.1rem; overflow-x: auto; white-space: nowrap; } .tab { white-space: nowrap; } }
 
         /* Service list */
         .service-list { display: grid; gap: 1rem; }
@@ -220,13 +248,21 @@
             <div class="tabs" role="tablist">
                 <button class="tab active" data-tab="portfolio" role="tab">Portfolio</button>
                 <button class="tab" data-tab="services" role="tab">Services</button>
+                <button class="tab" data-tab="content" role="tab">Pages &amp; FAQs</button>
+                <button class="tab" data-tab="blog" role="tab">Blog</button>
+                <button class="tab" data-tab="journey" role="tab">Journey</button>
+                <button class="tab" data-tab="testimonials" role="tab">Testimonials</button>
+                <button class="tab" data-tab="awards" role="tab">Awards</button>
+                <button class="tab" data-tab="announcements" role="tab">Announcements</button>
+                <button class="tab" data-tab="settings" role="tab">Settings</button>
+                <button class="tab" data-tab="inquiries" role="tab">Inquiries</button>
             </div>
 
             <!-- Portfolio -->
             <section id="tab-portfolio">
                 <div class="panel-card">
                     <h2>Add photos</h2>
-                    <p class="hint">Choose one or more photos. They appear on the Portfolio page straight away. Photos are resized automatically before upload.</p>
+                    <p class="hint">Choose photos, add details, then publish them when they are ready. Photos are resized automatically before upload.</p>
 
                     <div class="drop" id="drop">
                         <strong>Click to choose photos</strong>
@@ -244,16 +280,36 @@
                         <label class="field">
                             <span>Category</span>
                             <select id="upCategory">
-                                <option>Weddings</option>
-                                <option>Receptions</option>
-                                <option>Corporate</option>
-                                <option>Celebrations</option>
+                                <option>Wedding Ceremony</option>
+                                <option>Wedding Reception</option>
+                                <option>Milestone Celebration</option>
+                                <option>Corporate Event</option>
                             </select>
+                        </label>
+                    </div>
+
+                    <div class="row">
+                        <label class="field">
+                            <span>Upload as</span>
+                            <select id="upAlbumMode">
+                                <option value="none">Single photos</option>
+                                <option value="new">New album (group)</option>
+                                <option value="existing">Add to an existing album</option>
+                            </select>
+                        </label>
+                        <label class="field" id="upAlbumTitleField" hidden>
+                            <span>Album title</span>
+                            <input type="text" id="upAlbumTitle" maxlength="120" placeholder="e.g. Chika &amp; Rose — Kent">
+                        </label>
+                        <label class="field" id="upAlbumSelectField" hidden>
+                            <span>Album</span>
+                            <select id="upAlbumSelect"></select>
                         </label>
                     </div>
                     <label class="check"><input type="checkbox" id="upFeatured"> Feature on the home page</label>
 
-                    <button class="btn primary" id="uploadBtn" type="button" disabled>Upload photos</button>
+                    <button class="btn primary" id="uploadBtn" type="button" disabled>Save photos as drafts</button>
+                    <button class="btn" id="uploadPublishBtn" type="button" disabled>Upload &amp; publish</button>
                 </div>
 
                 <div class="section-head">
@@ -261,6 +317,27 @@
                     <span class="count" id="photoCount"></span>
                 </div>
                 <div class="photo-grid" id="photoGrid"></div>
+
+                <div class="section-head" style="margin-top:3rem">
+                    <h2>Your albums</h2>
+                    <span class="count" id="albumCount"></span>
+                </div>
+                <p class="hint">Group photos from the same celebration into an album. Visitors open the album on the portfolio page to see every picture inside.</p>
+                <div class="photo-grid" id="albumGrid"></div>
+
+                <div class="section-head" style="margin-top:3rem">
+                    <h2>Portfolio order</h2>
+                    <span class="count" id="orderCount"></span>
+                </div>
+                <p class="hint">Change the order visitors see on the portfolio page. Use the arrows to move items earlier or later.</p>
+                <div class="order-list" id="orderList"></div>
+
+                <div class="section-head" style="margin-top:3rem">
+                    <h2>Home page arrangement</h2>
+                    <span class="count" id="homeOrderCount"></span>
+                </div>
+                <p class="hint">Only the first 6 featured items appear on the home page. Use the arrows to arrange them.</p>
+                <div class="order-list" id="homeOrderList"></div>
             </section>
 
             <!-- Services -->
@@ -281,7 +358,8 @@
                         <span class="field"><span>Icon</span></span>
                         <div class="icon-picker" id="iconPicker"></div>
                         <div style="display:flex; gap:0.6rem; flex-wrap:wrap">
-                            <button class="btn primary" type="submit" id="svcSave">Add service</button>
+                            <button class="btn" type="submit" id="svcSave">Save as draft</button>
+                            <button class="btn primary" type="button" id="svcPublish">Publish service</button>
                             <button class="btn" type="button" id="svcCancel" hidden>Cancel editing</button>
                         </div>
                     </form>
@@ -292,6 +370,247 @@
                     <span class="count" id="svcCount"></span>
                 </div>
                 <div class="service-list" id="svcList"></div>
+            </section>
+
+            <!-- Pages and FAQs -->
+            <section id="tab-content" hidden>
+                <div class="panel-card">
+                    <h2>Page headers</h2>
+                    <p class="hint">Save changes as a draft first. Visitors see them only after you publish.</p>
+                    <label class="field">
+                        <span>Page</span>
+                        <select id="pageSelect">
+                            <option value="home">Home</option>
+                            <option value="about">About</option>
+                            <option value="portfolio">Portfolio</option>
+                            <option value="services">Services</option>
+                            <option value="contact">Contact</option>
+                            <option value="blog">Blog</option>
+                        </select>
+                    </label>
+                    <div class="row">
+                        <label class="field"><span>Header eyebrow</span><input type="text" id="pageKicker" maxlength="100"></label>
+                        <label class="field"><span>Header title</span><textarea id="pageTitle" maxlength="240"></textarea></label>
+                    </div>
+                    <label class="field"><span>Header image URL</span><input type="text" id="pageImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"></label>
+                    <input type="hidden" id="pageImagePublicId">
+                    <label class="field"><span>Upload a new header image</span><input type="file" id="pageImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                    <div class="row" id="homeCtaFields">
+                        <label class="field"><span>Home button label</span><input type="text" id="pageCtaText" maxlength="80"></label>
+                        <label class="field"><span>Home button link</span><input type="text" id="pageCtaHref" maxlength="300"></label>
+                    </div>
+                    <h3>Page copy</h3>
+                    <div id="pageCopyFields" class="page-copy-fields"></div>
+                    <p class="count" id="pageStatus"></p>
+                    <div class="actions">
+                        <button class="btn" type="button" id="pageSaveDraft">Save draft</button>
+                        <button class="btn primary" type="button" id="pagePublish">Publish changes</button>
+                        <button class="btn danger" type="button" id="pageUnpublish">Take changes offline</button>
+                    </div>
+                </div>
+
+                <div class="panel-card">
+                    <div class="section-head"><h2>Frequently asked questions</h2><button class="btn small" type="button" id="addFaq">Add question</button></div>
+                    <p class="hint">Edit or add questions, save a draft, then publish the FAQ set when it is ready.</p>
+                    <div id="faqEditor" class="faq-editor"></div>
+                    <p class="count" id="faqStatus"></p>
+                    <div class="actions">
+                        <button class="btn" type="button" id="faqSaveDraft">Save draft</button>
+                        <button class="btn primary" type="button" id="faqPublish">Publish FAQs</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Blog -->
+            <section id="tab-blog" hidden>
+                <div class="panel-card">
+                    <h2 id="blogFormTitle">Write a post</h2>
+                    <p class="hint">Posts stay private as drafts until you publish them.</p>
+                    <input type="hidden" id="blogSlug">
+                    <label class="field"><span>Title</span><input type="text" id="blogTitle" maxlength="140"></label>
+                    <label class="field"><span>Short introduction</span><textarea id="blogExcerpt" maxlength="320"></textarea></label>
+                    <label class="field"><span>Article text</span><textarea id="blogBody" maxlength="30000" rows="12"></textarea></label>
+                    <label class="field"><span>Cover image URL</span><input type="text" id="blogImage" maxlength="1000"></label>
+                    <input type="hidden" id="blogImagePublicId">
+                    <label class="field"><span>Upload a cover image</span><input type="file" id="blogImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                    <p class="count" id="blogStatus"></p>
+                    <div class="actions">
+                        <button class="btn" type="button" id="blogSaveDraft">Save draft</button>
+                        <button class="btn primary" type="button" id="blogPublish">Publish post</button>
+                        <button class="btn" type="button" id="blogUnpublish" hidden>Unpublish</button>
+                        <button class="btn" type="button" id="blogReset">New post</button>
+                    </div>
+                </div>
+                <div class="section-head"><h2>Posts</h2><span class="count" id="blogCount"></span></div>
+                <div class="blog-admin-list" id="blogList"></div>
+            </section>
+
+            <!-- Journey (Instagram feed) -->
+            <section id="tab-journey" hidden>
+                <div class="panel-card">
+                    <h2>Live Instagram feed</h2>
+                    <p class="hint">When connected, the "Follow Our Journey" section pulls your latest Instagram posts automatically. If it is not connected, the posts you add below are shown instead.</p>
+                    <p class="count" id="igConnStatus"></p>
+                    <label class="field"><span>Instagram access token</span><input type="text" id="igToken" maxlength="2000" placeholder="Paste a long-lived Instagram access token"></label>
+                    <div class="actions">
+                        <button class="btn primary" type="button" id="igTokenSave">Connect feed</button>
+                        <button class="btn" type="button" id="igTokenRefresh">Refresh token</button>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <h2 id="igFormTitle">Add a journey post</h2>
+                    <p class="hint">These appear in the "Follow Our Journey" section on the home page.</p>
+                    <input type="hidden" id="igSlug">
+                    <label class="field"><span>Image URL</span><input type="text" id="igImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"></label>
+                    <input type="hidden" id="igImagePublicId">
+                    <label class="field"><span>Upload an image</span><input type="file" id="igImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                    <label class="field"><span>Caption</span><textarea id="igCaption" maxlength="600"></textarea></label>
+                    <div class="row">
+                        <label class="field"><span>Date label</span><input type="text" id="igDate" maxlength="40" placeholder="e.g. 2 days ago"></label>
+                        <label class="field"><span>Link (optional)</span><input type="text" id="igLink" maxlength="1000" placeholder="https://instagram.com/p/..."></label>
+                    </div>
+                    <div class="row">
+                        <label class="field"><span>Likes</span><input type="number" id="igLikes" min="0" value="0"></label>
+                        <label class="field"><span>Comments</span><input type="number" id="igComments" min="0" value="0"></label>
+                    </div>
+                    <p class="count" id="igStatus"></p>
+                    <div class="actions">
+                        <button class="btn" type="button" id="igSaveDraft">Save draft</button>
+                        <button class="btn primary" type="button" id="igPublish">Publish post</button>
+                        <button class="btn" type="button" id="igUnpublish" hidden>Unpublish</button>
+                        <button class="btn" type="button" id="igReset">New post</button>
+                    </div>
+                </div>
+                <div class="section-head"><h2>Journey posts</h2><span class="count" id="igCount"></span></div>
+                <div class="blog-admin-list" id="igList"></div>
+            </section>
+
+            <!-- Testimonials -->
+            <section id="tab-testimonials" hidden>
+                <div class="panel-card">
+                    <h2 id="tsFormTitle">Add a testimonial</h2>
+                    <p class="hint">Testimonials appear on the Testimonials page and in the home page slider. If a review lives elsewhere (Google, Facebook, Hitched), add the link and it becomes a "read the review" button.</p>
+                    <input type="hidden" id="tsSlug">
+                    <label class="field"><span>Quote</span><textarea id="tsQuote" maxlength="2000" rows="4"></textarea></label>
+                    <div class="row">
+                        <label class="field"><span>Author</span><input type="text" id="tsAuthor" maxlength="140" placeholder="e.g. Lizzy &amp; Kenny"></label>
+                        <label class="field"><span>Context (optional)</span><input type="text" id="tsRole" maxlength="140" placeholder="e.g. London Wedding"></label>
+                    </div>
+                    <div class="row">
+                        <label class="field"><span>Review link (optional)</span><input type="text" id="tsLink" maxlength="1000" placeholder="https://g.page/..."></label>
+                        <label class="field"><span>Link label</span><input type="text" id="tsLinkLabel" maxlength="60" placeholder="Read the review"></label>
+                    </div>
+                    <p class="count" id="tsStatus"></p>
+                    <div class="actions">
+                        <button class="btn" type="button" id="tsSaveDraft">Save draft</button>
+                        <button class="btn primary" type="button" id="tsPublish">Publish testimonial</button>
+                        <button class="btn" type="button" id="tsUnpublish" hidden>Unpublish</button>
+                        <button class="btn" type="button" id="tsReset">New testimonial</button>
+                    </div>
+                </div>
+                <div class="section-head"><h2>Testimonials</h2><span class="count" id="tsCount"></span></div>
+                <div class="blog-admin-list" id="tsList"></div>
+            </section>
+
+            <!-- Awards -->
+            <section id="tab-awards" hidden>
+                <div class="panel-card">
+                    <h2 id="awFormTitle">Add an award</h2>
+                    <p class="hint">Awards appear in the "Award-Winning Service" marquee on the home page. Add a link to send visitors to the award page.</p>
+                    <input type="hidden" id="awSlug">
+                    <label class="field"><span>Award name</span><input type="text" id="awName" maxlength="140" placeholder="e.g. Hitched Wedding Awards"></label>
+                    <div class="row">
+                        <label class="field"><span>Label (optional)</span><input type="text" id="awLabel" maxlength="80" placeholder="e.g. 2026 Winner"></label>
+                        <label class="field"><span>Link (optional)</span><input type="text" id="awLink" maxlength="1000" placeholder="https://..."></label>
+                    </div>
+                    <label class="field"><span>Badge image URL</span><input type="text" id="awImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"></label>
+                    <input type="hidden" id="awImagePublicId">
+                    <label class="field"><span>Upload a badge</span><input type="file" id="awImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                    <p class="count" id="awStatus"></p>
+                    <div class="actions">
+                        <button class="btn" type="button" id="awSaveDraft">Save draft</button>
+                        <button class="btn primary" type="button" id="awPublish">Publish award</button>
+                        <button class="btn" type="button" id="awUnpublish" hidden>Unpublish</button>
+                        <button class="btn" type="button" id="awReset">New award</button>
+                    </div>
+                </div>
+                <div class="section-head"><h2>Awards</h2><span class="count" id="awCount"></span></div>
+                <div class="blog-admin-list" id="awList"></div>
+            </section>
+
+            <!-- Announcements -->
+            <section id="tab-announcements" hidden>
+                <div class="panel-card">
+                    <h2>Announcement bar</h2>
+                    <p class="hint">The scrolling message across the very top of every page.</p>
+                    <label class="check"><input type="checkbox" id="anBarEnabled"> Show the announcement bar</label>
+                    <label class="field"><span>Messages (one per line)</span><textarea id="anBarMessages" rows="4" placeholder="One announcement per line"></textarea></label>
+                    <div class="row">
+                        <label class="field"><span>Scroll speed (seconds)</span><input type="number" id="anBarSpeed" min="10" max="120" value="34"></label>
+                        <label class="field"><span>Bar link (optional)</span><input type="text" id="anBarLink" maxlength="1000" placeholder="https://..."></label>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <h2>Announcement pop-up</h2>
+                    <p class="hint">A poster that pops up when visitors arrive. Each visitor sees a poster once.</p>
+                    <label class="check"><input type="checkbox" id="anPopupEnabled"> Show the pop-up</label>
+                    <label class="field"><span>Banner image URL</span><input type="text" id="anPopupImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"></label>
+                    <input type="hidden" id="anPopupImagePublicId">
+                    <label class="field"><span>Upload a banner</span><input type="file" id="anPopupImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                    <label class="field"><span>Title</span><input type="text" id="anPopupTitle" maxlength="120"></label>
+                    <label class="field"><span>Message</span><textarea id="anPopupText" maxlength="400"></textarea></label>
+                    <div class="row">
+                        <label class="field"><span>Button text</span><input type="text" id="anPopupCtaText" maxlength="60" placeholder="e.g. Book a consultation"></label>
+                        <label class="field"><span>Button link</span><input type="text" id="anPopupLink" maxlength="1000" placeholder="https://..."></label>
+                    </div>
+                    <label class="field"><span>Delay before it appears (seconds)</span><input type="number" id="anPopupDelay" min="0" max="60" value="1"></label>
+                    <p class="count" id="anStatus"></p>
+                    <div class="actions">
+                        <button class="btn" type="button" id="anSaveDraft">Save draft</button>
+                        <button class="btn primary" type="button" id="anPublish">Publish</button>
+                        <button class="btn danger" type="button" id="anUnpublish">Take offline</button>
+                    </div>
+                </div>
+            </section>
+            <!-- Settings -->
+            <section id="tab-settings" hidden>
+                <div class="panel-card">
+                    <h2>Social links</h2>
+                    <p class="hint">These appear in the footer. Leave a field empty to hide that network.</p>
+                    <div class="row">
+                        <label class="field"><span>Instagram</span><input type="text" id="seInstagram" maxlength="1000" placeholder="https://instagram.com/..."></label>
+                        <label class="field"><span>Facebook</span><input type="text" id="seFacebook" maxlength="1000" placeholder="https://facebook.com/..."></label>
+                    </div>
+                    <div class="row">
+                        <label class="field"><span>TikTok</span><input type="text" id="seTiktok" maxlength="1000" placeholder="https://tiktok.com/@..."></label>
+                        <label class="field"><span>YouTube</span><input type="text" id="seYoutube" maxlength="1000" placeholder="https://youtube.com/@..."></label>
+                    </div>
+                </div>
+                <div class="panel-card">
+                    <h2>Location &amp; map</h2>
+                    <p class="hint">The map on the contact page is centred on this location.</p>
+                    <label class="field"><span>Business location</span><input type="text" id="seMapLocation" maxlength="160" placeholder="Harlow, Essex, United Kingdom"></label>
+                    <label class="field"><span>Directions link (optional)</span><input type="text" id="seMapDirections" maxlength="1000" placeholder="https://maps.google.com/..."></label>
+                </div>
+                <div class="panel-card">
+                    <h2>Enquiry emails</h2>
+                    <p class="hint">Website enquiries are emailed here and saved under the Inquiries tab.</p>
+                    <label class="field"><span>Send enquiries to</span><input type="text" id="seInquiryEmail" maxlength="200" placeholder="hello@perfectevent4u.co.uk"></label>
+                    <p class="count" id="seEmailStatus"></p>
+                    <p class="count" id="seStatus"></p>
+                    <div class="actions">
+                        <button class="btn" type="button" id="seSaveDraft">Save draft</button>
+                        <button class="btn primary" type="button" id="sePublish">Publish settings</button>
+                        <button class="btn danger" type="button" id="seUnpublish">Take offline</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Inquiries -->
+            <section id="tab-inquiries" hidden>
+                <div class="section-head"><h2>Website enquiries</h2><span class="count" id="inqCount"></span></div>
+                <p class="hint">Every enquiry submitted through the website is listed here, whether or not the email was sent.</p>
+                <div class="blog-admin-list" id="inqList"></div>
             </section>
         </main>
     </div>
@@ -306,16 +625,50 @@
                 <label class="field">
                     <span>Category</span>
                     <select id="edCategory">
-                        <option>Weddings</option><option>Receptions</option><option>Corporate</option><option>Celebrations</option>
+                        <option>Wedding Ceremony</option><option>Wedding Reception</option><option>Milestone Celebration</option><option>Corporate Event</option>
                     </select>
                 </label>
             </div>
             <label class="check"><input type="checkbox" id="edFeatured"> Feature on the home page</label>
             <div class="dialog-actions">
                 <button class="btn" type="button" id="edCancel">Cancel</button>
-                <button class="btn primary" type="submit">Save</button>
+                <button class="btn" type="submit">Save draft</button>
+                <button class="btn primary" type="button" id="edPublish">Publish changes</button>
             </div>
         </form>
+    </dialog>
+
+    <!-- Edit album dialog -->
+    <dialog id="albumDialog">
+        <form method="dialog" id="albumForm">
+            <h2>Edit album</h2>
+            <label class="field"><span>Album title</span><input type="text" id="alTitle" maxlength="120" required></label>
+            <div class="row">
+                <label class="field"><span>Location</span><input type="text" id="alLocation" maxlength="60"></label>
+                <label class="field">
+                    <span>Category</span>
+                    <select id="alCategory">
+                        <option>Wedding Ceremony</option><option>Wedding Reception</option><option>Milestone Celebration</option><option>Corporate Event</option>
+                    </select>
+                </label>
+            </div>
+            <label class="check"><input type="checkbox" id="alFeatured"> Feature on the home page</label>
+            <div class="dialog-actions">
+                <button class="btn" type="button" id="alCancel">Cancel</button>
+                <button class="btn" type="submit">Save draft</button>
+                <button class="btn primary" type="button" id="alPublish">Publish changes</button>
+            </div>
+        </form>
+    </dialog>
+
+    <!-- Choose album cover dialog -->
+    <dialog id="coverDialog">
+        <h2>Choose the album cover</h2>
+        <p class="hint" style="margin-bottom:1rem">The cover is the first picture visitors see in the portfolio.</p>
+        <div class="cover-grid" id="coverGrid"></div>
+        <div class="dialog-actions">
+            <button class="btn" type="button" id="coverCancel">Close</button>
+        </div>
     </dialog>
 
     <div id="toast" role="status"></div>
@@ -360,9 +713,1080 @@
         }
         function fail(e) { toast(e.message || 'Something went wrong.', true); }
 
+        var cmsRecords = [];
+        var faqItems = [];
+        var removedFaqs = [];
+        var blogRecords = [];
+        var editingBlogPublished = false;
+        var igRecords = [];
+        var igEditingPublished = false;
+        var awardRecords = [];
+        var testimonialRecords = [];
+        var announcementRecord = null;
+        var settingsRecord = null;
+        var inquiriesList = [];
+        var integrationStatus = null;
+        var albums = [];
+
+        function slugify(value) {
+            return String(value || '').toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 100);
+        }
+
+        function loadContent() {
+            return api('GET', '/api/admin/content').then(function (records) {
+                cmsRecords = records;
+                faqItems = records.filter(function (record) { return record.type === 'faq' && !record.draftContent._deleted; })
+                    .map(function (record) { return Object.assign({}, record.draftContent, { slug: record.slug, sortOrder: record.draftContent.sortOrder === undefined ? record.sortOrder : record.draftContent.sortOrder, isPublished: record.isPublished }); });
+                removedFaqs = records.filter(function (record) { return record.type === 'faq' && record.draftContent._deleted; });
+                blogRecords = records.filter(function (record) { return record.type === 'blog'; });
+                igRecords = records.filter(function (record) { return record.type === 'instagram'; })
+                    .sort(function (a, b) { return (a.draftContent.sortOrder || 0) - (b.draftContent.sortOrder || 0); });
+                testimonialRecords = records.filter(function (record) { return record.type === 'testimonial'; })
+                    .sort(function (a, b) { return (a.draftContent.sortOrder || 0) - (b.draftContent.sortOrder || 0); });
+                awardRecords = records.filter(function (record) { return record.type === 'award'; })
+                    .sort(function (a, b) { return (a.draftContent.sortOrder || 0) - (b.draftContent.sortOrder || 0); });
+                announcementRecord = records.find(function (record) { return record.type === 'announcement' && record.slug === 'site'; }) || null;
+                settingsRecord = records.find(function (record) { return record.type === 'settings' && record.slug === 'site'; }) || null;
+                renderPageEditor();
+                renderFaqs();
+                renderBlogList();
+                renderJourneyList();
+                renderAnnouncement();
+                renderTestimonialList();
+                renderAwardList();
+                renderSettings();
+            }).catch(fail);
+        }
+
+        function pageRecord() {
+            return cmsRecords.find(function (record) { return record.type === 'page' && record.slug === $('pageSelect').value; });
+        }
+
+        var pageCopyDefinitions = {
+            home: [
+                { key: 'introQuote', label: 'Introduction quote', value: 'We specialise in creating beautiful celebrations for clients with refined tastes throughout England.', multiline: true },
+                { key: 'introText', label: 'Introduction text', value: 'At Perfectevent4u, we believe your celebration should be a reflection of your unique story. We offer a hands-on approach to every event, focusing on your brief to ensure every detail is executed with excellence.', multiline: true },
+                { key: 'portfolioTitle', label: 'Portfolio heading', value: 'The Lookbook' },
+                { key: 'portfolioSubtitle', label: 'Portfolio eyebrow', value: 'Selected Works' },
+                { key: 'serviceEyebrow', label: 'Services eyebrow', value: 'What We Do' },
+                { key: 'serviceTitle', label: 'Services heading', value: 'Our Services' },
+                { key: 'aboutName', label: 'Founder name', value: 'Abi Shobowale' },
+                { key: 'aboutTextOne', label: 'Founder introduction', value: 'Abi is the founder of Perfectevent4u. Her passion for organising and planning has established her as an outstanding wedding and party planner and designer.', multiline: true },
+                { key: 'aboutTextTwo', label: 'Founder story', value: 'She passionately produces unique and opulent events. Known for her patient, calm, and professional approach, Abi treats every client like family, ensuring your day is not just perfect, but unforgettable.', multiline: true },
+                { key: 'contactTitle', label: 'Contact heading', value: 'Begin Your Journey' },
+                { key: 'contactText', label: 'Contact introduction', value: 'We would be honoured to hear about your vision. Please share a few details with us, and we will be in touch to schedule a complimentary consultation.', multiline: true },
+                { key: 'footerDescription', label: 'Footer description', value: 'Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.', multiline: true }
+            ],
+            about: [
+                { key: 'introHeading', label: 'Introduction heading', value: 'A Bespoken Experience' },
+                { key: 'introText', label: 'Introduction text', value: 'Perfectevent4u is a full service wedding and event planning and design company located in Essex. We are known for curating detailed and beautiful weddings and celebrations for clients with refined tastes throughout the UK.', multiline: true },
+                { key: 'storyHeading', label: 'Our story heading', value: 'Excellence in Every Detail' },
+                { key: 'storyParagraphOne', label: 'Our story paragraph 1', value: 'Perfectevent4u offers a hands-on approach to every event we produce whilst focussing on our clients brief and ensuring that every event is executed per excellence.', multiline: true },
+                { key: 'storyParagraphTwo', label: 'Our story paragraph 2', value: 'We are known for our professional expertise, in the delivery of opulent and tailor made events for our clients.', multiline: true },
+                { key: 'storyParagraphThree', label: 'Our story paragraph 3', value: 'An unforgettable experience is what we aim to give our clients and their guests at their celebrations and on their wedding day.', multiline: true },
+                { key: 'storyParagraphFour', label: 'Our story paragraph 4', value: 'We specialise in full wedding planning and designs. We have an array of stellar vendors that we partner with to create your dream event.', multiline: true },
+                { key: 'storyParagraphFive', label: 'Our story paragraph 5', value: 'Working with you and for you every step on the way to create an exceptional and unforgettable wedding and event is our promise to you.', multiline: true },
+                { key: 'valueOneTitle', label: 'Value 1 title', value: 'Excellence' },
+                { key: 'valueOneText', label: 'Value 1 description', value: 'Every detail matters. We pursue perfection in every element of your celebration.', multiline: true },
+                { key: 'valueTwoTitle', label: 'Value 2 title', value: 'Personalisation' },
+                { key: 'valueTwoText', label: 'Value 2 description', value: 'No two events are the same. Your celebration is uniquely tailored to your story.', multiline: true },
+                { key: 'valueThreeTitle', label: 'Value 3 title', value: 'Calmness' },
+                { key: 'valueThreeText', label: 'Value 3 description', value: 'We remain composed under pressure so you can enjoy every moment stress-free.', multiline: true },
+                { key: 'footerDescription', label: 'Footer description', value: 'Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.', multiline: true }
+            ],
+            portfolio: [
+                { key: 'ctaHeading', label: 'Closing heading', value: 'Ready to Create Your Dream Event?' },
+                { key: 'ctaText', label: 'Closing text', value: "Let's discuss how we can bring your vision to life with our bespoke planning and design services.", multiline: true },
+                { key: 'ctaButton', label: 'Closing button', value: 'Start Your Journey' },
+                { key: 'footerDescription', label: 'Footer description', value: 'Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.', multiline: true }
+            ],
+            services: [
+                { key: 'introHeading', label: 'Introduction heading', value: 'Tailored to Your Celebration' },
+                { key: 'introText', label: 'Introduction text', value: 'Whether you need us from the very first idea or only for the final weeks, every service is shaped around your story, your guests and your budget. Choose the support that suits you, and we will take care of the rest.', multiline: true },
+                { key: 'processEyebrow', label: 'Process eyebrow', value: 'How It Works' },
+                { key: 'processHeading', label: 'Process heading', value: 'Your Journey With Us' },
+                { key: 'stepOneTitle', label: 'Step 1 title', value: 'Consultation' },
+                { key: 'stepOneText', label: 'Step 1 description', value: 'We chat about your vision, date, guest list and budget in a complimentary consultation.', multiline: true },
+                { key: 'stepTwoTitle', label: 'Step 2 title', value: 'Design & Planning' },
+                { key: 'stepTwoText', label: 'Step 2 description', value: 'We create your concept, curate your vendors and build a clear plan and timeline.', multiline: true },
+                { key: 'stepThreeTitle', label: 'Step 3 title', value: 'Your Celebration' },
+                { key: 'stepThreeText', label: 'Step 3 description', value: 'We run everything on the day, calmly and professionally, so you can enjoy every moment.', multiline: true },
+                { key: 'ctaHeading', label: 'Closing heading', value: 'Not Sure Which Service Is Right for You?' },
+                { key: 'ctaText', label: 'Closing text', value: 'Tell us about your event and we will recommend the best way to support you.', multiline: true },
+                { key: 'ctaButton', label: 'Closing button', value: 'Book a Consultation' },
+                { key: 'footerDescription', label: 'Footer description', value: 'Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.', multiline: true }
+            ],
+            contact: [
+                { key: 'contactTitle', label: 'Contact heading', value: "We'd Love to Hear From You" },
+                { key: 'contactText', label: 'Contact introduction', value: 'We would be honoured to hear about your vision. Please share a few details with us, and we will be in touch to schedule a complimentary consultation.', multiline: true },
+                { key: 'location', label: 'Location', value: 'Essex, United Kingdom' },
+                { key: 'social', label: 'Social handle', value: '@perfectevent4u' },
+                { key: 'email', label: 'Email address', value: 'hello@perfectevent4u.co.uk' },
+                { key: 'phone', label: 'Phone number', value: '+44 (0) 7700 000000' },
+                { key: 'formButton', label: 'Inquiry button', value: 'Send Inquiry' },
+                { key: 'footerDescription', label: 'Footer description', value: 'Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.', multiline: true }
+            ],
+            blog: [
+                { key: 'introText', label: 'Journal introduction', value: 'Ideas, thoughtful details, and real celebrations from the Perfectevent4u team.', multiline: true },
+                { key: 'emptyText', label: 'No-posts message', value: 'New stories are coming soon.' },
+                { key: 'footerDescription', label: 'Footer description', value: 'Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.', multiline: true }
+            ]
+        };
+
+        function renderPageCopyFields(page, values) {
+            var container = $('pageCopyFields');
+            container.replaceChildren();
+            (pageCopyDefinitions[page] || []).forEach(function (definition) {
+                var label = document.createElement('label');
+                label.className = 'field';
+                var title = document.createElement('span');
+                title.textContent = definition.label;
+                var field = document.createElement(definition.multiline ? 'textarea' : 'input');
+                if (!definition.multiline) field.type = 'text';
+                field.dataset.pageCopy = definition.key;
+                field.value = values[definition.key] === undefined ? definition.value : values[definition.key];
+                label.append(title, field);
+                container.appendChild(label);
+            });
+        }
+
+        function renderPageEditor() {
+            var record = pageRecord();
+            var defaults = {
+                home: { heroImage: 'image/chika and rose/chika_and_rose copy.jpg', heroKicker: 'London • Essex • UK', heroTitle: 'Excellence in\nWedding Planning\n& Design', heroCtaText: 'View Our Portfolio', heroCtaHref: 'portfolio.html' },
+                about: { heroImage: 'wed2.webp', heroKicker: 'Our Story', heroTitle: 'About Us' },
+                portfolio: { heroImage: 'wed.jpeg', heroKicker: 'Our Work', heroTitle: 'The Lookbook' },
+                services: { heroImage: 'wed2.webp', heroKicker: 'What We Do', heroTitle: 'Our Services' },
+                contact: { heroImage: 'hall.jpg', heroKicker: 'Get In Touch', heroTitle: 'Begin Your Journey' },
+                blog: { heroImage: 'wed2.webp', heroKicker: 'Stories & Inspiration', heroTitle: 'The Journal' }
+            };
+            var page = $('pageSelect').value;
+            var content = Object.assign({}, defaults[page], record ? record.draftContent : {});
+            $('pageKicker').value = content.heroKicker || '';
+            $('pageTitle').value = content.heroTitle || '';
+            $('pageImage').value = content.heroImage || '';
+            $('pageImagePublicId').value = content.heroImagePublicId || '';
+            $('pageCtaText').value = content.heroCtaText || '';
+            $('pageCtaHref').value = content.heroCtaHref || '';
+            renderPageCopyFields(page, Object.assign({}, (pageCopyDefinitions[page] || []).reduce(function (result, definition) {
+                result[definition.key] = definition.value;
+                return result;
+            }, {}), content.copy || {}));
+            $('homeCtaFields').hidden = $('pageSelect').value !== 'home';
+            $('pageStatus').textContent = record ? (record.isPublished ? 'Published · edits are drafts until published' : 'Not live') : 'No saved content';
+            $('pageUnpublish').disabled = !record || !record.isPublished;
+        }
+
+        function currentPageContent() {
+            var record = pageRecord();
+            var content = Object.assign({}, record ? record.draftContent : {});
+            content.heroKicker = $('pageKicker').value.trim();
+            content.heroTitle = $('pageTitle').value.trim();
+            content.heroImage = $('pageImage').value.trim();
+            content.heroImagePublicId = $('pageImagePublicId').value.trim();
+            if ($('pageSelect').value === 'home') {
+                content.heroCtaText = $('pageCtaText').value.trim();
+                content.heroCtaHref = $('pageCtaHref').value.trim();
+            }
+            content.copy = {};
+            $('pageCopyFields').querySelectorAll('[data-page-copy]').forEach(function (field) {
+                content.copy[field.dataset.pageCopy] = field.value.trim();
+            });
+            return content;
+        }
+
+        function savePageContent(action) {
+            var slug = $('pageSelect').value;
+            api('POST', '/api/admin/content', {
+                type: 'page',
+                slug: slug,
+                action: action,
+                content: action === 'unpublish' ? undefined : currentPageContent()
+            }).then(function () {
+                toast(action === 'publish' ? 'Page changes published.' : action === 'unpublish' ? 'Page taken offline.' : 'Page draft saved.');
+                loadContent();
+            }).catch(fail);
+        }
+
+        function uploadContentImage(fileId, targetId) {
+            var file = $(fileId).files[0];
+            if (!file) return;
+            var form = new FormData();
+            form.append('image', file, file.name);
+            api('POST', '/api/admin/upload', form).then(function (result) {
+                $(targetId).value = result.image;
+                $(targetId + 'PublicId').value = result.imagePublicId || '';
+                $(fileId).value = '';
+                toast('Image uploaded. Save and publish the content to make it live.');
+            }).catch(fail);
+        }
+
+        function renderFaqs() {
+            var editor = $('faqEditor');
+            editor.replaceChildren();
+            faqItems.forEach(function (item, index) {
+                var row = document.createElement('div');
+                row.className = 'faq-row';
+                var question = document.createElement('label');
+                question.className = 'field';
+                question.innerHTML = '<span>Question</span><input type="text" maxlength="180">';
+                question.querySelector('input').value = item.question || '';
+                question.querySelector('input').addEventListener('input', function (event) { item.question = event.target.value; });
+                var answer = document.createElement('label');
+                answer.className = 'field';
+                answer.innerHTML = '<span>Answer</span><textarea maxlength="2000"></textarea>';
+                answer.querySelector('textarea').value = item.answer || '';
+                answer.querySelector('textarea').addEventListener('input', function (event) { item.answer = event.target.value; });
+                var controls = document.createElement('div');
+                controls.className = 'actions';
+                controls.innerHTML = '<button class="btn small" type="button" data-move="up" aria-label="Move question up">↑</button><button class="btn small" type="button" data-move="down" aria-label="Move question down">↓</button><button class="btn small danger" type="button">Remove</button><span class="count"></span>';
+                controls.querySelector('[data-move="up"]').disabled = index === 0;
+                controls.querySelector('[data-move="down"]').disabled = index === faqItems.length - 1;
+                controls.querySelector('.danger').addEventListener('click', function () {
+                    if (item.slug) removedFaqs.push(item);
+                    faqItems.splice(index, 1);
+                    renderFaqs();
+                });
+                controls.querySelector('[data-move="up"]').addEventListener('click', function () { moveFaq(index, -1); });
+                controls.querySelector('[data-move="down"]').addEventListener('click', function () { moveFaq(index, 1); });
+                controls.querySelector('.count').textContent = item.isPublished ? 'Live; changes are drafts' : 'Draft';
+                row.append(question, answer, controls);
+                editor.appendChild(row);
+            });
+            $('faqStatus').textContent = removedFaqs.length ? removedFaqs.length + ' question(s) marked for removal; they remain live until FAQ publication.' : '';
+        }
+
+        function moveFaq(index, direction) {
+            var next = index + direction;
+            if (next < 0 || next >= faqItems.length) return;
+            var current = faqItems[index];
+            faqItems[index] = faqItems[next];
+            faqItems[next] = current;
+            renderFaqs();
+        }
+
+        function saveFaqs(action) {
+            if (action === 'publish' && faqItems.some(function (item) { return !item.question.trim() || !item.answer.trim(); })) {
+                toast('Every published FAQ needs a question and an answer.', true);
+                return;
+            }
+            var changes = faqItems.map(function (item, index) {
+                var slug = item.slug || slugify(item.question) || 'faq-' + Date.now() + '-' + index;
+                item.slug = slug;
+                return api('POST', '/api/admin/content', {
+                    type: 'faq', slug: slug, sortOrder: index,
+                    action: action,
+                    content: { question: item.question.trim(), answer: item.answer.trim() }
+                });
+            });
+            removedFaqs.forEach(function (item) {
+                changes.push(api('POST', '/api/admin/content', {
+                    type: 'faq', slug: item.slug,
+                    action: action === 'publish' ? 'unpublish' : 'draft',
+                    content: { _deleted: true }, sortOrder: item.sortOrder || 0
+                }));
+            });
+            Promise.all(changes).then(function () {
+                toast(action === 'publish' ? 'FAQs published.' : 'FAQ draft saved.');
+                loadContent();
+            }).catch(fail);
+        }
+
+        function renderBlogList() {
+            $('blogCount').textContent = blogRecords.length + (blogRecords.length === 1 ? ' post' : ' posts');
+            var list = $('blogList');
+            list.replaceChildren();
+            if (!blogRecords.length) {
+                list.innerHTML = '<div class="empty">No posts yet. Drafts will appear here.</div>';
+                return;
+            }
+            blogRecords.forEach(function (record) {
+                var row = document.createElement('article');
+                row.className = 'blog-admin-row';
+                var info = document.createElement('div');
+                var title = document.createElement('h3');
+                title.textContent = record.draftContent.title || record.slug;
+                var state = document.createElement('p');
+                state.textContent = record.isPublished ? 'Published · draft may contain newer edits' : 'Draft · not visible to visitors';
+                row.classList.toggle('draft', !record.isPublished);
+                info.append(title, state);
+                var controls = document.createElement('div');
+                controls.className = 'actions';
+                controls.innerHTML = '<button type="button" class="btn small" data-act="edit">Edit</button><button type="button" class="btn small primary" data-act="publish">Publish</button><button type="button" class="btn small" data-act="unpublish">Unpublish</button><button type="button" class="btn small danger" data-act="delete">Delete</button>';
+                controls.querySelector('[data-act="unpublish"]').hidden = !record.isPublished;
+                controls.querySelector('[data-act="delete"]').hidden = !!record.isPublished;
+                row.dataset.slug = record.slug;
+                row.append(info, controls);
+                list.appendChild(row);
+            });
+        }
+
+        function resetBlogForm() {
+            $('blogSlug').value = '';
+            $('blogTitle').value = '';
+            $('blogExcerpt').value = '';
+            $('blogBody').value = '';
+            $('blogImage').value = '';
+            $('blogImagePublicId').value = '';
+            $('blogFormTitle').textContent = 'Write a post';
+            $('blogUnpublish').hidden = true;
+            editingBlogPublished = false;
+            $('blogStatus').textContent = '';
+        }
+
+        function saveBlog(action) {
+            var title = $('blogTitle').value.trim();
+            var slug = $('blogSlug').value || slugify(title);
+            if (!title || !slug) { toast('Add a post title first.', true); return; }
+            var record = blogRecords.find(function (item) { return item.slug === slug; });
+            var previous = record ? record.draftContent : {};
+            var content = {
+                title: title,
+                excerpt: $('blogExcerpt').value.trim(),
+                body: $('blogBody').value.trim(),
+                coverImage: $('blogImage').value.trim(),
+                coverImagePublicId: $('blogImagePublicId').value.trim(),
+                publishedAt: previous.publishedAt || (action === 'publish' ? new Date().toISOString() : '')
+            };
+            api('POST', '/api/admin/content', { type: 'blog', slug: slug, action: action, content: content })
+                .then(function (result) {
+                    $('blogSlug').value = result.slug;
+                    toast(action === 'publish' ? 'Post published.' : 'Post saved as a draft.');
+                    loadContent();
+                }).catch(fail);
+        }
+
+        function changeBlogVisibility(action) {
+            var slug = $('blogSlug').value;
+            if (!slug) return;
+            api('POST', '/api/admin/content', { type: 'blog', slug: slug, action: action })
+                .then(function () { toast('Post unpublished.'); resetBlogForm(); loadContent(); }).catch(fail);
+        }
+
+        function handleBlogListClick(event) {
+            var button = event.target.closest('button[data-act]');
+            if (!button) return;
+            var row = button.closest('[data-slug]');
+            var record = blogRecords.find(function (item) { return item.slug === row.dataset.slug; });
+            if (!record) return;
+            var action = button.dataset.act;
+            if (action === 'edit') {
+                $('blogSlug').value = record.slug;
+                $('blogTitle').value = record.draftContent.title || '';
+                $('blogExcerpt').value = record.draftContent.excerpt || '';
+                $('blogBody').value = record.draftContent.body || '';
+                $('blogImage').value = record.draftContent.coverImage || '';
+                $('blogImagePublicId').value = record.draftContent.coverImagePublicId || '';
+                $('blogFormTitle').textContent = 'Edit post';
+                $('blogUnpublish').hidden = !record.isPublished;
+                $('blogStatus').textContent = record.isPublished ? 'Live content remains unchanged until Publish.' : 'Draft only.';
+                editingBlogPublished = record.isPublished;
+                $('blogTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (action === 'publish') {
+                $('blogSlug').value = record.slug;
+                $('blogTitle').value = record.draftContent.title || '';
+                $('blogExcerpt').value = record.draftContent.excerpt || '';
+                $('blogBody').value = record.draftContent.body || '';
+                $('blogImage').value = record.draftContent.coverImage || '';
+                $('blogImagePublicId').value = record.draftContent.coverImagePublicId || '';
+                saveBlog('publish');
+            } else if (action === 'unpublish') {
+                api('POST', '/api/admin/content', { type: 'blog', slug: record.slug, action: 'unpublish' })
+                    .then(function () { toast('Post taken offline.'); loadContent(); }).catch(fail);
+            } else if (action === 'delete') {
+                if (!confirm('Delete this draft post?')) return;
+                api('DELETE', '/api/admin/content/blog/' + record.slug)
+                    .then(function () { toast('Draft deleted.'); if ($('blogSlug').value === record.slug) resetBlogForm(); loadContent(); }).catch(fail);
+            }
+        }
+
+        // ---- Journey (Instagram feed) ---------------------------------------
+        function resetJourneyForm() {
+            $('igSlug').value = '';
+            $('igImage').value = '';
+            $('igImagePublicId').value = '';
+            $('igCaption').value = '';
+            $('igDate').value = '';
+            $('igLink').value = '';
+            $('igLikes').value = '0';
+            $('igComments').value = '0';
+            $('igFormTitle').textContent = 'Add a journey post';
+            $('igUnpublish').hidden = true;
+            igEditingPublished = false;
+            $('igStatus').textContent = '';
+        }
+
+        function saveJourney(action) {
+            var image = $('igImage').value.trim();
+            if (!image) { toast('Add an image first.', true); return; }
+            var slug = $('igSlug').value || 'ig-' + Date.now();
+            var record = igRecords.find(function (item) { return item.slug === slug; });
+            var previous = record ? record.draftContent : {};
+            var sortOrder = record && previous.sortOrder !== undefined ? previous.sortOrder : igRecords.length;
+            var content = {
+                image: image,
+                imagePublicId: $('igImagePublicId').value.trim(),
+                caption: $('igCaption').value.trim(),
+                dateLabel: $('igDate').value.trim(),
+                link: $('igLink').value.trim(),
+                likes: Math.max(0, Number($('igLikes').value) || 0),
+                comments: Math.max(0, Number($('igComments').value) || 0)
+            };
+            api('POST', '/api/admin/content', { type: 'instagram', slug: slug, action: action, sortOrder: sortOrder, content: content })
+                .then(function (result) {
+                    $('igSlug').value = result.slug;
+                    toast(action === 'publish' ? 'Journey post published.' : 'Journey post saved as a draft.');
+                    loadContent();
+                }).catch(fail);
+        }
+
+        function renderJourneyList() {
+            $('igCount').textContent = igRecords.length + (igRecords.length === 1 ? ' post' : ' posts');
+            var list = $('igList');
+            list.replaceChildren();
+            if (!igRecords.length) {
+                list.innerHTML = '<div class="empty">No journey posts yet. Drafts will appear here.</div>';
+                return;
+            }
+            igRecords.forEach(function (record, index) {
+                var content = record.draftContent || {};
+                var row = document.createElement('article');
+                row.className = 'blog-admin-row';
+                var info = document.createElement('div');
+                var title = document.createElement('h3');
+                title.textContent = content.caption ? content.caption.slice(0, 80) : 'Journey post';
+                var state = document.createElement('p');
+                state.textContent = record.isPublished ? 'Published · draft may contain newer edits' : 'Draft · not visible to visitors';
+                info.append(title, state);
+                var controls = document.createElement('div');
+                controls.className = 'actions';
+                controls.innerHTML = '<button type="button" class="btn small" data-act="edit">Edit</button><button type="button" class="btn small primary" data-act="publish">Publish</button><button type="button" class="btn small" data-act="unpublish">Unpublish</button><button type="button" class="btn small" data-act="up" aria-label="Move up">&uarr;</button><button type="button" class="btn small" data-act="down" aria-label="Move down">&darr;</button><button type="button" class="btn small danger" data-act="delete">Delete</button>';
+                controls.querySelector('[data-act="unpublish"]').hidden = !record.isPublished;
+                controls.querySelector('[data-act="delete"]').hidden = !!record.isPublished;
+                controls.querySelector('[data-act="up"]').disabled = index === 0;
+                controls.querySelector('[data-act="down"]').disabled = index === igRecords.length - 1;
+                row.dataset.slug = record.slug;
+                row.append(info, controls);
+                list.appendChild(row);
+            });
+        }
+
+        function fillJourneyForm(record) {
+            var content = record.draftContent || {};
+            $('igSlug').value = record.slug;
+            $('igImage').value = content.image || '';
+            $('igImagePublicId').value = content.imagePublicId || '';
+            $('igCaption').value = content.caption || '';
+            $('igDate').value = content.dateLabel || '';
+            $('igLink').value = content.link || '';
+            $('igLikes').value = String(content.likes || 0);
+            $('igComments').value = String(content.comments || 0);
+            $('igFormTitle').textContent = 'Edit journey post';
+            $('igUnpublish').hidden = !record.isPublished;
+            igEditingPublished = record.isPublished;
+            $('igStatus').textContent = record.isPublished ? 'Live content remains unchanged until Publish.' : 'Draft only.';
+        }
+
+        function reorderJourney() {
+            var changes = igRecords.map(function (record, index) {
+                return api('POST', '/api/admin/content', {
+                    type: 'instagram', slug: record.slug, sortOrder: index,
+                    action: record.isPublished ? 'publish' : 'draft',
+                    content: Object.assign({}, record.draftContent, { sortOrder: index })
+                });
+            });
+            Promise.all(changes).then(function () { toast('Journey order updated.'); loadContent(); }).catch(fail);
+        }
+
+        function handleJourneyListClick(event) {
+            var button = event.target.closest('button[data-act]');
+            if (!button) return;
+            var row = button.closest('[data-slug]');
+            var index = igRecords.findIndex(function (item) { return item.slug === row.dataset.slug; });
+            if (index === -1) return;
+            var record = igRecords[index];
+            var action = button.dataset.act;
+            if (action === 'edit') {
+                fillJourneyForm(record);
+                $('igCaption').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (action === 'publish') {
+                fillJourneyForm(record);
+                saveJourney('publish');
+            } else if (action === 'unpublish') {
+                api('POST', '/api/admin/content', { type: 'instagram', slug: record.slug, action: 'unpublish' })
+                    .then(function () { toast('Journey post taken offline.'); loadContent(); }).catch(fail);
+            } else if (action === 'delete') {
+                if (!confirm('Delete this journey draft?')) return;
+                api('DELETE', '/api/admin/content/instagram/' + record.slug)
+                    .then(function () { toast('Journey draft deleted.'); if ($('igSlug').value === record.slug) resetJourneyForm(); loadContent(); }).catch(fail);
+            } else if (action === 'up' || action === 'down') {
+                var next = action === 'up' ? index - 1 : index + 1;
+                if (next < 0 || next >= igRecords.length) return;
+                igRecords[index] = igRecords[next];
+                igRecords[next] = record;
+                reorderJourney();
+            }
+        }
+
+        // ---- Announcements --------------------------------------------------
+        function renderAnnouncement() {
+            var content = announcementRecord ? announcementRecord.draftContent : {};
+            $('anBarEnabled').checked = Boolean(content.barEnabled);
+            $('anBarMessages').value = Array.isArray(content.barMessages) ? content.barMessages.join('\n') : '';
+            $('anBarSpeed').value = String(content.barSpeed || 34);
+            $('anBarLink').value = content.barLink || '';
+            $('anPopupEnabled').checked = Boolean(content.popupEnabled);
+            $('anPopupImage').value = content.popupImage || '';
+            $('anPopupImagePublicId').value = content.popupImagePublicId || '';
+            $('anPopupTitle').value = content.popupTitle || '';
+            $('anPopupText').value = content.popupText || '';
+            $('anPopupCtaText').value = content.popupCtaText || '';
+            $('anPopupLink').value = content.popupLink || '';
+            $('anPopupDelay').value = String(content.popupDelay === undefined ? 1 : content.popupDelay);
+            $('anStatus').textContent = !announcementRecord ? 'Not set up yet'
+                : announcementRecord.isPublished ? 'Published · save drafts, then publish to make them live' : 'Draft · not visible to visitors';
+        }
+
+        function currentAnnouncementContent() {
+            return {
+                barEnabled: $('anBarEnabled').checked,
+                barMessages: $('anBarMessages').value.split('\n').map(function (line) { return line.trim(); }).filter(Boolean),
+                barSpeed: Math.min(120, Math.max(10, Number($('anBarSpeed').value) || 34)),
+                barLink: $('anBarLink').value.trim(),
+                popupEnabled: $('anPopupEnabled').checked,
+                popupImage: $('anPopupImage').value.trim(),
+                popupImagePublicId: $('anPopupImagePublicId').value.trim(),
+                popupTitle: $('anPopupTitle').value.trim(),
+                popupText: $('anPopupText').value.trim(),
+                popupCtaText: $('anPopupCtaText').value.trim(),
+                popupLink: $('anPopupLink').value.trim(),
+                popupDelay: Math.min(60, Math.max(0, Number($('anPopupDelay').value) || 0))
+            };
+        }
+
+        function saveAnnouncement(action) {
+            var content = currentAnnouncementContent();
+            if (action === 'publish' && content.barEnabled && !content.barMessages.length) {
+                toast('Add at least one announcement message, or turn the bar off.', true);
+                return;
+            }
+            if (action === 'publish' && content.popupEnabled && !content.popupImage) {
+                toast('Upload a popup banner, or turn the popup off.', true);
+                return;
+            }
+            api('POST', '/api/admin/content', { type: 'announcement', slug: 'site', action: action, content: content })
+                .then(function () {
+                    toast(action === 'publish' ? 'Announcements published.' : action === 'unpublish' ? 'Announcements taken offline.' : 'Announcement draft saved.');
+                    loadContent();
+                }).catch(fail);
+        }
+
+        // ---- Albums ---------------------------------------------------------
+        function loadAlbums() {
+            api('GET', '/api/admin/albums').then(function (items) {
+                albums = items;
+                renderAlbums();
+                populateAlbumSelect();
+                renderOrderPanels();
+            }).catch(fail);
+        }
+
+        function populateAlbumSelect() {
+            var select = $('upAlbumSelect');
+            select.replaceChildren();
+            albums.forEach(function (album) {
+                var option = document.createElement('option');
+                option.value = album.id;
+                option.textContent = album.title + ' (' + album.photos.length + ' photos)';
+                select.appendChild(option);
+            });
+        }
+
+        function renderAlbums() {
+            var grid = $('albumGrid');
+            $('albumCount').textContent = albums.length + (albums.length === 1 ? ' album' : ' albums');
+            if (!albums.length) {
+                grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No albums yet. Choose "New album" when uploading photos to group them.</div>';
+                return;
+            }
+            grid.innerHTML = albums.map(function (album, index) {
+                var cover = album.photos.find(function (photo) { return photo.id === album.coverPhotoId; }) || album.photos[0];
+                var state = album.isPublished ? (album.hasDraft ? 'Live · draft changes' : 'Live') : 'Draft';
+                return '<article class="photo" data-id="' + esc(album.id) + '">' +
+                    '<div class="img"><img src="' + esc(cover ? cover.image : '') + '" alt="' + esc(album.title) + '" loading="lazy"><span class="badge">' + album.photos.length + ' photos</span></div>' +
+                    '<div class="meta"><h3>' + esc(album.title) + '</h3><p>' + esc(album.category) + (album.location ? ' &middot; ' + esc(album.location) : '') + '</p><span class="publish-state ' + (album.isPublished ? '' : 'draft') + '">' + state + '</span></div>' +
+                    '<div class="actions">' +
+                    '<button class="btn small" data-act="edit">Edit</button>' +
+                    '<button class="btn small" data-act="cover">Set cover</button>' +
+                    (album.isPublished ? (album.hasDraft ? '<button class="btn small primary" data-act="publish">Publish changes</button>' : '') + '<button class="btn small" data-act="unpublish">Take offline</button>' : '<button class="btn small primary" data-act="publish">Publish album</button>') +
+                    '<button class="btn small" data-act="up" aria-label="Move earlier"' + (index === 0 ? ' disabled' : '') + '>&uarr;</button>' +
+                    '<button class="btn small" data-act="down" aria-label="Move later"' + (index === albums.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
+                    '<button class="btn small danger" data-act="delete">Delete</button>' +
+                    '</div></article>';
+            }).join('');
+        }
+
+        var editingAlbumId = null;
+        var coverAlbumId = null;
+
+        function openCoverDialog(album) {
+            coverAlbumId = album.id;
+            var grid = $('coverGrid');
+            grid.replaceChildren();
+            album.photos.forEach(function (photo) {
+                var img = document.createElement('img');
+                img.src = photo.image;
+                img.alt = photo.title || '';
+                if (photo.id === album.coverPhotoId) img.classList.add('selected');
+                img.addEventListener('click', function () {
+                    api('POST', '/api/admin/albums/' + album.id + '/cover', { photoId: photo.id })
+                        .then(function () {
+                            toast('Cover saved. Publish the album to make it live.');
+                            $('coverDialog').close();
+                            loadAlbums();
+                        }).catch(fail);
+                });
+                grid.appendChild(img);
+            });
+            $('coverDialog').showModal();
+        }
+
+        function saveAlbum(action) {
+            if (!editingAlbumId) return;
+            var body = {
+                title: $('alTitle').value,
+                location: $('alLocation').value,
+                category: $('alCategory').value,
+                featured: $('alFeatured').checked
+            };
+            var request = api('PUT', '/api/admin/albums/' + editingAlbumId, body);
+            if (action === 'publish') {
+                request = request.then(function () { return api('POST', '/api/admin/albums/' + editingAlbumId + '/publish'); });
+            }
+            request.then(function () {
+                $('albumDialog').close();
+                toast(action === 'publish' ? 'Album changes published.' : 'Album draft saved.');
+                loadAlbums();
+                loadPhotos();
+            }).catch(fail);
+        }
+
+        // ---- Testimonials ---------------------------------------------------
+        function resetTestimonialForm() {
+            ['tsSlug', 'tsQuote', 'tsAuthor', 'tsRole', 'tsLink', 'tsLinkLabel'].forEach(function (id) { $(id).value = ''; });
+            $('tsFormTitle').textContent = 'Add a testimonial';
+            $('tsUnpublish').hidden = true;
+            $('tsStatus').textContent = '';
+        }
+
+        function saveTestimonial(action) {
+            var quote = $('tsQuote').value.trim();
+            var author = $('tsAuthor').value.trim();
+            if (!quote || !author) { toast('Add a quote and an author first.', true); return; }
+            var slug = $('tsSlug').value || slugify(author) || 'testimonial-' + Date.now();
+            var record = testimonialRecords.find(function (item) { return item.slug === slug; });
+            var sortOrder = record && record.draftContent.sortOrder !== undefined ? record.draftContent.sortOrder : testimonialRecords.length;
+            var content = {
+                quote: quote,
+                author: author,
+                role: $('tsRole').value.trim(),
+                link: $('tsLink').value.trim(),
+                linkLabel: $('tsLinkLabel').value.trim()
+            };
+            api('POST', '/api/admin/content', { type: 'testimonial', slug: slug, action: action, sortOrder: sortOrder, content: content })
+                .then(function (result) {
+                    $('tsSlug').value = result.slug;
+                    toast(action === 'publish' ? 'Testimonial published.' : 'Testimonial saved as a draft.');
+                    loadContent();
+                }).catch(fail);
+        }
+
+        function renderTestimonialList() {
+            $('tsCount').textContent = testimonialRecords.length + (testimonialRecords.length === 1 ? ' testimonial' : ' testimonials');
+            var list = $('tsList');
+            list.replaceChildren();
+            if (!testimonialRecords.length) {
+                list.innerHTML = '<div class="empty">No testimonials yet. Drafts will appear here.</div>';
+                return;
+            }
+            testimonialRecords.forEach(function (record, index) {
+                var content = record.draftContent || {};
+                var row = document.createElement('article');
+                row.className = 'blog-admin-row';
+                var info = document.createElement('div');
+                var title = document.createElement('h3');
+                title.textContent = content.author || 'Testimonial';
+                var state = document.createElement('p');
+                state.textContent = (content.quote || '').slice(0, 90) + ((content.quote || '').length > 90 ? '…' : '');
+                info.append(title, state);
+                var controls = document.createElement('div');
+                controls.className = 'actions';
+                controls.innerHTML = '<button type="button" class="btn small" data-act="edit">Edit</button><button type="button" class="btn small primary" data-act="publish">Publish</button><button type="button" class="btn small" data-act="unpublish">Unpublish</button><button type="button" class="btn small" data-act="up" aria-label="Move up">&uarr;</button><button type="button" class="btn small" data-act="down" aria-label="Move down">&darr;</button><button type="button" class="btn small danger" data-act="delete">Delete</button>';
+                controls.querySelector('[data-act="unpublish"]').hidden = !record.isPublished;
+                controls.querySelector('[data-act="delete"]').hidden = !!record.isPublished;
+                controls.querySelector('[data-act="up"]').disabled = index === 0;
+                controls.querySelector('[data-act="down"]').disabled = index === testimonialRecords.length - 1;
+                row.dataset.slug = record.slug;
+                row.append(info, controls);
+                list.appendChild(row);
+            });
+        }
+
+        function fillTestimonialForm(record) {
+            var content = record.draftContent || {};
+            $('tsSlug').value = record.slug;
+            $('tsQuote').value = content.quote || '';
+            $('tsAuthor').value = content.author || '';
+            $('tsRole').value = content.role || '';
+            $('tsLink').value = content.link || '';
+            $('tsLinkLabel').value = content.linkLabel || '';
+            $('tsFormTitle').textContent = 'Edit testimonial';
+            $('tsUnpublish').hidden = !record.isPublished;
+            $('tsStatus').textContent = record.isPublished ? 'Live content remains unchanged until Publish.' : 'Draft only.';
+        }
+
+        function handleTestimonialListClick(event) {
+            var button = event.target.closest('button[data-act]');
+            if (!button) return;
+            var row = button.closest('[data-slug]');
+            var index = testimonialRecords.findIndex(function (item) { return item.slug === row.dataset.slug; });
+            if (index === -1) return;
+            var record = testimonialRecords[index];
+            var action = button.dataset.act;
+            if (action === 'edit') {
+                fillTestimonialForm(record);
+                $('tsQuote').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (action === 'publish') {
+                fillTestimonialForm(record);
+                saveTestimonial('publish');
+            } else if (action === 'unpublish') {
+                api('POST', '/api/admin/content', { type: 'testimonial', slug: record.slug, action: 'unpublish' })
+                    .then(function () { toast('Testimonial taken offline.'); loadContent(); }).catch(fail);
+            } else if (action === 'delete') {
+                if (!confirm('Delete this testimonial draft?')) return;
+                api('DELETE', '/api/admin/content/testimonial/' + record.slug)
+                    .then(function () { toast('Testimonial deleted.'); if ($('tsSlug').value === record.slug) resetTestimonialForm(); loadContent(); }).catch(fail);
+            } else if (action === 'up' || action === 'down') {
+                var next = action === 'up' ? index - 1 : index + 1;
+                if (next < 0 || next >= testimonialRecords.length) return;
+                testimonialRecords[index] = testimonialRecords[next];
+                testimonialRecords[next] = record;
+                reorderContentRecords(testimonialRecords, 'testimonial');
+            }
+        }
+
+        // ---- Awards ----------------------------------------------------------
+        function resetAwardForm() {
+            ['awSlug', 'awName', 'awLabel', 'awLink', 'awImage', 'awImagePublicId'].forEach(function (id) { $(id).value = ''; });
+            $('awFormTitle').textContent = 'Add an award';
+            $('awUnpublish').hidden = true;
+            $('awStatus').textContent = '';
+        }
+
+        function saveAward(action) {
+            var name = $('awName').value.trim();
+            var image = $('awImage').value.trim();
+            if (!name) { toast('Add the award name first.', true); return; }
+            if (action === 'publish' && !image) { toast('Add a badge image before publishing.', true); return; }
+            var slug = $('awSlug').value || slugify(name) || 'award-' + Date.now();
+            var record = awardRecords.find(function (item) { return item.slug === slug; });
+            var sortOrder = record && record.draftContent.sortOrder !== undefined ? record.draftContent.sortOrder : awardRecords.length;
+            var content = {
+                name: name,
+                label: $('awLabel').value.trim(),
+                link: $('awLink').value.trim(),
+                image: image,
+                imagePublicId: $('awImagePublicId').value.trim()
+            };
+            api('POST', '/api/admin/content', { type: 'award', slug: slug, action: action, sortOrder: sortOrder, content: content })
+                .then(function (result) {
+                    $('awSlug').value = result.slug;
+                    toast(action === 'publish' ? 'Award published.' : 'Award saved as a draft.');
+                    loadContent();
+                }).catch(fail);
+        }
+
+        function renderAwardList() {
+            $('awCount').textContent = awardRecords.length + (awardRecords.length === 1 ? ' award' : ' awards');
+            var list = $('awList');
+            list.replaceChildren();
+            if (!awardRecords.length) {
+                list.innerHTML = '<div class="empty">No awards yet. Drafts will appear here.</div>';
+                return;
+            }
+            awardRecords.forEach(function (record, index) {
+                var content = record.draftContent || {};
+                var row = document.createElement('article');
+                row.className = 'blog-admin-row';
+                var info = document.createElement('div');
+                var title = document.createElement('h3');
+                title.textContent = content.name || 'Award';
+                var state = document.createElement('p');
+                state.textContent = [content.label, content.link ? 'linked' : 'no link'].filter(Boolean).join(' · ');
+                info.append(title, state);
+                var controls = document.createElement('div');
+                controls.className = 'actions';
+                controls.innerHTML = '<button type="button" class="btn small" data-act="edit">Edit</button><button type="button" class="btn small primary" data-act="publish">Publish</button><button type="button" class="btn small" data-act="unpublish">Unpublish</button><button type="button" class="btn small" data-act="up" aria-label="Move up">&uarr;</button><button type="button" class="btn small" data-act="down" aria-label="Move down">&darr;</button><button type="button" class="btn small danger" data-act="delete">Delete</button>';
+                controls.querySelector('[data-act="unpublish"]').hidden = !record.isPublished;
+                controls.querySelector('[data-act="delete"]').hidden = !!record.isPublished;
+                controls.querySelector('[data-act="up"]').disabled = index === 0;
+                controls.querySelector('[data-act="down"]').disabled = index === awardRecords.length - 1;
+                row.dataset.slug = record.slug;
+                row.append(info, controls);
+                list.appendChild(row);
+            });
+        }
+
+        function fillAwardForm(record) {
+            var content = record.draftContent || {};
+            $('awSlug').value = record.slug;
+            $('awName').value = content.name || '';
+            $('awLabel').value = content.label || '';
+            $('awLink').value = content.link || '';
+            $('awImage').value = content.image || '';
+            $('awImagePublicId').value = content.imagePublicId || '';
+            $('awFormTitle').textContent = 'Edit award';
+            $('awUnpublish').hidden = !record.isPublished;
+            $('awStatus').textContent = record.isPublished ? 'Live content remains unchanged until Publish.' : 'Draft only.';
+        }
+
+        function handleAwardListClick(event) {
+            var button = event.target.closest('button[data-act]');
+            if (!button) return;
+            var row = button.closest('[data-slug]');
+            var index = awardRecords.findIndex(function (item) { return item.slug === row.dataset.slug; });
+            if (index === -1) return;
+            var record = awardRecords[index];
+            var action = button.dataset.act;
+            if (action === 'edit') {
+                fillAwardForm(record);
+                $('awName').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (action === 'publish') {
+                fillAwardForm(record);
+                saveAward('publish');
+            } else if (action === 'unpublish') {
+                api('POST', '/api/admin/content', { type: 'award', slug: record.slug, action: 'unpublish' })
+                    .then(function () { toast('Award taken offline.'); loadContent(); }).catch(fail);
+            } else if (action === 'delete') {
+                if (!confirm('Delete this award draft?')) return;
+                api('DELETE', '/api/admin/content/award/' + record.slug)
+                    .then(function () { toast('Award deleted.'); if ($('awSlug').value === record.slug) resetAwardForm(); loadContent(); }).catch(fail);
+            } else if (action === 'up' || action === 'down') {
+                var next = action === 'up' ? index - 1 : index + 1;
+                if (next < 0 || next >= awardRecords.length) return;
+                awardRecords[index] = awardRecords[next];
+                awardRecords[next] = record;
+                reorderContentRecords(awardRecords, 'award');
+            }
+        }
+
+        function reorderContentRecords(records, type) {
+            var changes = records.map(function (record, index) {
+                return api('POST', '/api/admin/content', {
+                    type: type, slug: record.slug, sortOrder: index,
+                    action: record.isPublished ? 'publish' : 'draft',
+                    content: Object.assign({}, record.draftContent, { sortOrder: index })
+                });
+            });
+            Promise.all(changes).then(function () { toast('Order updated.'); loadContent(); }).catch(fail);
+        }
+
+        // ---- Settings --------------------------------------------------------
+        function renderSettings() {
+            var content = settingsRecord ? settingsRecord.draftContent : {};
+            $('seInstagram').value = content.instagram || '';
+            $('seFacebook').value = content.facebook || '';
+            $('seTiktok').value = content.tiktok || '';
+            $('seYoutube').value = content.youtube || '';
+            $('seMapLocation').value = content.mapLocation || '';
+            $('seMapDirections').value = content.mapDirectionsUrl || '';
+            $('seInquiryEmail').value = content.inquiryEmail || '';
+            $('seStatus').textContent = !settingsRecord ? 'Not set up yet'
+                : settingsRecord.isPublished ? 'Published · save drafts, then publish to make them live' : 'Draft · not visible to visitors';
+        }
+
+        function currentSettingsContent() {
+            return {
+                instagram: $('seInstagram').value.trim(),
+                facebook: $('seFacebook').value.trim(),
+                tiktok: $('seTiktok').value.trim(),
+                youtube: $('seYoutube').value.trim(),
+                mapLocation: $('seMapLocation').value.trim(),
+                mapDirectionsUrl: $('seMapDirections').value.trim(),
+                inquiryEmail: $('seInquiryEmail').value.trim()
+            };
+        }
+
+        function saveSettings(action) {
+            var content = currentSettingsContent();
+            var email = content.inquiryEmail;
+            if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                toast('Please enter a valid enquiry email address.', true);
+                return;
+            }
+            api('POST', '/api/admin/content', { type: 'settings', slug: 'site', action: action, content: content })
+                .then(function () {
+                    toast(action === 'publish' ? 'Settings published.' : action === 'unpublish' ? 'Settings taken offline.' : 'Settings draft saved.');
+                    loadContent();
+                }).catch(fail);
+        }
+
+        // ---- Inquiries -------------------------------------------------------
+        function loadInquiries() {
+            api('GET', '/api/admin/inquiries').then(function (items) {
+                inquiriesList = items;
+                renderInquiries();
+            }).catch(fail);
+        }
+
+        function renderInquiries() {
+            $('inqCount').textContent = inquiriesList.length + (inquiriesList.length === 1 ? ' enquiry' : ' enquiries');
+            var list = $('inqList');
+            list.replaceChildren();
+            if (!inquiriesList.length) {
+                list.innerHTML = '<div class="empty">No enquiries yet.</div>';
+                return;
+            }
+            inquiriesList.forEach(function (item) {
+                var row = document.createElement('article');
+                row.className = 'blog-admin-row';
+                var info = document.createElement('div');
+                var title = document.createElement('h3');
+                title.textContent = item.name + ' · ' + item.email;
+                var state = document.createElement('p');
+                state.textContent = [item.eventDate, item.venue, item.guests ? item.guests + ' guests' : '', new Date(item.createdAt).toLocaleString('en-GB'), item.emailSent ? 'emailed' : 'email not sent'].filter(Boolean).join(' · ');
+                info.append(title, state);
+                if (item.message) {
+                    var message = document.createElement('p');
+                    message.textContent = item.message;
+                    message.style.maxWidth = '620px';
+                    message.style.whiteSpace = 'pre-line';
+                    info.appendChild(message);
+                }
+                var controls = document.createElement('div');
+                controls.className = 'actions';
+                controls.innerHTML = '<a class="btn small" href="mailto:' + esc(item.email) + '">Reply</a><button class="btn small danger" type="button" data-act="delete">Delete</button>';
+                row.dataset.id = item.id;
+                row.append(info, controls);
+                list.appendChild(row);
+            });
+        }
+
+        // ---- Instagram integration status ------------------------------------
+        function loadIntegrations() {
+            api('GET', '/api/admin/integrations').then(function (data) {
+                integrationStatus = data;
+                var instagram = data.instagram || {};
+                $('igConnStatus').textContent = instagram.connected
+                    ? 'Connected' + (instagram.username ? ' as @' + instagram.username : '') + (instagram.source === 'env' ? ' (server token)' : '') + '. Live posts are shown automatically.'
+                    : 'Not connected — the posts below are shown instead.';
+                $('seEmailStatus').textContent = data.emailConfigured
+                    ? 'Email sending is configured on the server.'
+                    : 'Email sending is not configured on the server yet (SMTP settings missing). Enquiries are still saved under Inquiries.';
+            }).catch(function () { /* status optional */ });
+        }
+
+        // ---- Portfolio ordering ---------------------------------------------
+        function mergedOrderItems() {
+            var photoItems = photos.filter(function (p) { return !p.albumId; }).map(function (p) {
+                return {
+                    type: 'photo', id: p.id, title: p.title,
+                    subtitle: [p.category, p.location].filter(Boolean).join(' · '),
+                    image: p.image, sortOrder: p.sortOrder || 0,
+                    featured: p.featured, featuredOrder: p.featuredOrder
+                };
+            });
+            var albumItems = albums.map(function (a) {
+                var cover = a.photos.find(function (photo) { return photo.id === a.coverPhotoId; }) || a.photos[0] || {};
+                return {
+                    type: 'album', id: a.id, title: a.title,
+                    subtitle: a.photos.length + ' photos · ' + a.category,
+                    image: cover.image || '', sortOrder: a.sortOrder || 0,
+                    featured: a.featured, featuredOrder: a.featuredOrder
+                };
+            });
+            return photoItems.concat(albumItems).sort(function (a, b) {
+                if ((a.sortOrder || 0) !== (b.sortOrder || 0)) return (a.sortOrder || 0) - (b.sortOrder || 0);
+                return a.title.localeCompare(b.title);
+            });
+        }
+
+        function featuredSort(a, b) {
+            var ao = a.featuredOrder === null || a.featuredOrder === undefined ? Infinity : a.featuredOrder;
+            var bo = b.featuredOrder === null || b.featuredOrder === undefined ? Infinity : b.featuredOrder;
+            if (ao !== bo) return ao - bo;
+            return (a.sortOrder || 0) - (b.sortOrder || 0);
+        }
+
+        function orderRowHtml(item, index, total) {
+            return '<div class="order-row" data-type="' + item.type + '" data-id="' + esc(item.id) + '">' +
+                '<span class="n">' + (index + 1) + '</span>' +
+                '<img src="' + esc(item.image) + '" alt="">' +
+                '<div class="t">' + esc(item.title) + '<small>' + esc(item.subtitle) + '</small></div>' +
+                '<span class="k">' + (item.type === 'album' ? 'Album' : 'Photo') + '</span>' +
+                '<button class="btn small" type="button" data-move="up"' + (index === 0 ? ' disabled' : '') + '>&uarr;</button>' +
+                '<button class="btn small" type="button" data-move="down"' + (index === total - 1 ? ' disabled' : '') + '>&darr;</button>' +
+                '</div>';
+        }
+
+        function renderOrderPanels() {
+            var list = $('orderList');
+            if (!list) return;
+            var items = mergedOrderItems();
+            $('orderCount').textContent = items.length + (items.length === 1 ? ' item' : ' items');
+            list.innerHTML = items.length
+                ? items.map(function (item, index) { return orderRowHtml(item, index, items.length); }).join('')
+                : '<div class="order-empty">No portfolio items yet.</div>';
+
+            var featured = items.filter(function (item) { return item.featured; }).sort(featuredSort);
+            $('homeOrderCount').textContent = featured.length + (featured.length === 1 ? ' featured item' : ' featured items');
+            $('homeOrderList').innerHTML = featured.length
+                ? featured.map(function (item, index) { return orderRowHtml(item, index, featured.length); }).join('')
+                : '<div class="order-empty">Tick “Feature on the home page” on a photo or album to add it here.</div>';
+        }
+
+        function reorderPortfolio(type, id, direction) {
+            var items = mergedOrderItems();
+            var index = items.findIndex(function (item) { return item.type === type && item.id === id; });
+            var next = direction === 'up' ? index - 1 : index + 1;
+            if (index < 0 || next < 0 || next >= items.length) return;
+            items.splice(next, 0, items.splice(index, 1)[0]);
+            api('POST', '/api/admin/portfolio/order', { order: items.map(function (item) { return { type: item.type, id: item.id }; }) })
+                .then(function () { toast('Portfolio order updated.'); loadPhotos(); loadAlbums(); }).catch(fail);
+        }
+
+        function reorderFeatured(type, id, direction) {
+            var items = mergedOrderItems().filter(function (item) { return item.featured; }).sort(featuredSort);
+            var index = items.findIndex(function (item) { return item.type === type && item.id === id; });
+            var next = direction === 'up' ? index - 1 : index + 1;
+            if (index < 0 || next < 0 || next >= items.length) return;
+            items.splice(next, 0, items.splice(index, 1)[0]);
+            api('POST', '/api/admin/portfolio/featured', { order: items.map(function (item) { return { type: item.type, id: item.id }; }) })
+                .then(function () { toast('Home page order updated.'); loadPhotos(); loadAlbums(); }).catch(fail);
+        }
+
+        function handleOrderClick(event) {
+            var button = event.target.closest('button[data-move]');
+            if (!button) return;
+            var row = button.closest('.order-row');
+            var panel = button.closest('.order-list');
+            if (!row) return;
+            if (panel && panel.id === 'homeOrderList') reorderFeatured(row.dataset.type, row.dataset.id, button.dataset.move);
+            else reorderPortfolio(row.dataset.type, row.dataset.id, button.dataset.move);
+        }
+
         // ---- Views ----------------------------------------------------------
         function showLogin() { $('appView').hidden = true; $('loginView').hidden = false; $('password').focus(); }
-        function showApp() { $('loginView').hidden = true; $('appView').hidden = false; loadPhotos(); loadServices(); }
+        function showApp() {
+            $('loginView').hidden = true;
+            $('appView').hidden = false;
+            loadPhotos();
+            loadServices();
+            loadAlbums();
+            loadContent();
+            loadIntegrations();
+            loadInquiries();
+        }
 
         $('loginForm').addEventListener('submit', function (e) {
             e.preventDefault();
@@ -376,11 +1800,53 @@
             api('POST', '/api/admin/logout').then(showLogin).catch(fail);
         });
 
+        $('pageSelect').addEventListener('change', renderPageEditor);
+        $('pageSaveDraft').addEventListener('click', function () { savePageContent('draft'); });
+        $('pagePublish').addEventListener('click', function () { savePageContent('publish'); });
+        $('pageUnpublish').addEventListener('click', function () { savePageContent('unpublish'); });
+        $('faqSaveDraft').addEventListener('click', function () { saveFaqs('draft'); });
+        $('faqPublish').addEventListener('click', function () { saveFaqs('publish'); });
+        $('addFaq').addEventListener('click', function () {
+            faqItems.push({ slug: '', question: '', answer: '', isPublished: false });
+            renderFaqs();
+        });
+        $('blogSaveDraft').addEventListener('click', function () { saveBlog('draft'); });
+        $('blogPublish').addEventListener('click', function () { saveBlog('publish'); });
+        $('blogUnpublish').addEventListener('click', function () { changeBlogVisibility('unpublish'); });
+        $('blogReset').addEventListener('click', resetBlogForm);
+        $('blogList').addEventListener('click', handleBlogListClick);
+        $('pageImageFile').addEventListener('change', function () { uploadContentImage('pageImageFile', 'pageImage', 'pageImagePublicId'); });
+        $('blogImageFile').addEventListener('change', function () { uploadContentImage('blogImageFile', 'blogImage', 'blogImagePublicId'); });
+
+        $('igSaveDraft').addEventListener('click', function () { saveJourney('draft'); });
+        $('igPublish').addEventListener('click', function () { saveJourney('publish'); });
+        $('igReset').addEventListener('click', resetJourneyForm);
+        $('igList').addEventListener('click', handleJourneyListClick);
+        $('igImageFile').addEventListener('change', function () { uploadContentImage('igImageFile', 'igImage', 'igImagePublicId'); });
+        $('igUnpublish').addEventListener('click', function () {
+            var slug = $('igSlug').value;
+            if (!slug) return;
+            api('POST', '/api/admin/content', { type: 'instagram', slug: slug, action: 'unpublish' })
+                .then(function () { toast('Journey post taken offline.'); loadContent(); }).catch(fail);
+        });
+
+        $('anSaveDraft').addEventListener('click', function () { saveAnnouncement('draft'); });
+        $('anPublish').addEventListener('click', function () { saveAnnouncement('publish'); });
+        $('anUnpublish').addEventListener('click', function () { saveAnnouncement('unpublish'); });
+        $('anPopupImageFile').addEventListener('change', function () { uploadContentImage('anPopupImageFile', 'anPopupImage', 'anPopupImagePublicId'); });
+
+        $('upAlbumMode').addEventListener('change', function () {
+            var mode = $('upAlbumMode').value;
+            $('upAlbumTitleField').hidden = mode !== 'new';
+            $('upAlbumSelectField').hidden = mode !== 'existing';
+        });
+
         document.querySelectorAll('.tab').forEach(function (tab) {
             tab.addEventListener('click', function () {
                 document.querySelectorAll('.tab').forEach(function (t) { t.classList.toggle('active', t === tab); });
-                $('tab-portfolio').hidden = tab.dataset.tab !== 'portfolio';
-                $('tab-services').hidden = tab.dataset.tab !== 'services';
+                document.querySelectorAll('main > section[id^="tab-"]').forEach(function (panel) {
+                    panel.hidden = panel.id !== 'tab-' + tab.dataset.tab;
+                });
             });
         });
 
@@ -419,6 +1885,7 @@
                 box.appendChild(row);
             });
             $('uploadBtn').disabled = !pendingFiles.length;
+            $('uploadPublishBtn').disabled = !pendingFiles.length;
             $('uploadBtn').textContent = pendingFiles.length > 1 ? 'Upload ' + pendingFiles.length + ' photos' : 'Upload photo' + (pendingFiles.length ? '' : 's');
         }
 
@@ -452,9 +1919,9 @@
             }).catch(function () { return file; });
         }
 
-        $('uploadBtn').addEventListener('click', function () {
+        function uploadPhotos(action) {
             if (!pendingFiles.length) return;
-            var btn = $('uploadBtn');
+            var btn = action === 'publish' ? $('uploadPublishBtn') : $('uploadBtn');
             btn.disabled = true;
             btn.textContent = 'Uploading…';
 
@@ -469,24 +1936,38 @@
                 fd.append('location', $('upLocation').value);
                 fd.append('category', $('upCategory').value);
                 fd.append('featured', $('upFeatured').checked ? 'true' : 'false');
+                fd.append('action', action);
+                var albumMode = $('upAlbumMode').value;
+                if (albumMode === 'new') {
+                    var albumTitle = $('upAlbumTitle').value.trim();
+                    if (albumTitle) fd.append('albumTitle', albumTitle);
+                } else if (albumMode === 'existing') {
+                    var albumId = $('upAlbumSelect').value;
+                    if (albumId) fd.append('albumId', albumId);
+                }
                 return api('POST', '/api/admin/portfolio', fd);
             }).then(function (res) {
                 pendingFiles.forEach(function (p) { URL.revokeObjectURL(p.url); });
                 pendingFiles = [];
                 renderPending();
-                toast(res.added.length === 1 ? 'Photo uploaded.' : res.added.length + ' photos uploaded.');
+                $('upAlbumTitle').value = '';
+                toast(res.added.length + (res.added.length === 1 ? ' photo saved.' : ' photos saved.') + (action === 'publish' ? ' Published.' : ' Draft only.'));
                 loadPhotos();
+                loadAlbums();
             }).catch(function (e) {
                 fail(e);
                 renderPending();
             });
-        });
+        }
+
+        $('uploadBtn').addEventListener('click', function () { uploadPhotos('draft'); });
+        $('uploadPublishBtn').addEventListener('click', function () { uploadPhotos('publish'); });
 
         // ---- Portfolio: list -------------------------------------------------
         var photos = [];
 
         function loadPhotos() {
-            api('GET', '/api/portfolio').then(function (items) { photos = items; renderPhotos(); }).catch(fail);
+            api('GET', '/api/admin/portfolio').then(function (items) { photos = items; renderPhotos(); renderOrderPanels(); }).catch(fail);
         }
 
         function renderPhotos() {
@@ -497,9 +1978,10 @@
                 return '<article class="photo" data-id="' + esc(p.id) + '">' +
                     '<div class="img"><img src="' + esc(p.image) + '" alt="' + esc(p.title) + '" loading="lazy">' +
                     (p.featured ? '<span class="badge">Home page</span>' : '') + '</div>' +
-                    '<div class="meta"><h3>' + esc(p.title) + '</h3><p>' + esc(p.category) + (p.location ? ' &middot; ' + esc(p.location) : '') + '</p></div>' +
+                    '<div class="meta"><h3>' + esc(p.title) + '</h3><p>' + esc(p.category) + (p.location ? ' &middot; ' + esc(p.location) : '') + '</p><span class="publish-state ' + (p.isPublished ? '' : 'draft') + '">' + (p.isPublished ? (p.hasDraft ? 'Live · draft changes' : 'Live') : 'Draft') + '</span></div>' +
                     '<div class="actions">' +
                     '<button class="btn small" data-act="edit">Edit</button>' +
+                    (p.isPublished ? (p.hasDraft ? '<button class="btn small primary" data-act="publish">Publish draft</button>' : '') + '<button class="btn small" data-act="unpublish">Take offline</button>' : '<button class="btn small primary" data-act="publish">Publish</button>') +
                     '<button class="btn small" data-act="up" aria-label="Move earlier"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>' +
                     '<button class="btn small" data-act="down" aria-label="Move later"' + (i === photos.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
                     '<button class="btn small danger" data-act="delete">Delete</button>' +
@@ -522,6 +2004,11 @@
                 $('edCategory').value = p.category;
                 $('edFeatured').checked = !!p.featured;
                 $('editDialog').showModal();
+            } else if (act === 'publish' || act === 'unpublish') {
+                api('PUT', '/api/admin/portfolio/' + id, { action: act }).then(function () {
+                    toast(act === 'publish' ? 'Photo published.' : 'Photo taken offline.');
+                    loadPhotos();
+                }).catch(fail);
             } else if (act === 'delete') {
                 if (!confirm('Delete "' + p.title + '"? This removes it from the website.')) return;
                 api('DELETE', '/api/admin/portfolio/' + id).then(function () { toast('Photo deleted.'); loadPhotos(); }).catch(fail);
@@ -531,14 +2018,114 @@
         });
 
         $('edCancel').addEventListener('click', function () { $('editDialog').close(); });
-        $('editForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            api('PUT', '/api/admin/portfolio/' + editingId, {
+        function savePhoto(action) {
+            return api('PUT', '/api/admin/portfolio/' + editingId, {
                 title: $('edTitle').value,
                 location: $('edLocation').value,
                 category: $('edCategory').value,
-                featured: $('edFeatured').checked
-            }).then(function () { $('editDialog').close(); toast('Saved.'); loadPhotos(); }).catch(fail);
+                featured: $('edFeatured').checked,
+                action: action
+            }).then(function () { $('editDialog').close(); toast(action === 'publish' ? 'Changes published.' : 'Draft saved.'); loadPhotos(); }).catch(fail);
+        }
+        $('editForm').addEventListener('submit', function (e) { e.preventDefault(); savePhoto('draft'); });
+        $('edPublish').addEventListener('click', function () { savePhoto('publish'); });
+
+        // ---- Albums ----------------------------------------------------------
+        $('albumGrid').addEventListener('click', function (e) {
+            var btn = e.target.closest('button[data-act]');
+            if (!btn) return;
+            var id = btn.closest('.photo').dataset.id;
+            var album = albums.find(function (a) { return a.id === id; });
+            if (!album) return;
+            var act = btn.dataset.act;
+            if (act === 'edit') {
+                editingAlbumId = id;
+                $('alTitle').value = album.title;
+                $('alLocation').value = album.location || '';
+                $('alCategory').value = album.category;
+                $('alFeatured').checked = !!album.featured;
+                $('albumDialog').showModal();
+            } else if (act === 'cover') {
+                openCoverDialog(album);
+            } else if (act === 'publish') {
+                api('POST', '/api/admin/albums/' + id + '/publish')
+                    .then(function () { toast('Album published.'); loadAlbums(); loadPhotos(); }).catch(fail);
+            } else if (act === 'unpublish') {
+                api('POST', '/api/admin/albums/' + id + '/unpublish')
+                    .then(function () { toast('Album taken offline.'); loadAlbums(); loadPhotos(); }).catch(fail);
+            } else if (act === 'delete') {
+                if (!confirm('Delete "' + album.title + '" and all its photos? This cannot be undone.')) return;
+                api('DELETE', '/api/admin/albums/' + id)
+                    .then(function () { toast('Album deleted.'); loadAlbums(); loadPhotos(); }).catch(fail);
+            } else {
+                api('POST', '/api/admin/albums/' + id + '/move', { dir: act }).then(loadAlbums).catch(fail);
+            }
+        });
+
+        $('alCancel').addEventListener('click', function () { $('albumDialog').close(); });
+        $('albumForm').addEventListener('submit', function (e) { e.preventDefault(); saveAlbum('draft'); });
+        $('alPublish').addEventListener('click', function () { saveAlbum('publish'); });
+        $('coverCancel').addEventListener('click', function () { $('coverDialog').close(); });
+
+        $('orderList').addEventListener('click', handleOrderClick);
+        $('homeOrderList').addEventListener('click', handleOrderClick);
+
+        // Testimonials
+        $('tsSaveDraft').addEventListener('click', function () { saveTestimonial('draft'); });
+        $('tsPublish').addEventListener('click', function () { saveTestimonial('publish'); });
+        $('tsReset').addEventListener('click', resetTestimonialForm);
+        $('tsList').addEventListener('click', handleTestimonialListClick);
+        $('tsUnpublish').addEventListener('click', function () {
+            var slug = $('tsSlug').value;
+            if (!slug) return;
+            api('POST', '/api/admin/content', { type: 'testimonial', slug: slug, action: 'unpublish' })
+                .then(function () { toast('Testimonial taken offline.'); loadContent(); }).catch(fail);
+        });
+
+        // Awards
+        $('awSaveDraft').addEventListener('click', function () { saveAward('draft'); });
+        $('awPublish').addEventListener('click', function () { saveAward('publish'); });
+        $('awReset').addEventListener('click', resetAwardForm);
+        $('awList').addEventListener('click', handleAwardListClick);
+        $('awImageFile').addEventListener('change', function () { uploadContentImage('awImageFile', 'awImage', 'awImagePublicId'); });
+        $('awUnpublish').addEventListener('click', function () {
+            var slug = $('awSlug').value;
+            if (!slug) return;
+            api('POST', '/api/admin/content', { type: 'award', slug: slug, action: 'unpublish' })
+                .then(function () { toast('Award taken offline.'); loadContent(); }).catch(fail);
+        });
+
+        // Settings
+        $('seSaveDraft').addEventListener('click', function () { saveSettings('draft'); });
+        $('sePublish').addEventListener('click', function () { saveSettings('publish'); });
+        $('seUnpublish').addEventListener('click', function () { saveSettings('unpublish'); });
+
+        // Inquiries
+        $('inqList').addEventListener('click', function (event) {
+            var button = event.target.closest('button[data-act="delete"]');
+            if (!button) return;
+            var row = button.closest('[data-id]');
+            if (!row) return;
+            if (!confirm('Delete this enquiry?')) return;
+            api('DELETE', '/api/admin/inquiries/' + row.dataset.id)
+                .then(function () { toast('Enquiry deleted.'); loadInquiries(); }).catch(fail);
+        });
+
+        // Instagram live feed
+        $('igTokenSave').addEventListener('click', function () {
+            var token = $('igToken').value.trim();
+            if (!token) { toast('Paste an access token first.', true); return; }
+            api('POST', '/api/admin/integrations/instagram', { accessToken: token }).then(function (result) {
+                $('igToken').value = '';
+                toast('Instagram feed connected' + (result.username ? ' as @' + result.username : '') + '.');
+                loadIntegrations();
+            }).catch(fail);
+        });
+        $('igTokenRefresh').addEventListener('click', function () {
+            api('POST', '/api/admin/integrations/instagram/refresh', {}).then(function () {
+                toast('Instagram token refreshed.');
+                loadIntegrations();
+            }).catch(fail);
         });
 
         // ---- Services --------------------------------------------------------
@@ -557,12 +2144,13 @@
             $('svcDesc').value = '';
             document.querySelector('input[name=svcIcon]').checked = true;
             $('svcFormTitle').textContent = 'Add a service';
-            $('svcSave').textContent = 'Add service';
+            $('svcSave').textContent = 'Save as draft';
+            $('svcPublish').textContent = 'Publish service';
             $('svcCancel').hidden = true;
         }
 
         function loadServices() {
-            api('GET', '/api/services').then(function (items) { services = items; renderServices(); }).catch(fail);
+            api('GET', '/api/admin/services').then(function (items) { services = items; renderServices(); }).catch(fail);
         }
 
         function renderServices() {
@@ -572,9 +2160,10 @@
             list.innerHTML = services.map(function (s, i) {
                 return '<article class="service" data-id="' + esc(s.id) + '">' +
                     '<div class="ico">' + window.peIcon(s.icon) + '</div>' +
-                    '<div><h3>' + esc(s.title) + '</h3><p>' + esc(s.description) + '</p></div>' +
+                    '<div><h3>' + esc(s.title) + '</h3><p>' + esc(s.description) + '</p><span class="publish-state ' + (s.isPublished ? '' : 'draft') + '">' + (s.isPublished ? (s.hasDraft ? 'Live · draft changes' : 'Live') : 'Draft') + '</span></div>' +
                     '<div class="actions">' +
                     '<button class="btn small" data-act="edit">Edit</button>' +
+                    (s.isPublished ? (s.hasDraft ? '<button class="btn small primary" data-act="publish">Publish draft</button>' : '') + '<button class="btn small" data-act="unpublish">Take offline</button>' : '<button class="btn small primary" data-act="publish">Publish</button>') +
                     '<button class="btn small" data-act="up" aria-label="Move up"' + (i === 0 ? ' disabled' : '') + '>&uarr;</button>' +
                     '<button class="btn small" data-act="down" aria-label="Move down"' + (i === services.length - 1 ? ' disabled' : '') + '>&darr;</button>' +
                     '<button class="btn small danger" data-act="delete">Delete</button>' +
@@ -582,17 +2171,18 @@
             }).join('');
         }
 
-        $('svcForm').addEventListener('submit', function (e) {
-            e.preventDefault();
+        function saveService(action) {
             var id = $('svcId').value;
-            var body = { title: $('svcTitle').value, description: $('svcDesc').value, icon: chosenIcon() };
+            var body = { title: $('svcTitle').value, description: $('svcDesc').value, icon: chosenIcon(), action: action };
             var req = id ? api('PUT', '/api/admin/services/' + id, body) : api('POST', '/api/admin/services', body);
             req.then(function () {
-                toast(id ? 'Service updated.' : 'Service added.');
-                resetServiceForm();
+                toast(action === 'publish' ? 'Service published.' : 'Service draft saved.');
+                if (!id) resetServiceForm();
                 loadServices();
             }).catch(fail);
-        });
+        }
+        $('svcForm').addEventListener('submit', function (e) { e.preventDefault(); saveService('draft'); });
+        $('svcPublish').addEventListener('click', function () { saveService('publish'); });
 
         $('svcCancel').addEventListener('click', resetServiceForm);
 
@@ -610,9 +2200,20 @@
                 var radio = document.querySelector('input[name=svcIcon][value="' + s.icon + '"]');
                 if (radio) radio.checked = true;
                 $('svcFormTitle').textContent = 'Edit service';
-                $('svcSave').textContent = 'Save changes';
+                $('svcSave').textContent = 'Save draft';
+                $('svcPublish').textContent = 'Publish changes';
                 $('svcCancel').hidden = false;
                 $('svcForm').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (act === 'publish' || act === 'unpublish') {
+                api('PUT', '/api/admin/services/' + id, {
+                    title: s.title,
+                    description: s.description,
+                    icon: s.icon,
+                    action: act
+                }).then(function () {
+                    toast(act === 'publish' ? 'Service published.' : 'Service taken offline.');
+                    loadServices();
+                }).catch(fail);
             } else if (act === 'delete') {
                 if (!confirm('Delete "' + s.title + '"? This removes it from the website.')) return;
                 api('DELETE', '/api/admin/services/' + id).then(function () { toast('Service deleted.'); resetServiceForm(); loadServices(); }).catch(fail);

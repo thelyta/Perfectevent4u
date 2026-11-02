@@ -24,12 +24,14 @@
     "express": "^4.21.2",
     "multer": "^2.0.2",
     "next": "16.4.3",
+    "nodemailer": "^6.9.16",
     "pg": "^8.13.0",
     "react": "19.1.0",
     "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@types/node": "^20.19.0",
+    "@types/nodemailer": "^8.0.2",
     "@types/pg": "^8.23.1",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
