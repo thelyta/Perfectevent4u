@@ -334,6 +334,15 @@
     '.testimonial-card .pe-role{font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text-light)}',
     '.testimonial-card .pe-review{font-size:.7rem;text-transform:uppercase;letter-spacing:.16em;color:var(--text);text-decoration:none;border-bottom:1px solid currentColor;align-self:flex-start;margin-top:auto}',
     '.testimonial-read{display:inline-block;margin-top:1.25rem;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:inherit;border-bottom:1px solid currentColor;text-decoration:none}',
+    /* preferred suppliers */
+    '.supplier-grid{display:grid;grid-template-columns:1fr;gap:2rem}',
+    '@media (min-width:768px){.supplier-grid{grid-template-columns:repeat(3,1fr)}}',
+    '.supplier-card{border-top:1px solid var(--border);padding-top:1.75rem;display:flex;flex-direction:column;gap:.55rem}',
+    '.supplier-logo{width:56px;height:56px;object-fit:contain;margin-bottom:.35rem}',
+    '.supplier-category{font-size:.64rem;text-transform:uppercase;letter-spacing:.2em;color:var(--text-light)}',
+    '.supplier-name{font-family:"Playfair Display",Georgia,serif;font-size:1.3rem;font-weight:400}',
+    '.supplier-desc{color:var(--text-light);line-height:1.7;font-size:.92rem}',
+    '.supplier-link{font-size:.68rem;text-transform:uppercase;letter-spacing:.16em;color:inherit;text-decoration:none;border-bottom:1px solid currentColor;align-self:flex-start;margin-top:.5rem}',
     /* inquiry form */
     '.form-status{margin-top:.9rem;font-size:.85rem;min-height:1.2rem}',
     '.form-status.err{color:#a3302b}',
@@ -883,6 +892,33 @@
     });
   }
 
+  // ---- Preferred suppliers ------------------------------------------------
+  function supplierCard(supplier) {
+    var image = supplier.image ? (publicImageUrl(supplier.image) || supplier.image) : '';
+    var link = supplier.link && String(supplier.link).trim();
+    return '<article class="supplier-card fade-in">' +
+      (image ? '<img class="supplier-logo" src="' + esc(image) + '" alt="' + esc(supplier.name || '') + '" loading="lazy">' : '') +
+      (supplier.category ? '<p class="supplier-category">' + esc(supplier.category) + '</p>' : '') +
+      '<h3 class="supplier-name">' + esc(supplier.name || '') + '</h3>' +
+      (supplier.description ? '<p class="supplier-desc">' + esc(supplier.description) + '</p>' : '') +
+      (link ? '<a class="supplier-link" href="' + esc(link) + '" target="_blank" rel="noopener">' + esc(supplier.linkLabel || 'Visit website') + '</a>' : '') +
+      '</article>';
+  }
+
+  function loadSuppliers() {
+    var section = document.querySelector('[data-suppliers-section]');
+    if (!section) return;
+    var grid = section.querySelector('[data-suppliers]');
+    if (!grid) return;
+    getJSON('/api/content/supplier').then(function (items) {
+      if (!Array.isArray(items) || !items.length) return;
+      ensureStyles();
+      section.hidden = false;
+      grid.innerHTML = items.map(supplierCard).join('');
+      reveal(grid);
+    }).catch(function () { /* keep hidden */ });
+  }
+
   enhanceNavigation();
   loadPageContent();
   loadFaqs();
@@ -892,5 +928,6 @@
   loadSettings();
   loadAwards();
   loadTestimonials();
+  loadSuppliers();
   wireInquiryForms();
 })();

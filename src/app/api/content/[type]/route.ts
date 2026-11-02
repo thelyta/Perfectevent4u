@@ -3,7 +3,7 @@ import { getPublishedContent } from '@/lib/db/queries';
 
 export const dynamic = 'force-dynamic';
 
-const contentTypes = ['page', 'faq', 'blog', 'instagram', 'announcement', 'award', 'testimonial', 'settings'];
+const contentTypes = ['page', 'faq', 'blog', 'instagram', 'announcement', 'award', 'testimonial', 'supplier', 'settings'];
 
 export async function GET(request: NextRequest, context: { params: Promise<{ type: string }> }) {
   const { type } = await context.params;

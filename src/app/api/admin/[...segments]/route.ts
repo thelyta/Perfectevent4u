@@ -20,7 +20,7 @@ import { getInstagramStatus, refreshInstagramToken, saveInstagramToken } from '@
 
 const categories = ['Wedding Ceremony', 'Wedding Reception', 'Milestone Celebration', 'Corporate Event'];
 const icons = ['planning', 'floral', 'management', 'venue', 'decor', 'catering', 'photo', 'music'];
-const contentTypes = ['page', 'faq', 'blog', 'instagram', 'announcement', 'award', 'testimonial', 'settings'];
+const contentTypes = ['page', 'faq', 'blog', 'instagram', 'announcement', 'award', 'testimonial', 'supplier', 'settings'];
 const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 type Context = { params: Promise<{ segments: string[] }> };
@@ -376,6 +376,12 @@ export async function POST(request: NextRequest, context: Context) {
       const testimonial = content as Record<string, unknown>;
       if (!clean(testimonial.quote, 2000) || !clean(testimonial.author, 140)) {
         return failure('Published testimonials need a quote and an author.');
+      }
+    }
+    if (action === 'publish' && type === 'supplier') {
+      const supplier = content as Record<string, unknown>;
+      if (!clean(supplier.name, 140)) {
+        return failure('Published suppliers need a name.');
       }
     }
 
@@ -866,7 +872,7 @@ export async function DELETE(request: NextRequest, context: Context) {
   const { segments } = await context.params;
   if (segments.length === 3 && segments[0] === 'content') {
     const [, type, slug] = segments;
-    if (!['faq', 'blog', 'instagram', 'award', 'testimonial'].includes(type)) return failure('Not found.', 404);
+    if (!['faq', 'blog', 'instagram', 'award', 'testimonial', 'supplier'].includes(type)) return failure('Not found.', 404);
     const [item] = await db.select().from(siteContent)
       .where(and(eq(siteContent.contentType, type), eq(siteContent.slug, slug))).limit(1);
     if (!item) return failure('Content not found.', 404);

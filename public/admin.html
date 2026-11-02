@@ -253,6 +253,7 @@
                 <button class="tab" data-tab="journey" role="tab">Journey</button>
                 <button class="tab" data-tab="testimonials" role="tab">Testimonials</button>
                 <button class="tab" data-tab="awards" role="tab">Awards</button>
+                <button class="tab" data-tab="suppliers" role="tab">Suppliers</button>
                 <button class="tab" data-tab="announcements" role="tab">Announcements</button>
                 <button class="tab" data-tab="settings" role="tab">Settings</button>
                 <button class="tab" data-tab="inquiries" role="tab">Inquiries</button>
@@ -538,6 +539,34 @@
                 <div class="blog-admin-list" id="awList"></div>
             </section>
 
+            <!-- Suppliers -->
+            <section id="tab-suppliers" hidden>
+                <div class="panel-card">
+                    <h2 id="supFormTitle">Add a preferred supplier</h2>
+                    <p class="hint">Preferred suppliers appear on the Services page under "Our Preferred Suppliers". The section stays hidden until at least one supplier is published.</p>
+                    <input type="hidden" id="supSlug">
+                    <label class="field"><span>Supplier name</span><input type="text" id="supName" maxlength="140" placeholder="e.g. Bloom &amp; Wild Florals"></label>
+                    <div class="row">
+                        <label class="field"><span>Category (optional)</span><input type="text" id="supCategory" maxlength="80" placeholder="e.g. Florist, Photographer, Venue"></label>
+                        <label class="field"><span>Website / Instagram (optional)</span><input type="text" id="supLink" maxlength="1000" placeholder="https://..."></label>
+                    </div>
+                    <label class="field"><span>Link label</span><input type="text" id="supLinkLabel" maxlength="60" placeholder="Visit website"></label>
+                    <label class="field"><span>Description (optional)</span><textarea id="supDescription" maxlength="600" rows="3"></textarea></label>
+                    <label class="field"><span>Logo / image URL (optional)</span><input type="text" id="supImage" maxlength="1000"></label>
+                    <input type="hidden" id="supImagePublicId">
+                    <label class="field"><span>Upload a logo</span><input type="file" id="supImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                    <p class="count" id="supStatus"></p>
+                    <div class="actions">
+                        <button class="btn" type="button" id="supSaveDraft">Save draft</button>
+                        <button class="btn primary" type="button" id="supPublish">Publish supplier</button>
+                        <button class="btn" type="button" id="supUnpublish" hidden>Unpublish</button>
+                        <button class="btn" type="button" id="supReset">New supplier</button>
+                    </div>
+                </div>
+                <div class="section-head"><h2>Preferred suppliers</h2><span class="count" id="supCount"></span></div>
+                <div class="blog-admin-list" id="supList"></div>
+            </section>
+
             <!-- Announcements -->
             <section id="tab-announcements" hidden>
                 <div class="panel-card">
@@ -722,6 +751,7 @@
         var igEditingPublished = false;
         var awardRecords = [];
         var testimonialRecords = [];
+        var supplierRecords = [];
         var announcementRecord = null;
         var settingsRecord = null;
         var inquiriesList = [];
@@ -745,6 +775,8 @@
                     .sort(function (a, b) { return (a.draftContent.sortOrder || 0) - (b.draftContent.sortOrder || 0); });
                 awardRecords = records.filter(function (record) { return record.type === 'award'; })
                     .sort(function (a, b) { return (a.draftContent.sortOrder || 0) - (b.draftContent.sortOrder || 0); });
+                supplierRecords = records.filter(function (record) { return record.type === 'supplier'; })
+                    .sort(function (a, b) { return (a.draftContent.sortOrder || 0) - (b.draftContent.sortOrder || 0); });
                 announcementRecord = records.find(function (record) { return record.type === 'announcement' && record.slug === 'site'; }) || null;
                 settingsRecord = records.find(function (record) { return record.type === 'settings' && record.slug === 'site'; }) || null;
                 renderPageEditor();
@@ -754,6 +786,7 @@
                 renderAnnouncement();
                 renderTestimonialList();
                 renderAwardList();
+                renderSupplierList();
                 renderSettings();
             }).catch(fail);
         }
@@ -1591,6 +1624,113 @@
             Promise.all(changes).then(function () { toast('Order updated.'); loadContent(); }).catch(fail);
         }
 
+        // ---- Preferred suppliers --------------------------------------------
+        function resetSupplierForm() {
+            ['supSlug', 'supName', 'supCategory', 'supLink', 'supLinkLabel', 'supDescription', 'supImage', 'supImagePublicId'].forEach(function (id) { $(id).value = ''; });
+            $('supFormTitle').textContent = 'Add a preferred supplier';
+            $('supUnpublish').hidden = true;
+            $('supStatus').textContent = '';
+        }
+
+        function saveSupplier(action) {
+            var name = $('supName').value.trim();
+            if (!name) { toast('Add the supplier name first.', true); return; }
+            var slug = $('supSlug').value || slugify(name) || 'supplier-' + Date.now();
+            var record = supplierRecords.find(function (item) { return item.slug === slug; });
+            var sortOrder = record && record.draftContent.sortOrder !== undefined ? record.draftContent.sortOrder : supplierRecords.length;
+            var content = {
+                name: name,
+                category: $('supCategory').value.trim(),
+                link: $('supLink').value.trim(),
+                linkLabel: $('supLinkLabel').value.trim(),
+                description: $('supDescription').value.trim(),
+                image: $('supImage').value.trim(),
+                imagePublicId: $('supImagePublicId').value.trim()
+            };
+            api('POST', '/api/admin/content', { type: 'supplier', slug: slug, action: action, sortOrder: sortOrder, content: content })
+                .then(function (result) {
+                    $('supSlug').value = result.slug;
+                    toast(action === 'publish' ? 'Supplier published.' : 'Supplier saved as a draft.');
+                    loadContent();
+                }).catch(fail);
+        }
+
+        function renderSupplierList() {
+            $('supCount').textContent = supplierRecords.length + (supplierRecords.length === 1 ? ' supplier' : ' suppliers');
+            var list = $('supList');
+            list.replaceChildren();
+            if (!supplierRecords.length) {
+                list.innerHTML = '<div class="empty">No preferred suppliers yet. Drafts will appear here.</div>';
+                return;
+            }
+            supplierRecords.forEach(function (record, index) {
+                var content = record.draftContent || {};
+                var row = document.createElement('article');
+                row.className = 'blog-admin-row';
+                var info = document.createElement('div');
+                var title = document.createElement('h3');
+                title.textContent = content.name || 'Supplier';
+                var state = document.createElement('p');
+                state.textContent = [content.category, (content.description || '').slice(0, 70), content.link ? 'linked' : 'no link'].filter(Boolean).join(' · ');
+                info.append(title, state);
+                var controls = document.createElement('div');
+                controls.className = 'actions';
+                controls.innerHTML = '<button type="button" class="btn small" data-act="edit">Edit</button><button type="button" class="btn small primary" data-act="publish">Publish</button><button type="button" class="btn small" data-act="unpublish">Unpublish</button><button type="button" class="btn small" data-act="up" aria-label="Move up">&uarr;</button><button type="button" class="btn small" data-act="down" aria-label="Move down">&darr;</button><button type="button" class="btn small danger" data-act="delete">Delete</button>';
+                controls.querySelector('[data-act="unpublish"]').hidden = !record.isPublished;
+                controls.querySelector('[data-act="delete"]').hidden = !!record.isPublished;
+                controls.querySelector('[data-act="up"]').disabled = index === 0;
+                controls.querySelector('[data-act="down"]').disabled = index === supplierRecords.length - 1;
+                row.dataset.slug = record.slug;
+                row.append(info, controls);
+                list.appendChild(row);
+            });
+        }
+
+        function fillSupplierForm(record) {
+            var content = record.draftContent || {};
+            $('supSlug').value = record.slug;
+            $('supName').value = content.name || '';
+            $('supCategory').value = content.category || '';
+            $('supLink').value = content.link || '';
+            $('supLinkLabel').value = content.linkLabel || '';
+            $('supDescription').value = content.description || '';
+            $('supImage').value = content.image || '';
+            $('supImagePublicId').value = content.imagePublicId || '';
+            $('supFormTitle').textContent = 'Edit supplier';
+            $('supUnpublish').hidden = !record.isPublished;
+            $('supStatus').textContent = record.isPublished ? 'Live content remains unchanged until Publish.' : 'Draft only.';
+        }
+
+        function handleSupplierListClick(event) {
+            var button = event.target.closest('button[data-act]');
+            if (!button) return;
+            var row = button.closest('[data-slug]');
+            var index = supplierRecords.findIndex(function (item) { return item.slug === row.dataset.slug; });
+            if (index === -1) return;
+            var record = supplierRecords[index];
+            var action = button.dataset.act;
+            if (action === 'edit') {
+                fillSupplierForm(record);
+                $('supName').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            } else if (action === 'publish') {
+                fillSupplierForm(record);
+                saveSupplier('publish');
+            } else if (action === 'unpublish') {
+                api('POST', '/api/admin/content', { type: 'supplier', slug: record.slug, action: 'unpublish' })
+                    .then(function () { toast('Supplier taken offline.'); loadContent(); }).catch(fail);
+            } else if (action === 'delete') {
+                if (!confirm('Delete this supplier draft?')) return;
+                api('DELETE', '/api/admin/content/supplier/' + record.slug)
+                    .then(function () { toast('Supplier deleted.'); if ($('supSlug').value === record.slug) resetSupplierForm(); loadContent(); }).catch(fail);
+            } else if (action === 'up' || action === 'down') {
+                var next = action === 'up' ? index - 1 : index + 1;
+                if (next < 0 || next >= supplierRecords.length) return;
+                supplierRecords[index] = supplierRecords[next];
+                supplierRecords[next] = record;
+                reorderContentRecords(supplierRecords, 'supplier');
+            }
+        }
+
         // ---- Settings --------------------------------------------------------
         function renderSettings() {
             var content = settingsRecord ? settingsRecord.draftContent : {};
@@ -2093,6 +2233,19 @@
             if (!slug) return;
             api('POST', '/api/admin/content', { type: 'award', slug: slug, action: 'unpublish' })
                 .then(function () { toast('Award taken offline.'); loadContent(); }).catch(fail);
+        });
+
+        // Suppliers
+        $('supSaveDraft').addEventListener('click', function () { saveSupplier('draft'); });
+        $('supPublish').addEventListener('click', function () { saveSupplier('publish'); });
+        $('supReset').addEventListener('click', resetSupplierForm);
+        $('supList').addEventListener('click', handleSupplierListClick);
+        $('supImageFile').addEventListener('change', function () { uploadContentImage('supImageFile', 'supImage', 'supImagePublicId'); });
+        $('supUnpublish').addEventListener('click', function () {
+            var slug = $('supSlug').value;
+            if (!slug) return;
+            api('POST', '/api/admin/content', { type: 'supplier', slug: slug, action: 'unpublish' })
+                .then(function () { toast('Supplier taken offline.'); loadContent(); }).catch(fail);
         });
 
         // Settings
