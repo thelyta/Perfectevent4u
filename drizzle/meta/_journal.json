@@ -56,6 +56,20 @@
       "when": 1793616000000,
       "tag": "0007_seed_awards_testimonials_settings",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1793904025486,
+      "tag": "0008_mysterious_silvermane",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1793907823699,
+      "tag": "0009_bitter_wolf_cub",
+      "breakpoints": true
     }
   ]
 }

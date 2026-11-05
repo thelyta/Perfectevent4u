@@ -17,6 +17,18 @@
     });
   }, { threshold: 0.1, rootMargin: '-50px' });
 
+  var PAGE_LINKS = [
+    { key: 'home', href: 'index.html' },
+    { key: 'portfolio', href: 'portfolio.html' },
+    { key: 'services', href: 'services.html' },
+    { key: 'about', href: 'about.html' },
+    { key: 'testimonials', href: 'testimonials.html' },
+    { key: 'faqs', href: 'faqs.html' },
+    { key: 'blog', href: 'blog.html' },
+    { key: 'contact', href: 'contact.html' }
+  ];
+  var DEFAULT_NAV_LABELS = { home: 'Home', portfolio: 'Portfolio', services: 'Services', about: 'About', testimonials: 'Testimonials', faqs: 'FAQs', blog: 'Blog', contact: 'Contact' };
+
   function reveal(root) {
     root.querySelectorAll('.fade-in').forEach(function (el) { observer.observe(el); });
   }
@@ -44,22 +56,59 @@
     catch (_) { return ''; }
   }
 
-  function replaceImageWhenLoaded(image, source) {
+  var heroRevealed = false;
+  function revealHero() {
+    if (heroRevealed) return;
+    heroRevealed = true;
+    document.body.classList.add('pe-hero-ready');
+  }
+
+  function replaceImageWhenLoaded(image, source, done) {
     var url = publicImageUrl(source);
-    if (!url || url === image.src) return;
+    if (!url || url === image.src) { if (done) done(); return; }
     var candidate = new Image();
-    candidate.onload = function () { image.src = url; };
+    candidate.onload = function () { image.src = url; if (done) done(); };
+    candidate.onerror = function () { if (done) done(); };
     candidate.src = url;
+  }
+
+  function buildHeroSlideshow(container, urls) {
+    ensureStyles();
+    container.replaceChildren();
+    var slides = urls.map(function (url, index) {
+      var slide = document.createElement('div');
+      slide.className = 'pe-slide' + (index === 0 ? ' active' : '');
+      slide.style.backgroundImage = 'url("' + publicImageUrl(url) + '")';
+      container.appendChild(slide);
+      return slide;
+    });
+    var current = 0;
+    setInterval(function () {
+      slides[current].classList.remove('active');
+      current = (current + 1) % slides.length;
+      slides[current].classList.add('active');
+    }, 5000);
   }
 
   function loadPageContent() {
     var slug = pageSlug();
     var image = document.querySelector('.hero-bg img, .page-header-bg img, .hero > img');
-    if (!image) return;
+    if (!image) { revealHero(); return; }
 
     getJSON('/api/content/page?slug=' + encodeURIComponent(slug)).then(function (page) {
-      if (!page) return;
-      if (page.heroImage) replaceImageWhenLoaded(image, page.heroImage);
+      if (!page) { revealHero(); return; }
+      var slides = Array.isArray(page.heroImages)
+        ? page.heroImages.filter(function (url) { return url && String(url).trim(); })
+        : [];
+      var heroBg = document.querySelector('.hero-bg');
+      if (slug === 'home' && heroBg && slides.length > 1) {
+        buildHeroSlideshow(heroBg, slides);
+        revealHero();
+      } else if (page.heroImage) {
+        replaceImageWhenLoaded(image, page.heroImage, revealHero);
+      } else {
+        revealHero();
+      }
       var kicker = document.querySelector(slug === 'home' ? '.hero-subtitle' : '.page-header-subtitle');
       var title = document.querySelector(slug === 'home' ? '.hero-title' : '.page-header-title');
       if (kicker && page.heroKicker) kicker.textContent = page.heroKicker;
@@ -78,7 +127,7 @@
         if (page.heroCtaText) cta.textContent = page.heroCtaText;
         if (page.heroCtaHref) cta.href = page.heroCtaHref;
       }
-    }).catch(function () { /* keep legacy hero markup */ });
+    }).catch(function () { revealHero(); /* keep legacy hero markup */ });
   }
 
   function loadFaqs() {
@@ -90,7 +139,7 @@
     getJSON('/api/content/faq').then(function (items) {
       if (!Array.isArray(items) || !items.length) return;
       list.replaceChildren();
-      items.forEach(function (item, index) {
+      items.slice(0, 6).forEach(function (item, index) {
         var row = document.createElement('div');
         row.className = 'fade-in';
         row.style.cssText = 'border-bottom:1px solid var(--border);padding:1.5rem 0';
@@ -101,17 +150,70 @@
         answer.textContent = item.answer || '';
         answer.style.cssText = 'color:var(--text-light);line-height:1.7;font-size:.95rem';
         row.append(question, answer);
-        if (index === items.length - 1) row.style.borderBottom = '0';
         list.appendChild(row);
         observer.observe(row);
       });
+      if (items.length > 6) {
+        ensureStyles();
+        var more = document.createElement('div');
+        more.style.textAlign = 'center';
+        var link = document.createElement('a');
+        link.className = 'testimonial-read';
+        link.href = 'faqs.html';
+        link.textContent = 'View all FAQs';
+        more.appendChild(link);
+        list.appendChild(more);
+      }
     }).catch(function () { /* keep legacy FAQ markup */ });
+  }
+
+  function loadFaqPage() {
+    var list = document.querySelector('[data-faq-list]');
+    if (!list) return;
+    getJSON('/api/content/faq').then(function (items) {
+      if (!Array.isArray(items) || !items.length) return;
+      ensureStyles();
+      var groups = [];
+      items.forEach(function (item) {
+        var name = (item.category && String(item.category).trim()) || 'General';
+        var group = groups.find(function (entry) { return entry.name === name; });
+        if (!group) { group = { name: name, items: [] }; groups.push(group); }
+        group.items.push(item);
+      });
+      var chips = document.querySelector('[data-faq-categories]');
+      if (chips) {
+        chips.innerHTML = ['All'].concat(groups.map(function (group) { return group.name; })).map(function (name, index) {
+          return '<button type="button" class="faq-chip' + (index === 0 ? ' active' : '') + '" data-faq-cat="' + esc(name) + '">' + esc(name) + '</button>';
+        }).join('');
+      }
+      list.innerHTML = groups.map(function (group) {
+        return '<div class="faq-group" data-faq-group="' + esc(group.name) + '">' +
+          '<h2 class="faq-group-title">' + esc(group.name) + '</h2>' +
+          group.items.map(function (item) {
+            return '<details class="faq-item"><summary>' + esc(item.question || '') + '</summary><p>' + esc(item.answer || '') + '</p></details>';
+          }).join('') +
+          '</div>';
+      }).join('');
+      if (chips) {
+        chips.addEventListener('click', function (event) {
+          var button = event.target.closest('button[data-faq-cat]');
+          if (!button) return;
+          var category = button.getAttribute('data-faq-cat');
+          chips.querySelectorAll('button').forEach(function (item) { item.classList.toggle('active', item === button); });
+          list.querySelectorAll('[data-faq-group]').forEach(function (group) {
+            group.hidden = category !== 'All' && group.getAttribute('data-faq-group') !== category;
+          });
+        });
+      }
+      reveal(list);
+    }).catch(function () { /* keep empty state */ });
   }
 
   function enhanceNavigation() {
     var extras = [
-      { href: 'testimonials.html', label: 'Testimonials' },
-      { href: 'blog.html', label: 'Journal' }
+      { href: 'testimonials.html', label: DEFAULT_NAV_LABELS.testimonials },
+      { href: 'faqs.html', label: DEFAULT_NAV_LABELS.faqs },
+      { href: 'blog.html', label: DEFAULT_NAV_LABELS.blog }
     ];
     document.querySelectorAll('.nav-links, .mobile-menu').forEach(function (nav) {
       extras.forEach(function (extra) {
@@ -306,6 +408,12 @@
     '.pe-lightbox{position:fixed;inset:0;z-index:2200;display:flex;align-items:center;justify-content:center;background:rgba(10,12,20,.94)}',
     '.pe-lightbox[hidden]{display:none}',
     '.pe-lightbox img{max-width:90vw;max-height:82vh;object-fit:contain;display:block}',
+    '.pe-lightbox-media{display:flex;align-items:center;justify-content:center}',
+    '.pe-lightbox video{max-width:90vw;max-height:82vh;display:block;background:#000}',
+    '.masonry-item video.pe-auto{width:100%;display:block;transition:transform .7s ease}',
+    '.pe-modal-grid video{width:100%;height:170px;object-fit:cover;cursor:zoom-in;display:block;background:#000}',
+    '.pe-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.4s ease;filter:blur(3px) brightness(.85)}',
+    '.pe-slide.active{opacity:1}',
     '.pe-lightbox-cap{position:absolute;bottom:1.25rem;left:0;right:0;text-align:center;color:#fff;font-size:.85rem;letter-spacing:.05em;padding:0 1rem}',
     '.pe-lightbox button{position:absolute;background:rgba(255,255,255,.14);color:#fff;border:none;width:3rem;height:3rem;cursor:pointer;font-size:1.5rem;border-radius:50%;line-height:1}',
     '.pe-lightbox .pe-lb-close{top:1rem;right:1rem;width:2.5rem;height:2.5rem;font-size:1.2rem}',
@@ -343,6 +451,19 @@
     '.supplier-name{font-family:"Playfair Display",Georgia,serif;font-size:1.3rem;font-weight:400}',
     '.supplier-desc{color:var(--text-light);line-height:1.7;font-size:.92rem}',
     '.supplier-link{font-size:.68rem;text-transform:uppercase;letter-spacing:.16em;color:inherit;text-decoration:none;border-bottom:1px solid currentColor;align-self:flex-start;margin-top:.5rem}',
+    '.service-icon-img{width:52px;height:52px;object-fit:contain;display:block}',
+    /* FAQ page */
+    '.faq-tools{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:2.5rem}',
+    '.faq-chip{font-family:inherit;font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;padding:.5rem 1rem;border:1px solid var(--border);background:transparent;color:inherit;cursor:pointer}',
+    '.faq-chip.active{border-color:currentColor;box-shadow:inset 0 0 0 1px currentColor}',
+    '.faq-group{margin-bottom:3rem}',
+    '.faq-group-title{font-family:"Playfair Display",Georgia,serif;font-size:1.5rem;font-weight:400;margin-bottom:1rem}',
+    '.faq-item{border-bottom:1px solid var(--border);padding:1rem 0}',
+    '.faq-item summary{cursor:pointer;font-size:1.05rem;font-family:"Playfair Display",Georgia,serif;list-style:none}',
+    '.faq-item summary::-webkit-details-marker{display:none}',
+    '.faq-item summary::after{content:"+";float:right;color:var(--text-light)}',
+    '.faq-item[open] summary::after{content:"\\2212"}',
+    '.faq-item p{margin-top:.75rem;color:var(--text-light);line-height:1.7;font-size:.95rem}',
     /* inquiry form */
     '.form-status{margin-top:.9rem;font-size:.85rem;min-height:1.2rem}',
     '.form-status.err{color:#a3302b}',
@@ -449,8 +570,29 @@
     return list.join('|');
   }
 
+  function isVideo(item) {
+    return Boolean(item) && item.mediaType === 'video';
+  }
+
+  var videoObserver = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      var video = entry.target;
+      if (entry.isIntersecting) {
+        var result = video.play();
+        if (result && result.catch) result.catch(function () {});
+      } else {
+        video.pause();
+      }
+    });
+  }, { threshold: 0.35 });
+
+  function activateVideos(root) {
+    root.querySelectorAll('video.pe-auto').forEach(function (video) { videoObserver.observe(video); });
+  }
+
   function card(p) {
     var isAlbum = p.type === 'album';
+    var video = isVideo(p);
     var attrs = 'class="masonry-item fade-in' + (isAlbum ? ' pe-album-item' : '') + '"' +
       ' data-category="' + esc(p.category) + '"' +
       ' data-type="' + (isAlbum ? 'album' : 'photo') + '"' +
@@ -459,10 +601,12 @@
       ' data-locations="' + esc(locationList(p)) + '"' +
       (isAlbum ? ' data-album-id="' + esc(p.id) + '" role="button" tabindex="0"' : '');
     var badge = isAlbum
-      ? '<span class="pe-album-badge">' + (p.photos ? p.photos.length : 0) + ' photos</span>'
-      : '';
-    return '<div ' + attrs + '>' +
-      '<img src="' + esc(imageSrc(p)) + '" alt="' + esc(p.title) + '" loading="lazy">' + badge +
+      ? '<span class="pe-album-badge">' + (p.photos ? p.photos.length : 0) + (video ? ' clips' : ' photos') + '</span>'
+      : (video ? '<span class="pe-album-badge">Video</span>' : '');
+    var media = video
+      ? '<video class="pe-auto" src="' + esc(publicImageUrl(p.image) || p.image) + '" muted loop playsinline preload="metadata"></video>'
+      : '<img src="' + esc(imageSrc(p)) + '" alt="' + esc(p.title) + '" loading="lazy">';
+    return '<div ' + attrs + '>' + media + badge +
       '<div class="masonry-overlay"><div class="masonry-info">' +
       (p.location ? '<p class="masonry-location">' + esc(p.location) + '</p>' : '') +
       '<h3 class="masonry-name">' + esc(p.title) + '</h3>' +
@@ -504,13 +648,25 @@
     var box = modal.querySelector('.pe-modal-grid');
     box.replaceChildren();
     photos.forEach(function (photo, index) {
-      var img = document.createElement('img');
-      img.src = publicImageUrl(photo.image) || photo.image || '';
-      img.alt = photo.title || album.title || '';
-      img.loading = 'lazy';
-      img.addEventListener('click', function () { openLightbox(photos, index); });
-      box.appendChild(img);
+      var media;
+      if (isVideo(photo)) {
+        media = document.createElement('video');
+        media.src = publicImageUrl(photo.image) || photo.image || '';
+        media.muted = true;
+        media.loop = true;
+        media.playsInline = true;
+        media.preload = 'metadata';
+        media.className = 'pe-modal-video';
+      } else {
+        media = document.createElement('img');
+        media.src = publicImageUrl(photo.image) || photo.image || '';
+        media.alt = photo.title || album.title || '';
+        media.loading = 'lazy';
+      }
+      media.addEventListener('click', function () { openLightbox(photos, index); });
+      box.appendChild(media);
     });
+    activateVideos(box);
     modal.hidden = false;
     document.body.style.overflow = 'hidden';
   }
@@ -530,7 +686,7 @@
     lightbox.innerHTML =
       '<button class="pe-lb-close" type="button" aria-label="Close">&times;</button>' +
       '<button class="pe-lb-prev" type="button" aria-label="Previous">&#8249;</button>' +
-      '<img alt="">' +
+      '<div class="pe-lightbox-media"></div>' +
       '<button class="pe-lb-next" type="button" aria-label="Next">&#8250;</button>' +
       '<div class="pe-lightbox-cap"></div>';
     lightbox.querySelector('.pe-lb-close').addEventListener('click', closeLightbox);
@@ -553,8 +709,21 @@
   function showLightboxPhoto() {
     var photo = lightboxPhotos[lightboxIndex];
     if (!photo) return;
-    lightbox.querySelector('img').src = publicImageUrl(photo.image) || photo.image || '';
-    lightbox.querySelector('img').alt = photo.title || '';
+    var container = lightbox.querySelector('.pe-lightbox-media');
+    container.replaceChildren();
+    if (isVideo(photo)) {
+      var video = document.createElement('video');
+      video.src = publicImageUrl(photo.image) || photo.image || '';
+      video.controls = true;
+      video.autoplay = true;
+      video.playsInline = true;
+      container.appendChild(video);
+    } else {
+      var image = document.createElement('img');
+      image.src = publicImageUrl(photo.image) || photo.image || '';
+      image.alt = photo.title || '';
+      container.appendChild(image);
+    }
     lightbox.querySelector('.pe-lightbox-cap').textContent =
       [photo.title, photo.location].filter(Boolean).join(' \u00b7 ');
     var many = lightboxPhotos.length > 1;
@@ -689,6 +858,7 @@
 
       grid.innerHTML = displayed.map(card).join('');
       reveal(grid);
+      activateVideos(grid);
       wirePortfolioInteractions(grid, items);
       if (mode !== 'home') wirePortfolioFilters(grid, displayed);
     }).catch(function () { /* keep fallback markup */ });
@@ -700,8 +870,11 @@
     getJSON('/api/services').then(function (items) {
       if (!Array.isArray(items) || !items.length) return;
       services.innerHTML = items.map(function (s) {
+        var icon = s.image
+          ? '<img class="service-icon-img" src="' + esc(publicImageUrl(s.image) || s.image) + '" alt="" loading="lazy">'
+          : window.peIcon(s.icon);
         return '<div class="service-card fade-in">' +
-          '<div class="service-icon">' + window.peIcon(s.icon) + '</div>' +
+          '<div class="service-icon">' + icon + '</div>' +
           '<h3 class="service-title">' + esc(s.title) + '</h3>' +
           '<p class="service-desc">' + esc(s.description) + '</p>' +
           '</div>';
@@ -719,9 +892,24 @@
   };
   var SOCIAL_LABELS = { instagram: 'Instagram', facebook: 'Facebook', tiktok: 'TikTok', youtube: 'YouTube' };
 
+  function applyNavLabels(labels) {
+    PAGE_LINKS.forEach(function (page) {
+      var label = labels[page.key];
+      if (!label) return;
+      document.querySelectorAll('.nav-links a[href="' + page.href + '"], .mobile-menu a[href="' + page.href + '"], .links a[href="' + page.href + '"], .footer-links a[href="' + page.href + '"]').forEach(function (link) {
+        if (link.classList.contains('nav-btn') || link.classList.contains('nav-toggle-cta')) return;
+        link.textContent = label;
+      });
+    });
+    var slug = pageSlug();
+    if (labels[slug]) document.title = labels[slug] + ' | Perfectevent4u';
+  }
+
   function applySettings(settings) {
     if (!settings || typeof settings !== 'object') return;
     ensureStyles();
+
+    applyNavLabels(Object.assign({}, DEFAULT_NAV_LABELS, settings.navLabels || {}));
 
     var networks = ['instagram', 'facebook', 'tiktok', 'youtube'].filter(function (network) {
       return typeof settings[network] === 'string' && settings[network].trim();
@@ -762,6 +950,20 @@
 
   function loadSettings() {
     getJSON('/api/content/settings?slug=site').then(applySettings).catch(function () { /* keep static */ });
+  }
+
+  function loadPageVisibility() {
+    getJSON('/api/content/page').then(function (pages) {
+      if (!Array.isArray(pages)) return;
+      var offline = {};
+      pages.forEach(function (page) { if (page && page.offline) offline[page.slug] = true; });
+      var slug = pageSlug();
+      if (slug !== 'home' && offline[slug]) { window.location.replace('index.html'); return; }
+      PAGE_LINKS.forEach(function (page) {
+        if (!offline[page.key]) return;
+        document.querySelectorAll('.nav-links a[href="' + page.href + '"], .mobile-menu a[href="' + page.href + '"], .links a[href="' + page.href + '"], .footer-links a[href="' + page.href + '"]').forEach(function (link) { link.remove(); });
+      });
+    }).catch(function () { /* keep pages online */ });
   }
 
   // ---- Awards -------------------------------------------------------------
@@ -922,12 +1124,16 @@
   enhanceNavigation();
   loadPageContent();
   loadFaqs();
+  loadFaqPage();
   loadBlog();
   loadInstagram();
   loadAnnouncement();
   loadSettings();
+  loadPageVisibility();
   loadAwards();
   loadTestimonials();
   loadSuppliers();
   wireInquiryForms();
+
+  setTimeout(revealHero, 1500);
 })();

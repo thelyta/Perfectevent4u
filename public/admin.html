@@ -153,6 +153,7 @@
         .photo { background: var(--card); border: 1px solid var(--border); display: flex; flex-direction: column; }
         .photo .img { position: relative; aspect-ratio: 4 / 3; background: #e9e7e3; }
         .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .photo .img video { width: 100%; height: 100%; object-fit: cover; display: block; }
         .badge {
             position: absolute; top: 0.5rem; left: 0.5rem; background: var(--text); color: var(--bg);
             font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.15em; padding: 0.25rem 0.5rem;
@@ -163,18 +164,39 @@
         .photo .actions { display: flex; gap: 0.4rem; padding: 0.6rem 0.9rem 0.9rem; flex-wrap: wrap; }
 
         .cover-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 0.5rem; max-height: 55vh; overflow: auto; margin-bottom: 1rem; }
-        .cover-grid img { width: 100%; height: 100px; object-fit: cover; cursor: pointer; border: 2px solid transparent; display: block; }
-        .cover-grid img.selected { border-color: var(--text); }
+        .cover-grid img, .cover-grid video { width: 100%; height: 100px; object-fit: cover; cursor: pointer; border: 2px solid transparent; display: block; }
+        .cover-grid img.selected, .cover-grid video.selected { border-color: var(--text); }
 
         .order-list { display: grid; gap: 0.5rem; }
         .order-row { display: flex; align-items: center; gap: 0.8rem; border: 1px solid var(--border); background: #fff; padding: 0.5rem 0.7rem; }
-        .order-row img { width: 48px; height: 48px; object-fit: cover; flex-shrink: 0; background: #e9e7e3; }
+        .order-row img, .order-row video { width: 48px; height: 48px; object-fit: cover; flex-shrink: 0; background: #e9e7e3; }
         .order-row .t { flex: 1; font-size: 0.9rem; min-width: 0; }
         .order-row .t small { display: block; color: var(--text-light); font-size: 0.72rem; }
         .order-row .n { color: var(--text-light); font-size: 0.75rem; width: 1.6rem; text-align: right; }
         .order-row .k { font-size: 0.58rem; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-light); }
         .order-empty { color: var(--text-light); padding: 1rem; border: 1px dashed var(--border); text-align: center; font-size: 0.85rem; }
         @media (max-width: 640px) { .tabs { gap: 1.1rem; overflow-x: auto; white-space: nowrap; } .tab { white-space: nowrap; } }
+
+        /* Image cropper */
+        .crop-stage { position: relative; display: block; margin: 0 auto; line-height: 0; touch-action: none; user-select: none; overflow: hidden; }
+        .crop-stage img { max-width: min(560px, calc(100vw - 6rem)); max-height: 56vh; display: block; }
+        .crop-box { position: absolute; border: 2px solid #fff; box-shadow: 0 0 0 9999px rgba(20, 25, 45, 0.55); cursor: move; box-sizing: border-box; }
+        .crop-box .h { position: absolute; width: 14px; height: 14px; background: #fff; border: 1px solid #202946; box-sizing: border-box; }
+        .crop-box .h.nw { left: -7px; top: -7px; cursor: nwse-resize; }
+        .crop-box .h.ne { right: -7px; top: -7px; cursor: nesw-resize; }
+        .crop-box .h.sw { left: -7px; bottom: -7px; cursor: nesw-resize; }
+        .crop-box .h.se { right: -7px; bottom: -7px; cursor: nwse-resize; }
+        .crop-aspects { display: flex; gap: 0.4rem; flex-wrap: wrap; margin: 1rem 0 0; }
+        .crop-aspects button { font-family: inherit; font-size: 0.62rem; text-transform: uppercase; letter-spacing: 0.12em; padding: 0.4rem 0.7rem; border: 1px solid var(--border); background: #fff; cursor: pointer; color: var(--text); }
+        .crop-aspects button.active { border-color: var(--text); box-shadow: inset 0 0 0 1px var(--text); }
+        #edPreview { width: 96px; height: 72px; object-fit: cover; border: 1px solid var(--border); display: block; }
+
+        /* Media library picker */
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 0.5rem; max-height: 50vh; overflow: auto; margin-bottom: 1rem; }
+        .media-grid button { padding: 0; border: 1px solid var(--border); background: #fff; cursor: pointer; text-align: left; }
+        .media-grid button:hover { border-color: var(--text); }
+        .media-grid img, .media-grid video { width: 100%; height: 90px; object-fit: cover; display: block; background: #e9e7e3; }
+        .media-grid .label { display: block; font-size: 0.6rem; padding: 0.25rem 0.35rem; color: var(--text-light); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
         /* Service list */
         .service-list { display: grid; gap: 1rem; }
@@ -266,9 +288,9 @@
                     <p class="hint">Choose photos, add details, then publish them when they are ready. Photos are resized automatically before upload.</p>
 
                     <div class="drop" id="drop">
-                        <strong>Click to choose photos</strong>
-                        <span>or drag and drop them here &middot; JPG, PNG, WebP or GIF</span>
-                        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif" multiple>
+                        <strong>Click to choose photos or videos</strong>
+                        <span>or drag and drop them here &middot; JPG, PNG, WebP, GIF, MP4, WebM or MOV</span>
+                        <input type="file" id="fileInput" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" multiple>
                     </div>
 
                     <div class="pending" id="pending"></div>
@@ -358,6 +380,17 @@
                         </label>
                         <span class="field"><span>Icon</span></span>
                         <div class="icon-picker" id="iconPicker"></div>
+                        <label class="field"><span>Icon image (optional — replaces the icon above)</span>
+                            <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap">
+                                <img id="svcIconPreview" alt="" style="width:48px;height:48px;object-fit:contain;border:1px solid var(--border);display:none">
+                                <input type="text" id="svcImage" maxlength="1000" placeholder="Image URL" style="flex:1;min-width:200px">
+                                <button class="btn small" type="button" data-pick="svcImage" data-pick-public="svcImagePublicId" data-pick-preview="svcIconPreview">Choose existing</button>
+                                <button class="btn small" type="button" id="svcImageCrop">Adjust / crop</button>
+                            </div>
+                        </label>
+                        <input type="hidden" id="svcImagePublicId">
+                        <label class="field"><span>Upload an icon image</span><input type="file" id="svcImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                        <button class="btn small" type="button" id="svcImageClear" style="margin-bottom:1.1rem">Remove icon image</button>
                         <div style="display:flex; gap:0.6rem; flex-wrap:wrap">
                             <button class="btn" type="submit" id="svcSave">Save as draft</button>
                             <button class="btn primary" type="button" id="svcPublish">Publish service</button>
@@ -387,21 +420,50 @@
                             <option value="services">Services</option>
                             <option value="contact">Contact</option>
                             <option value="blog">Blog</option>
+                            <option value="faqs">FAQs</option>
                         </select>
                     </label>
                     <div class="row">
                         <label class="field"><span>Header eyebrow</span><input type="text" id="pageKicker" maxlength="100"></label>
                         <label class="field"><span>Header title</span><textarea id="pageTitle" maxlength="240"></textarea></label>
                     </div>
-                    <label class="field"><span>Header image URL</span><input type="text" id="pageImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"></label>
+                    <label class="field"><span>Header image URL</span><input type="text" id="pageImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"><button class="btn small" type="button" data-pick="pageImage" data-pick-public="pageImagePublicId" style="margin-top:0.4rem">Choose existing</button></label>
                     <input type="hidden" id="pageImagePublicId">
                     <label class="field"><span>Upload a new header image</span><input type="file" id="pageImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                    <button class="btn small" type="button" id="pageImageCrop" style="margin-bottom:1.1rem">Adjust / crop the header image</button>
                     <div class="row" id="homeCtaFields">
                         <label class="field"><span>Home button label</span><input type="text" id="pageCtaText" maxlength="80"></label>
                         <label class="field"><span>Home button link</span><input type="text" id="pageCtaHref" maxlength="300"></label>
                     </div>
+                    <div id="homeSlideshow" hidden>
+                        <h3>Home hero slideshow</h3>
+                        <p class="hint">Add up to 4 pictures. With two or more, the home hero gently rotates between them. Slide 1 is the main hero image.</p>
+                        <div class="row">
+                            <label class="field"><span>Slide 1 URL</span><input type="text" id="hero1" maxlength="1000"><button class="btn small" type="button" data-pick="hero1" style="margin-top:0.4rem">Choose existing</button></label>
+                            <label class="field"><span>Slide 1 upload</span><input type="file" id="heroFile1" accept="image/*"></label>
+                        </div>
+                        <div class="row">
+                            <label class="field"><span>Slide 2 URL</span><input type="text" id="hero2" maxlength="1000"><button class="btn small" type="button" data-pick="hero2" style="margin-top:0.4rem">Choose existing</button></label>
+                            <label class="field"><span>Slide 2 upload</span><input type="file" id="heroFile2" accept="image/*"></label>
+                        </div>
+                        <div class="row">
+                            <label class="field"><span>Slide 3 URL</span><input type="text" id="hero3" maxlength="1000"><button class="btn small" type="button" data-pick="hero3" style="margin-top:0.4rem">Choose existing</button></label>
+                            <label class="field"><span>Slide 3 upload</span><input type="file" id="heroFile3" accept="image/*"></label>
+                        </div>
+                        <div class="row">
+                            <label class="field"><span>Slide 4 URL</span><input type="text" id="hero4" maxlength="1000"><button class="btn small" type="button" data-pick="hero4" style="margin-top:0.4rem">Choose existing</button></label>
+                            <label class="field"><span>Slide 4 upload</span><input type="file" id="heroFile4" accept="image/*"></label>
+                        </div>
+                        <div style="display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.1rem">
+                            <button class="btn small" type="button" id="heroCrop1">Adjust slide 1</button>
+                            <button class="btn small" type="button" id="heroCrop2">Adjust slide 2</button>
+                            <button class="btn small" type="button" id="heroCrop3">Adjust slide 3</button>
+                            <button class="btn small" type="button" id="heroCrop4">Adjust slide 4</button>
+                        </div>
+                    </div>
                     <h3>Page copy</h3>
                     <div id="pageCopyFields" class="page-copy-fields"></div>
+                    <label class="check"><input type="checkbox" id="pageOffline"> Take this page offline (hidden from menus; visitors are sent to the home page)</label>
                     <p class="count" id="pageStatus"></p>
                     <div class="actions">
                         <button class="btn" type="button" id="pageSaveDraft">Save draft</button>
@@ -431,7 +493,7 @@
                     <label class="field"><span>Title</span><input type="text" id="blogTitle" maxlength="140"></label>
                     <label class="field"><span>Short introduction</span><textarea id="blogExcerpt" maxlength="320"></textarea></label>
                     <label class="field"><span>Article text</span><textarea id="blogBody" maxlength="30000" rows="12"></textarea></label>
-                    <label class="field"><span>Cover image URL</span><input type="text" id="blogImage" maxlength="1000"></label>
+                    <label class="field"><span>Cover image URL</span><input type="text" id="blogImage" maxlength="1000"><button class="btn small" type="button" data-pick="blogImage" data-pick-public="blogImagePublicId" style="margin-top:0.4rem">Choose existing</button></label>
                     <input type="hidden" id="blogImagePublicId">
                     <label class="field"><span>Upload a cover image</span><input type="file" id="blogImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
                     <p class="count" id="blogStatus"></p>
@@ -450,11 +512,18 @@
             <section id="tab-journey" hidden>
                 <div class="panel-card">
                     <h2>Live Instagram feed</h2>
-                    <p class="hint">When connected, the "Follow Our Journey" section pulls your latest Instagram posts automatically. If it is not connected, the posts you add below are shown instead.</p>
+                    <p class="hint">Connect once and your latest Instagram posts appear automatically in "Follow Our Journey". The easiest option is a JSON feed URL from a service like Behold — connect your Instagram there (Instagram login, no Facebook needed), then paste the feed URL here. If nothing is connected, the posts you add below are shown instead.</p>
                     <p class="count" id="igConnStatus"></p>
+                    <label class="field"><span>Instagram feed URL</span><input type="text" id="igFeedUrl" maxlength="2000" placeholder="https://feeds.behold.so/..."></label>
+                    <div class="actions">
+                        <button class="btn primary" type="button" id="igFeedSave">Connect feed URL</button>
+                        <button class="btn" type="button" id="igFeedClear">Remove feed URL</button>
+                    </div>
+                    <hr style="border:none;border-top:1px solid var(--border);margin:1.5rem 0">
+                    <p class="hint">Advanced: use an Instagram access token instead (requires a Meta app).</p>
                     <label class="field"><span>Instagram access token</span><input type="text" id="igToken" maxlength="2000" placeholder="Paste a long-lived Instagram access token"></label>
                     <div class="actions">
-                        <button class="btn primary" type="button" id="igTokenSave">Connect feed</button>
+                        <button class="btn" type="button" id="igTokenSave">Connect token</button>
                         <button class="btn" type="button" id="igTokenRefresh">Refresh token</button>
                     </div>
                 </div>
@@ -462,7 +531,7 @@
                     <h2 id="igFormTitle">Add a journey post</h2>
                     <p class="hint">These appear in the "Follow Our Journey" section on the home page.</p>
                     <input type="hidden" id="igSlug">
-                    <label class="field"><span>Image URL</span><input type="text" id="igImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"></label>
+                    <label class="field"><span>Image URL</span><input type="text" id="igImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"><button class="btn small" type="button" data-pick="igImage" data-pick-public="igImagePublicId" style="margin-top:0.4rem">Choose existing</button></label>
                     <input type="hidden" id="igImagePublicId">
                     <label class="field"><span>Upload an image</span><input type="file" id="igImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
                     <label class="field"><span>Caption</span><textarea id="igCaption" maxlength="600"></textarea></label>
@@ -524,7 +593,7 @@
                         <label class="field"><span>Label (optional)</span><input type="text" id="awLabel" maxlength="80" placeholder="e.g. 2026 Winner"></label>
                         <label class="field"><span>Link (optional)</span><input type="text" id="awLink" maxlength="1000" placeholder="https://..."></label>
                     </div>
-                    <label class="field"><span>Badge image URL</span><input type="text" id="awImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"></label>
+                    <label class="field"><span>Badge image URL</span><input type="text" id="awImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"><button class="btn small" type="button" data-pick="awImage" data-pick-public="awImagePublicId" style="margin-top:0.4rem">Choose existing</button></label>
                     <input type="hidden" id="awImagePublicId">
                     <label class="field"><span>Upload a badge</span><input type="file" id="awImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
                     <p class="count" id="awStatus"></p>
@@ -552,7 +621,7 @@
                     </div>
                     <label class="field"><span>Link label</span><input type="text" id="supLinkLabel" maxlength="60" placeholder="Visit website"></label>
                     <label class="field"><span>Description (optional)</span><textarea id="supDescription" maxlength="600" rows="3"></textarea></label>
-                    <label class="field"><span>Logo / image URL (optional)</span><input type="text" id="supImage" maxlength="1000"></label>
+                    <label class="field"><span>Logo / image URL (optional)</span><input type="text" id="supImage" maxlength="1000"><button class="btn small" type="button" data-pick="supImage" data-pick-public="supImagePublicId" style="margin-top:0.4rem">Choose existing</button></label>
                     <input type="hidden" id="supImagePublicId">
                     <label class="field"><span>Upload a logo</span><input type="file" id="supImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
                     <p class="count" id="supStatus"></p>
@@ -583,7 +652,7 @@
                     <h2>Announcement pop-up</h2>
                     <p class="hint">A poster that pops up when visitors arrive. Each visitor sees a poster once.</p>
                     <label class="check"><input type="checkbox" id="anPopupEnabled"> Show the pop-up</label>
-                    <label class="field"><span>Banner image URL</span><input type="text" id="anPopupImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"></label>
+                    <label class="field"><span>Banner image URL</span><input type="text" id="anPopupImage" maxlength="1000" placeholder="Cloudinary URL or existing image path"><button class="btn small" type="button" data-pick="anPopupImage" data-pick-public="anPopupImagePublicId" style="margin-top:0.4rem">Choose existing</button></label>
                     <input type="hidden" id="anPopupImagePublicId">
                     <label class="field"><span>Upload a banner</span><input type="file" id="anPopupImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
                     <label class="field"><span>Title</span><input type="text" id="anPopupTitle" maxlength="120"></label>
@@ -603,6 +672,26 @@
             </section>
             <!-- Settings -->
             <section id="tab-settings" hidden>
+                <div class="panel-card">
+                    <h2>Page names</h2>
+                    <p class="hint">Change the navigation label and browser tab name for each page (for example, rename "Journal" to "Blog"). To change a page's big header title, use the Pages &amp; FAQs tab.</p>
+                    <div class="row">
+                        <label class="field"><span>Home</span><input type="text" id="nlHome" maxlength="40"></label>
+                        <label class="field"><span>Portfolio</span><input type="text" id="nlPortfolio" maxlength="40"></label>
+                    </div>
+                    <div class="row">
+                        <label class="field"><span>Services</span><input type="text" id="nlServices" maxlength="40"></label>
+                        <label class="field"><span>About</span><input type="text" id="nlAbout" maxlength="40"></label>
+                    </div>
+                    <div class="row">
+                        <label class="field"><span>Testimonials</span><input type="text" id="nlTestimonials" maxlength="40"></label>
+                        <label class="field"><span>FAQs</span><input type="text" id="nlFaqs" maxlength="40"></label>
+                    </div>
+                    <div class="row">
+                        <label class="field"><span>Journal / Blog</span><input type="text" id="nlBlog" maxlength="40"></label>
+                        <label class="field"><span>Contact</span><input type="text" id="nlContact" maxlength="40"></label>
+                    </div>
+                </div>
                 <div class="panel-card">
                     <h2>Social links</h2>
                     <p class="hint">These appear in the footer. Leave a field empty to hide that network.</p>
@@ -649,6 +738,15 @@
         <form method="dialog" id="editForm">
             <h2>Edit photo</h2>
             <label class="field"><span>Title</span><input type="text" id="edTitle" maxlength="80" required></label>
+            <label class="field"><span>Photo</span>
+                <div style="display:flex;align-items:center;gap:0.8rem">
+                    <img id="edPreview" alt="">
+                    <button class="btn small" type="button" id="edCrop">Adjust / crop</button>
+                    <button class="btn small" type="button" data-pick="edImage" data-pick-public="edImagePublicId" data-pick-preview="edPreview" data-pick-types="any">Choose existing</button>
+                </div>
+            </label>
+            <input type="hidden" id="edImage">
+            <input type="hidden" id="edImagePublicId">
             <div class="row">
                 <label class="field"><span>Location</span><input type="text" id="edLocation" maxlength="60"></label>
                 <label class="field">
@@ -697,6 +795,34 @@
         <div class="cover-grid" id="coverGrid"></div>
         <div class="dialog-actions">
             <button class="btn" type="button" id="coverCancel">Close</button>
+        </div>
+    </dialog>
+
+    <!-- Crop / adjust image dialog -->
+    <dialog id="cropDialog">
+        <h2>Adjust the picture</h2>
+        <p class="hint" style="margin-bottom:0.75rem">Drag the box (or its corners) to choose which part of the photo to keep, then Apply.</p>
+        <div class="crop-stage" id="cropStage">
+            <img id="cropImage" alt="Crop preview">
+            <div class="crop-box" id="cropBox">
+                <span class="h nw"></span><span class="h ne"></span><span class="h sw"></span><span class="h se"></span>
+            </div>
+        </div>
+        <div class="crop-aspects" id="cropAspects"></div>
+        <div class="dialog-actions">
+            <button class="btn" type="button" id="cropCancel">Cancel</button>
+            <button class="btn primary" type="button" id="cropApply">Apply</button>
+        </div>
+    </dialog>
+
+    <!-- Choose an existing picture -->
+    <dialog id="mediaDialog">
+        <h2>Choose an existing picture</h2>
+        <p class="hint" style="margin-bottom:0.75rem">Pick a picture already used on the site instead of uploading it again.</p>
+        <input type="search" id="mediaSearch" placeholder="Search pictures..." style="margin-bottom:0.9rem">
+        <div class="media-grid" id="mediaGrid"></div>
+        <div class="dialog-actions">
+            <button class="btn" type="button" id="mediaCancel">Close</button>
         </div>
     </dialog>
 
@@ -800,7 +926,7 @@
                 { key: 'introQuote', label: 'Introduction quote', value: 'We specialise in creating beautiful celebrations for clients with refined tastes throughout England.', multiline: true },
                 { key: 'introText', label: 'Introduction text', value: 'At Perfectevent4u, we believe your celebration should be a reflection of your unique story. We offer a hands-on approach to every event, focusing on your brief to ensure every detail is executed with excellence.', multiline: true },
                 { key: 'portfolioTitle', label: 'Portfolio heading', value: 'The Lookbook' },
-                { key: 'portfolioSubtitle', label: 'Portfolio eyebrow', value: 'Selected Works' },
+                { key: 'portfolioSubtitle', label: 'Portfolio eyebrow', value: 'Featured Work' },
                 { key: 'serviceEyebrow', label: 'Services eyebrow', value: 'What We Do' },
                 { key: 'serviceTitle', label: 'Services heading', value: 'Our Services' },
                 { key: 'aboutName', label: 'Founder name', value: 'Abi Shobowale' },
@@ -891,7 +1017,8 @@
                 portfolio: { heroImage: 'wed.jpeg', heroKicker: 'Our Work', heroTitle: 'The Lookbook' },
                 services: { heroImage: 'wed2.webp', heroKicker: 'What We Do', heroTitle: 'Our Services' },
                 contact: { heroImage: 'hall.jpg', heroKicker: 'Get In Touch', heroTitle: 'Begin Your Journey' },
-                blog: { heroImage: 'wed2.webp', heroKicker: 'Stories & Inspiration', heroTitle: 'The Journal' }
+                blog: { heroImage: 'wed2.webp', heroKicker: 'Stories & Inspiration', heroTitle: 'The Journal' },
+                faqs: { heroImage: 'wed2.webp', heroKicker: 'Questions', heroTitle: 'Frequently Asked Questions' }
             };
             var page = $('pageSelect').value;
             var content = Object.assign({}, defaults[page], record ? record.draftContent : {});
@@ -906,6 +1033,13 @@
                 return result;
             }, {}), content.copy || {}));
             $('homeCtaFields').hidden = $('pageSelect').value !== 'home';
+            var isHome = $('pageSelect').value === 'home';
+            $('homeSlideshow').hidden = !isHome;
+            if (isHome) {
+                var heroImages = Array.isArray(content.heroImages) ? content.heroImages : [];
+                [1, 2, 3, 4].forEach(function (n) { $('hero' + n).value = heroImages[n - 1] || ''; });
+            }
+            $('pageOffline').checked = Boolean(record && record.draftContent && record.draftContent.offline);
             $('pageStatus').textContent = record ? (record.isPublished ? 'Published · edits are drafts until published' : 'Not live') : 'No saved content';
             $('pageUnpublish').disabled = !record || !record.isPublished;
         }
@@ -920,11 +1054,15 @@
             if ($('pageSelect').value === 'home') {
                 content.heroCtaText = $('pageCtaText').value.trim();
                 content.heroCtaHref = $('pageCtaHref').value.trim();
+                var slides = [1, 2, 3, 4].map(function (n) { return $('hero' + n).value.trim(); }).filter(Boolean);
+                content.heroImages = slides;
+                if (slides.length === 1) content.heroImage = slides[0];
             }
             content.copy = {};
             $('pageCopyFields').querySelectorAll('[data-page-copy]').forEach(function (field) {
                 content.copy[field.dataset.pageCopy] = field.value.trim();
             });
+            content.offline = $('pageOffline').checked;
             return content;
         }
 
@@ -954,6 +1092,214 @@
             }).catch(fail);
         }
 
+        function uploadBlob(blob, targetId, publicIdId) {
+            var form = new FormData();
+            form.append('image', blob, 'adjusted.jpg');
+            return api('POST', '/api/admin/upload', form).then(function (result) {
+                $(targetId).value = result.image;
+                if (publicIdId) $(publicIdId).value = result.imagePublicId || '';
+                return result;
+            });
+        }
+
+        // ---- Image cropper ---------------------------------------------------
+        var cropAspects = [
+            { label: 'Free', value: null },
+            { label: 'Original', value: 'original' },
+            { label: '1:1', value: 1 },
+            { label: '4:3', value: 4 / 3 },
+            { label: '3:4', value: 3 / 4 },
+            { label: '16:9', value: 16 / 9 }
+        ];
+        var crop = { natural: { w: 0, h: 0 }, disp: { w: 0, h: 0 }, box: { x: 0, y: 0, w: 0, h: 0 }, aspect: null, apply: null, drag: null };
+
+        function openCropper(url, onApply) {
+            if (!url) { toast('Add an image first, then you can adjust it.', true); return; }
+            crop.apply = onApply;
+            crop.aspect = null;
+            var image = $('cropImage');
+            if (/^https?:\/\//i.test(url) && url.indexOf(window.location.host) === -1) image.crossOrigin = 'anonymous';
+            else image.removeAttribute('crossorigin');
+            image.onload = function () {
+                crop.natural = { w: image.naturalWidth, h: image.naturalHeight };
+                if (!$('cropDialog').open) $('cropDialog').showModal();
+                // A closed <dialog> has no layout, so measure only after it is visible.
+                var attempts = 0;
+                (function measure() {
+                    var width = image.clientWidth;
+                    var height = image.clientHeight;
+                    if ((!width || !height) && attempts < 20) { attempts += 1; requestAnimationFrame(measure); return; }
+                    crop.disp = { w: width || image.naturalWidth, h: height || image.naturalHeight };
+                    crop.box = { x: crop.disp.w * 0.08, y: crop.disp.h * 0.08, w: crop.disp.w * 0.84, h: crop.disp.h * 0.84 };
+                    renderCropAspects();
+                    layoutCrop();
+                })();
+            };
+            image.onerror = function () { toast('That image could not be loaded for cropping.', true); };
+            image.src = url;
+        }
+
+        function renderCropAspects() {
+            $('cropAspects').innerHTML = cropAspects.map(function (aspect, index) {
+                return '<button type="button" data-aspect="' + index + '"' + (index === 0 ? ' class="active"' : '') + '>' + aspect.label + '</button>';
+            }).join('');
+        }
+
+        function layoutCrop() {
+            var box = crop.box, element = $('cropBox');
+            element.style.left = box.x + 'px';
+            element.style.top = box.y + 'px';
+            element.style.width = box.w + 'px';
+            element.style.height = box.h + 'px';
+        }
+
+        function clampCrop() {
+            var disp = crop.disp, box = crop.box;
+            box.w = Math.max(40, Math.min(box.w, disp.w));
+            box.h = Math.max(40, Math.min(box.h, disp.h));
+            box.x = Math.max(0, Math.min(box.x, disp.w - box.w));
+            box.y = Math.max(0, Math.min(box.y, disp.h - box.h));
+        }
+
+        $('cropBox').addEventListener('pointerdown', function (event) {
+            var stage = $('cropStage').getBoundingClientRect();
+            var kind = event.target.classList.contains('h') ? event.target.classList[1] : 'move';
+            crop.drag = {
+                kind: kind,
+                sx: event.clientX - stage.left,
+                sy: event.clientY - stage.top,
+                box: { x: crop.box.x, y: crop.box.y, w: crop.box.w, h: crop.box.h }
+            };
+            event.preventDefault();
+        });
+
+        document.addEventListener('pointermove', function (event) {
+            if (!crop.drag) return;
+            var stage = $('cropStage').getBoundingClientRect();
+            var dx = (event.clientX - stage.left) - crop.drag.sx;
+            var dy = (event.clientY - stage.top) - crop.drag.sy;
+            var box = crop.box, origin = crop.drag.box, kind = crop.drag.kind;
+            if (kind === 'move') {
+                box.x = origin.x + dx;
+                box.y = origin.y + dy;
+            } else {
+                if (kind.indexOf('w') !== -1) { box.x = origin.x + dx; box.w = origin.w - dx; }
+                if (kind.indexOf('e') !== -1) { box.w = origin.w + dx; }
+                if (kind.indexOf('n') !== -1) { box.y = origin.y + dy; box.h = origin.h - dy; }
+                if (kind.indexOf('s') !== -1) { box.h = origin.h + dy; }
+                if (crop.aspect) box.h = box.w / crop.aspect;
+            }
+            clampCrop();
+            layoutCrop();
+        });
+        document.addEventListener('pointerup', function () { crop.drag = null; });
+
+        $('cropAspects').addEventListener('click', function (event) {
+            var button = event.target.closest('button[data-aspect]');
+            if (!button) return;
+            $('cropAspects').querySelectorAll('button').forEach(function (item) { item.classList.toggle('active', item === button); });
+            var value = cropAspects[Number(button.dataset.aspect)].value;
+            if (value === 'original') value = crop.natural.w / crop.natural.h;
+            crop.aspect = value;
+            if (value) {
+                var box = crop.box;
+                var centerX = box.x + box.w / 2, centerY = box.y + box.h / 2;
+                var width = box.w, height = width / value;
+                if (height > crop.disp.h) { height = crop.disp.h; width = height * value; }
+                box.w = width; box.h = height;
+                box.x = centerX - width / 2; box.y = centerY - height / 2;
+                clampCrop();
+                layoutCrop();
+            }
+        });
+
+        $('cropApply').addEventListener('click', function () {
+            var image = $('cropImage');
+            var dispW = crop.disp.w || crop.natural.w || 1;
+            var dispH = crop.disp.h || crop.natural.h || 1;
+            var scaleX = crop.natural.w / dispW;
+            var scaleY = crop.natural.h / dispH;
+            var sx = Math.max(0, Math.round(crop.box.x * scaleX));
+            var sy = Math.max(0, Math.round(crop.box.y * scaleY));
+            var sw = Math.min(crop.natural.w - sx, Math.round(crop.box.w * scaleX));
+            var sh = Math.min(crop.natural.h - sy, Math.round(crop.box.h * scaleY));
+            var canvas = document.createElement('canvas');
+            canvas.width = Math.max(1, sw);
+            canvas.height = Math.max(1, sh);
+            var croppable = true;
+            try {
+                canvas.getContext('2d').drawImage(image, sx, sy, sw, sh, 0, 0, canvas.width, canvas.height);
+                canvas.getContext('2d').getImageData(0, 0, 1, 1);
+            } catch (error) {
+                croppable = false;
+            }
+            if (!croppable) { toast('This image cannot be cropped here; leaving it unchanged.', true); $('cropDialog').close(); return; }
+            canvas.toBlob(function (blob) {
+                $('cropDialog').close();
+                if (blob && crop.apply) crop.apply(blob);
+            }, 'image/jpeg', 0.9);
+        });
+        $('cropCancel').addEventListener('click', function () { $('cropDialog').close(); });
+
+        // ---- Media library picker -------------------------------------------
+        var mediaLibrary = [];
+        var mediaFiltered = [];
+        var mediaTarget = null;
+
+        function openMediaPicker(targetId, publicIdId, previewId, types) {
+            if (!targetId) return;
+            mediaTarget = { targetId: targetId, publicIdId: publicIdId || '', previewId: previewId || '', types: types || 'image' };
+            $('mediaSearch').value = '';
+            $('mediaGrid').innerHTML = '<p class="hint">Loading…</p>';
+            if (!$('mediaDialog').open) $('mediaDialog').showModal();
+            api('GET', '/api/admin/media').then(function (items) {
+                mediaLibrary = Array.isArray(items) ? items : [];
+                renderMediaGrid('');
+            }).catch(function (error) { fail(error); $('mediaDialog').close(); });
+        }
+
+        function renderMediaGrid(query) {
+            var search = (query || '').toLowerCase();
+            var types = mediaTarget ? mediaTarget.types : 'image';
+            mediaFiltered = mediaLibrary.filter(function (item) {
+                if (types !== 'any' && item.mediaType === 'video') return false;
+                return !search || String(item.label || '').toLowerCase().indexOf(search) !== -1;
+            });
+            var grid = $('mediaGrid');
+            if (!mediaFiltered.length) { grid.innerHTML = '<p class="hint">No pictures found.</p>'; return; }
+            grid.innerHTML = mediaFiltered.map(function (item, index) {
+                var thumb = item.mediaType === 'video'
+                    ? '<video src="' + esc(item.url) + '" muted preload="metadata"></video>'
+                    : '<img src="' + esc(item.url) + '" alt="" loading="lazy">';
+                return '<button type="button" data-media-index="' + index + '">' + thumb + '<span class="label">' + esc(item.label || '') + '</span></button>';
+            }).join('');
+        }
+
+        $('mediaSearch').addEventListener('input', function () { renderMediaGrid($('mediaSearch').value); });
+        $('mediaCancel').addEventListener('click', function () { $('mediaDialog').close(); });
+        $('mediaGrid').addEventListener('click', function (event) {
+            var button = event.target.closest('button[data-media-index]');
+            if (!button || !mediaTarget) return;
+            var item = mediaFiltered[Number(button.dataset.mediaIndex)];
+            if (!item) return;
+            var target = $(mediaTarget.targetId);
+            if (target) target.value = item.url;
+            if (mediaTarget.publicIdId && $(mediaTarget.publicIdId)) $(mediaTarget.publicIdId).value = item.publicId || '';
+            if (mediaTarget.previewId === 'edPreview') setEditPreview({ image: item.url, mediaType: item.mediaType });
+            else if (mediaTarget.previewId && $(mediaTarget.previewId)) {
+                var preview = $(mediaTarget.previewId);
+                preview.src = item.url;
+                preview.style.display = 'block';
+            }
+            $('mediaDialog').close();
+            toast('Picture selected. Save or publish to apply.');
+        });
+        document.addEventListener('click', function (event) {
+            var button = event.target.closest('[data-pick]');
+            if (!button) return;
+            openMediaPicker(button.getAttribute('data-pick'), button.getAttribute('data-pick-public'), button.getAttribute('data-pick-preview'), button.getAttribute('data-pick-types'));
+        });
+
         function renderFaqs() {
             var editor = $('faqEditor');
             editor.replaceChildren();
@@ -970,6 +1316,11 @@
                 answer.innerHTML = '<span>Answer</span><textarea maxlength="2000"></textarea>';
                 answer.querySelector('textarea').value = item.answer || '';
                 answer.querySelector('textarea').addEventListener('input', function (event) { item.answer = event.target.value; });
+                var category = document.createElement('label');
+                category.className = 'field';
+                category.innerHTML = '<span>Category (optional)</span><input type="text" maxlength="80" placeholder="e.g. Pricing, Planning, Travel">';
+                category.querySelector('input').value = item.category || '';
+                category.querySelector('input').addEventListener('input', function (event) { item.category = event.target.value; });
                 var controls = document.createElement('div');
                 controls.className = 'actions';
                 controls.innerHTML = '<button class="btn small" type="button" data-move="up" aria-label="Move question up">↑</button><button class="btn small" type="button" data-move="down" aria-label="Move question down">↓</button><button class="btn small danger" type="button">Remove</button><span class="count"></span>';
@@ -983,7 +1334,7 @@
                 controls.querySelector('[data-move="up"]').addEventListener('click', function () { moveFaq(index, -1); });
                 controls.querySelector('[data-move="down"]').addEventListener('click', function () { moveFaq(index, 1); });
                 controls.querySelector('.count').textContent = item.isPublished ? 'Live; changes are drafts' : 'Draft';
-                row.append(question, answer, controls);
+                row.append(category, question, answer, controls);
                 editor.appendChild(row);
             });
             $('faqStatus').textContent = removedFaqs.length ? removedFaqs.length + ' question(s) marked for removal; they remain live until FAQ publication.' : '';
@@ -1009,7 +1360,7 @@
                 return api('POST', '/api/admin/content', {
                     type: 'faq', slug: slug, sortOrder: index,
                     action: action,
-                    content: { question: item.question.trim(), answer: item.answer.trim() }
+                    content: { question: item.question.trim(), answer: item.answer.trim(), category: (item.category || '').trim() }
                 });
             });
             removedFaqs.forEach(function (item) {
@@ -1367,11 +1718,19 @@
             var grid = $('coverGrid');
             grid.replaceChildren();
             album.photos.forEach(function (photo) {
-                var img = document.createElement('img');
-                img.src = photo.image;
-                img.alt = photo.title || '';
-                if (photo.id === album.coverPhotoId) img.classList.add('selected');
-                img.addEventListener('click', function () {
+                var media;
+                if (photo.mediaType === 'video') {
+                    media = document.createElement('video');
+                    media.src = photo.image;
+                    media.muted = true;
+                    media.preload = 'metadata';
+                } else {
+                    media = document.createElement('img');
+                    media.src = photo.image;
+                    media.alt = photo.title || '';
+                }
+                if (photo.id === album.coverPhotoId) media.classList.add('selected');
+                media.addEventListener('click', function () {
                     api('POST', '/api/admin/albums/' + album.id + '/cover', { photoId: photo.id })
                         .then(function () {
                             toast('Cover saved. Publish the album to make it live.');
@@ -1379,7 +1738,7 @@
                             loadAlbums();
                         }).catch(fail);
                 });
-                grid.appendChild(img);
+                grid.appendChild(media);
             });
             $('coverDialog').showModal();
         }
@@ -1732,8 +2091,15 @@
         }
 
         // ---- Settings --------------------------------------------------------
+        var navLabelFields = { home: 'nlHome', portfolio: 'nlPortfolio', services: 'nlServices', about: 'nlAbout', testimonials: 'nlTestimonials', faqs: 'nlFaqs', blog: 'nlBlog', contact: 'nlContact' };
+        var navLabelDefaults = { home: 'Home', portfolio: 'Portfolio', services: 'Services', about: 'About', testimonials: 'Testimonials', faqs: 'FAQs', blog: 'Blog', contact: 'Contact' };
+
         function renderSettings() {
             var content = settingsRecord ? settingsRecord.draftContent : {};
+            var labels = content.navLabels || {};
+            Object.keys(navLabelFields).forEach(function (key) {
+                $(navLabelFields[key]).value = labels[key] || navLabelDefaults[key];
+            });
             $('seInstagram').value = content.instagram || '';
             $('seFacebook').value = content.facebook || '';
             $('seTiktok').value = content.tiktok || '';
@@ -1747,6 +2113,10 @@
 
         function currentSettingsContent() {
             return {
+                navLabels: Object.keys(navLabelFields).reduce(function (accumulator, key) {
+                    accumulator[key] = $(navLabelFields[key]).value.trim() || navLabelDefaults[key];
+                    return accumulator;
+                }, {}),
                 instagram: $('seInstagram').value.trim(),
                 facebook: $('seFacebook').value.trim(),
                 tiktok: $('seTiktok').value.trim(),
@@ -1817,9 +2187,15 @@
             api('GET', '/api/admin/integrations').then(function (data) {
                 integrationStatus = data;
                 var instagram = data.instagram || {};
-                $('igConnStatus').textContent = instagram.connected
-                    ? 'Connected' + (instagram.username ? ' as @' + instagram.username : '') + (instagram.source === 'env' ? ' (server token)' : '') + '. Live posts are shown automatically.'
-                    : 'Not connected — the posts below are shown instead.';
+                if (instagram.connected) {
+                    var handle = instagram.username ? ' (@' + instagram.username + ')' : '';
+                    if (instagram.source === 'feed') $('igConnStatus').textContent = 'Connected via feed URL' + handle + '. New posts appear automatically.';
+                    else if (instagram.source === 'env') $('igConnStatus').textContent = 'Connected with a server access token. New posts appear automatically.';
+                    else $('igConnStatus').textContent = 'Connected with an access token' + handle + '. New posts appear automatically.';
+                    if (instagram.source === 'feed' && instagram.feedUrl) $('igFeedUrl').value = instagram.feedUrl;
+                } else {
+                    $('igConnStatus').textContent = 'Not connected — the posts below are shown instead.';
+                }
                 $('seEmailStatus').textContent = data.emailConfigured
                     ? 'Email sending is configured on the server.'
                     : 'Email sending is not configured on the server yet (SMTP settings missing). Enquiries are still saved under Inquiries.';
@@ -1833,7 +2209,7 @@
                     type: 'photo', id: p.id, title: p.title,
                     subtitle: [p.category, p.location].filter(Boolean).join(' · '),
                     image: p.image, sortOrder: p.sortOrder || 0,
-                    featured: p.featured, featuredOrder: p.featuredOrder
+                    featured: p.featured, featuredOrder: p.featuredOrder, mediaType: p.mediaType || 'image'
                 };
             });
             var albumItems = albums.map(function (a) {
@@ -1842,7 +2218,7 @@
                     type: 'album', id: a.id, title: a.title,
                     subtitle: a.photos.length + ' photos · ' + a.category,
                     image: cover.image || '', sortOrder: a.sortOrder || 0,
-                    featured: a.featured, featuredOrder: a.featuredOrder
+                    featured: a.featured, featuredOrder: a.featuredOrder, mediaType: a.mediaType || 'image'
                 };
             });
             return photoItems.concat(albumItems).sort(function (a, b) {
@@ -1859,9 +2235,11 @@
         }
 
         function orderRowHtml(item, index, total) {
+            var thumb = item.mediaType === 'video'
+                ? '<video src="' + esc(item.image) + '" muted preload="metadata"></video>'
+                : '<img src="' + esc(item.image) + '" alt="">';
             return '<div class="order-row" data-type="' + item.type + '" data-id="' + esc(item.id) + '">' +
-                '<span class="n">' + (index + 1) + '</span>' +
-                '<img src="' + esc(item.image) + '" alt="">' +
+                '<span class="n">' + (index + 1) + '</span>' + thumb +
                 '<div class="t">' + esc(item.title) + '<small>' + esc(item.subtitle) + '</small></div>' +
                 '<span class="k">' + (item.type === 'album' ? 'Album' : 'Photo') + '</span>' +
                 '<button class="btn small" type="button" data-move="up"' + (index === 0 ? ' disabled' : '') + '>&uarr;</button>' +
@@ -1999,9 +2377,9 @@
 
         function addFiles(list) {
             Array.prototype.forEach.call(list, function (f) {
-                if (!/^image\/(jpeg|png|webp|gif)$/.test(f.type)) { toast('Skipped ' + f.name + ' (not a supported image)', true); return; }
-                if (pendingFiles.length >= 20) { toast('You can upload up to 20 photos at a time.', true); return; }
-                pendingFiles.push({ file: f, title: titleFromName(f.name), url: URL.createObjectURL(f) });
+                if (!/^(image\/(jpeg|png|webp|gif)|video\/(mp4|webm|quicktime))$/.test(f.type)) { toast('Skipped ' + f.name + ' (unsupported file type)', true); return; }
+                if (pendingFiles.length >= 20) { toast('You can upload up to 20 files at a time.', true); return; }
+                pendingFiles.push({ file: f, title: titleFromName(f.name), url: URL.createObjectURL(f), video: f.type.indexOf('video/') === 0 });
             });
             renderPending();
         }
@@ -2012,8 +2390,18 @@
             pendingFiles.forEach(function (p, i) {
                 var row = document.createElement('div');
                 row.className = 'pending-item';
-                row.innerHTML = '<img alt=""><input type="text" maxlength="80" aria-label="Photo title" placeholder="Title"><button class="x" type="button" aria-label="Remove">&times;</button>';
-                row.querySelector('img').src = p.url;
+                row.innerHTML = '<img alt=""><input type="text" maxlength="80" aria-label="Title" placeholder="Title"><button class="x" type="button" aria-label="Remove">&times;</button>';
+                var thumb = row.querySelector('img');
+                if (p.video) {
+                    var video = document.createElement('video');
+                    video.src = p.url;
+                    video.muted = true;
+                    video.preload = 'metadata';
+                    video.style.cssText = 'width:72px;height:72px;object-fit:cover;display:block';
+                    thumb.replaceWith(video);
+                } else {
+                    thumb.src = p.url;
+                }
                 var input = row.querySelector('input');
                 input.value = p.title;
                 input.addEventListener('input', function () { p.title = input.value; });
@@ -2026,7 +2414,7 @@
             });
             $('uploadBtn').disabled = !pendingFiles.length;
             $('uploadPublishBtn').disabled = !pendingFiles.length;
-            $('uploadBtn').textContent = pendingFiles.length > 1 ? 'Upload ' + pendingFiles.length + ' photos' : 'Upload photo' + (pendingFiles.length ? '' : 's');
+            $('uploadBtn').textContent = pendingFiles.length > 1 ? 'Upload ' + pendingFiles.length + ' files' : 'Upload file' + (pendingFiles.length ? '' : 's');
         }
 
         var drop = $('drop');
@@ -2042,7 +2430,7 @@
 
         // Shrink big camera photos in the browser so the site stays fast
         function shrink(file) {
-            if (file.type === 'image/gif') return Promise.resolve(file);
+            if (file.type === 'image/gif' || file.type.indexOf('video/') === 0) return Promise.resolve(file);
             var MAX = 2000;
             return createImageBitmap(file).then(function (bmp) {
                 var scale = Math.min(1, MAX / Math.max(bmp.width, bmp.height));
@@ -2069,7 +2457,10 @@
                 var fd = new FormData();
                 blobs.forEach(function (b, i) {
                     var isJpeg = b.type === 'image/jpeg';
-                    var name = pendingFiles[i].file.name.replace(/\.[^.]+$/, '') + (isJpeg ? '.jpg' : '');
+                    var isVideo = b.type.indexOf('video/') === 0;
+                    var name = isVideo
+                        ? pendingFiles[i].file.name
+                        : pendingFiles[i].file.name.replace(/\.[^.]+$/, '') + (isJpeg ? '.jpg' : '');
                     fd.append('images', b, name);
                     fd.append('titles', pendingFiles[i].title || titleFromName(pendingFiles[i].file.name));
                 });
@@ -2115,9 +2506,13 @@
             $('photoCount').textContent = photos.length + (photos.length === 1 ? ' photo' : ' photos');
             if (!photos.length) { grid.innerHTML = '<div class="empty" style="grid-column:1/-1">No photos yet. Add your first one above.</div>'; return; }
             grid.innerHTML = photos.map(function (p, i) {
+                var media = p.mediaType === 'video'
+                    ? '<video src="' + esc(p.image) + '" muted preload="metadata"></video>'
+                    : '<img src="' + esc(p.image) + '" alt="' + esc(p.title) + '" loading="lazy">';
                 return '<article class="photo" data-id="' + esc(p.id) + '">' +
-                    '<div class="img"><img src="' + esc(p.image) + '" alt="' + esc(p.title) + '" loading="lazy">' +
-                    (p.featured ? '<span class="badge">Home page</span>' : '') + '</div>' +
+                    '<div class="img">' + media +
+                    (p.featured ? '<span class="badge">Home page</span>' : '') +
+                    (p.mediaType === 'video' ? '<span class="badge" style="left:auto;right:0.5rem">Video</span>' : '') + '</div>' +
                     '<div class="meta"><h3>' + esc(p.title) + '</h3><p>' + esc(p.category) + (p.location ? ' &middot; ' + esc(p.location) : '') + '</p><span class="publish-state ' + (p.isPublished ? '' : 'draft') + '">' + (p.isPublished ? (p.hasDraft ? 'Live · draft changes' : 'Live') : 'Draft') + '</span></div>' +
                     '<div class="actions">' +
                     '<button class="btn small" data-act="edit">Edit</button>' +
@@ -2143,6 +2538,9 @@
                 $('edLocation').value = p.location || '';
                 $('edCategory').value = p.category;
                 $('edFeatured').checked = !!p.featured;
+                $('edImage').value = p.image || '';
+                $('edImagePublicId').value = p.imagePublicId || '';
+                setEditPreview(p);
                 $('editDialog').showModal();
             } else if (act === 'publish' || act === 'unpublish') {
                 api('PUT', '/api/admin/portfolio/' + id, { action: act }).then(function () {
@@ -2158,17 +2556,78 @@
         });
 
         $('edCancel').addEventListener('click', function () { $('editDialog').close(); });
+
+        function setEditPreview(photo) {
+            var preview = $('edPreview');
+            var isVideo = photo && photo.mediaType === 'video';
+            $('edCrop').disabled = !!isVideo;
+            if (isVideo && preview.tagName !== 'VIDEO') {
+                var video = document.createElement('video');
+                video.id = 'edPreview';
+                video.muted = true;
+                video.preload = 'metadata';
+                video.style.cssText = 'width:96px;height:72px;object-fit:cover;border:1px solid var(--border);display:block';
+                preview.replaceWith(video);
+                preview = video;
+            } else if (!isVideo && preview.tagName !== 'IMG') {
+                var image = document.createElement('img');
+                image.id = 'edPreview';
+                image.alt = '';
+                image.style.cssText = 'width:96px;height:72px;object-fit:cover;border:1px solid var(--border);display:block';
+                preview.replaceWith(image);
+                preview = image;
+            }
+            preview.src = (photo && photo.image) || '';
+        }
+
         function savePhoto(action) {
             return api('PUT', '/api/admin/portfolio/' + editingId, {
                 title: $('edTitle').value,
                 location: $('edLocation').value,
                 category: $('edCategory').value,
                 featured: $('edFeatured').checked,
+                image: $('edImage').value,
+                imagePublicId: $('edImagePublicId').value,
                 action: action
             }).then(function () { $('editDialog').close(); toast(action === 'publish' ? 'Changes published.' : 'Draft saved.'); loadPhotos(); }).catch(fail);
         }
         $('editForm').addEventListener('submit', function (e) { e.preventDefault(); savePhoto('draft'); });
         $('edPublish').addEventListener('click', function () { savePhoto('publish'); });
+        $('edCrop').addEventListener('click', function () {
+            openCropper($('edImage').value, function (blob) {
+                uploadBlob(blob, 'edImage', 'edImagePublicId').then(function (result) {
+                    $('edPreview').src = result.image;
+                    toast('Photo adjusted. Save or publish to apply.');
+                }).catch(fail);
+            });
+        });
+        $('pageImageCrop').addEventListener('click', function () {
+            openCropper($('pageImage').value, function (blob) {
+                uploadBlob(blob, 'pageImage', 'pageImagePublicId').then(function () {
+                    toast('Header image adjusted. Save and publish to make it live.');
+                }).catch(fail);
+            });
+        });
+
+        function uploadFileTo(fileId, targetId) {
+            var file = $(fileId).files[0];
+            if (!file) return;
+            var form = new FormData();
+            form.append('image', file, file.name);
+            api('POST', '/api/admin/upload', form).then(function (result) {
+                $(targetId).value = result.image;
+                $(fileId).value = '';
+                toast('Image uploaded. Save and publish to make it live.');
+            }).catch(fail);
+        }
+        [1, 2, 3, 4].forEach(function (n) {
+            $('heroFile' + n).addEventListener('change', function () { uploadFileTo('heroFile' + n, 'hero' + n); });
+            $('heroCrop' + n).addEventListener('click', function () {
+                openCropper($('hero' + n).value, function (blob) {
+                    uploadBlob(blob, 'hero' + n, null).then(function () { toast('Slide adjusted. Save and publish to apply.'); }).catch(fail);
+                });
+            });
+        });
 
         // ---- Albums ----------------------------------------------------------
         $('albumGrid').addEventListener('click', function (e) {
@@ -2265,6 +2724,22 @@
         });
 
         // Instagram live feed
+        $('igFeedSave').addEventListener('click', function () {
+            var url = $('igFeedUrl').value.trim();
+            if (!url) { toast('Paste a feed URL first.', true); return; }
+            api('POST', '/api/admin/integrations/instagram/feed', { feedUrl: url }).then(function (result) {
+                toast('Instagram feed connected' + (result.username ? ' (@' + result.username + ')' : '') + '.');
+                loadIntegrations();
+            }).catch(fail);
+        });
+        $('igFeedClear').addEventListener('click', function () {
+            if (!confirm('Remove the feed URL? The posts you add manually will be shown instead.')) return;
+            api('POST', '/api/admin/integrations/instagram/feed', { feedUrl: '' }).then(function () {
+                $('igFeedUrl').value = '';
+                toast('Feed URL removed.');
+                loadIntegrations();
+            }).catch(fail);
+        });
         $('igTokenSave').addEventListener('click', function () {
             var token = $('igToken').value.trim();
             if (!token) { toast('Paste an access token first.', true); return; }
@@ -2295,11 +2770,21 @@
             $('svcId').value = '';
             $('svcTitle').value = '';
             $('svcDesc').value = '';
+            $('svcImage').value = '';
+            $('svcImagePublicId').value = '';
+            updateServiceIconPreview();
             document.querySelector('input[name=svcIcon]').checked = true;
             $('svcFormTitle').textContent = 'Add a service';
             $('svcSave').textContent = 'Save as draft';
             $('svcPublish').textContent = 'Publish service';
             $('svcCancel').hidden = true;
+        }
+
+        function updateServiceIconPreview() {
+            var preview = $('svcIconPreview');
+            var url = $('svcImage').value.trim();
+            if (url) { preview.src = url; preview.style.display = 'block'; }
+            else { preview.removeAttribute('src'); preview.style.display = 'none'; }
         }
 
         function loadServices() {
@@ -2312,7 +2797,7 @@
             if (!services.length) { list.innerHTML = '<div class="empty">No services yet. Add your first one above.</div>'; return; }
             list.innerHTML = services.map(function (s, i) {
                 return '<article class="service" data-id="' + esc(s.id) + '">' +
-                    '<div class="ico">' + window.peIcon(s.icon) + '</div>' +
+                    '<div class="ico">' + (s.image ? '<img src="' + esc(s.image) + '" alt="" style="width:24px;height:24px;object-fit:contain">' : window.peIcon(s.icon)) + '</div>' +
                     '<div><h3>' + esc(s.title) + '</h3><p>' + esc(s.description) + '</p><span class="publish-state ' + (s.isPublished ? '' : 'draft') + '">' + (s.isPublished ? (s.hasDraft ? 'Live · draft changes' : 'Live') : 'Draft') + '</span></div>' +
                     '<div class="actions">' +
                     '<button class="btn small" data-act="edit">Edit</button>' +
@@ -2326,7 +2811,14 @@
 
         function saveService(action) {
             var id = $('svcId').value;
-            var body = { title: $('svcTitle').value, description: $('svcDesc').value, icon: chosenIcon(), action: action };
+            var body = {
+                title: $('svcTitle').value,
+                description: $('svcDesc').value,
+                icon: chosenIcon(),
+                image: $('svcImage').value.trim(),
+                imagePublicId: $('svcImagePublicId').value.trim(),
+                action: action
+            };
             var req = id ? api('PUT', '/api/admin/services/' + id, body) : api('POST', '/api/admin/services', body);
             req.then(function () {
                 toast(action === 'publish' ? 'Service published.' : 'Service draft saved.');
@@ -2339,6 +2831,35 @@
 
         $('svcCancel').addEventListener('click', resetServiceForm);
 
+        $('svcImageFile').addEventListener('change', function () {
+            var file = $('svcImageFile').files[0];
+            if (!file) return;
+            var form = new FormData();
+            form.append('image', file, file.name);
+            api('POST', '/api/admin/upload', form).then(function (result) {
+                $('svcImage').value = result.image;
+                $('svcImagePublicId').value = result.imagePublicId || '';
+                $('svcImageFile').value = '';
+                updateServiceIconPreview();
+                toast('Icon image uploaded. Save or publish to apply.');
+            }).catch(fail);
+        });
+        $('svcImage').addEventListener('input', updateServiceIconPreview);
+        $('svcImageCrop').addEventListener('click', function () {
+            openCropper($('svcImage').value.trim(), function (blob) {
+                uploadBlob(blob, 'svcImage', 'svcImagePublicId').then(function () {
+                    updateServiceIconPreview();
+                    toast('Icon image cropped. Save or publish to apply.');
+                }).catch(fail);
+            });
+        });
+        $('svcImageClear').addEventListener('click', function () {
+            $('svcImage').value = '';
+            $('svcImagePublicId').value = '';
+            updateServiceIconPreview();
+            toast('Icon image cleared. Save or publish to apply.');
+        });
+
         $('svcList').addEventListener('click', function (e) {
             var btn = e.target.closest('button[data-act]');
             if (!btn) return;
@@ -2350,6 +2871,9 @@
                 $('svcId').value = id;
                 $('svcTitle').value = s.title;
                 $('svcDesc').value = s.description;
+                $('svcImage').value = s.image || '';
+                $('svcImagePublicId').value = s.imagePublicId || '';
+                updateServiceIconPreview();
                 var radio = document.querySelector('input[name=svcIcon][value="' + s.icon + '"]');
                 if (radio) radio.checked = true;
                 $('svcFormTitle').textContent = 'Edit service';

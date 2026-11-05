@@ -10,6 +10,7 @@ export async function GET() {
     title: item.title,
     description: item.description,
     icon: item.icon,
+    image: item.image || null,
     created: item.createdAt.toISOString()
   })), {
     headers: { 'Cache-Control': 'no-store' }

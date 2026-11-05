@@ -1297,6 +1297,9 @@
                 display: none;
             }
         }
+    /* Hero image: hidden until the correct one is resolved (prevents an image flash) */
+    .hero-bg img, .page-header-bg img, .hero > img { opacity: 0; transition: opacity 0.5s ease; }
+    body.pe-hero-ready .hero-bg img, body.pe-hero-ready .page-header-bg img, body.pe-hero-ready .hero > img { opacity: 1; }
     </style>
 <base target="_self">
 </head>
@@ -1456,6 +1459,9 @@
                 <button class="testimonial-dot active" onclick="showTestimonial(0)" aria-label="Testimonial 1"></button>
                 <button class="testimonial-dot" onclick="showTestimonial(1)" aria-label="Testimonial 2"></button>
                 <button class="testimonial-dot" onclick="showTestimonial(2)" aria-label="Testimonial 3"></button>
+            </div>
+            <div style="text-align:center;">
+                <a class="testimonial-read" href="testimonials.html">View more testimonials</a>
             </div>
         </div>
     </section>

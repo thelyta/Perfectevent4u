@@ -1085,6 +1085,9 @@
             }
         }
 
+    /* Hero image: hidden until the correct one is resolved (prevents an image flash) */
+    .hero-bg img, .page-header-bg img, .hero > img { opacity: 0; transition: opacity 0.5s ease; }
+    body.pe-hero-ready .hero-bg img, body.pe-hero-ready .page-header-bg img, body.pe-hero-ready .hero > img { opacity: 1; }
     </style>
 <base target="_self">
 </head>

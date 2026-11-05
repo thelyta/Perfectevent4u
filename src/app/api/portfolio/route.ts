@@ -12,6 +12,7 @@ export async function GET() {
     location: item.location,
     category: item.category,
     image: item.image,
+    mediaType: item.mediaType,
     ...(item.imagePublicId ? { imagePublicId: item.imagePublicId } : {}),
     featured: item.featured,
     featuredOrder: item.featuredOrder,

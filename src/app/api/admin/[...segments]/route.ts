@@ -14,9 +14,9 @@ import {
 } from '@/lib/admin-auth';
 import { getDb } from '@/lib/db';
 import { ContentData, inquiries, portfolioAlbums, portfolioItems, services, siteContent } from '@/lib/db/schema';
-import { imageContentType, readStoredImage, removeStoredImage, storeImage } from '@/lib/image-storage';
+import { imageContentType, MediaType, readStoredImage, removeStoredImage, removeStoredMedia, storeImage, storeMedia } from '@/lib/image-storage';
 import { emailConfigured } from '@/lib/email';
-import { getInstagramStatus, refreshInstagramToken, saveInstagramToken } from '@/lib/instagram';
+import { getInstagramStatus, refreshInstagramToken, saveInstagramFeedUrl, saveInstagramToken } from '@/lib/instagram';
 
 const categories = ['Wedding Ceremony', 'Wedding Reception', 'Milestone Celebration', 'Corporate Event'];
 const icons = ['planning', 'floral', 'management', 'venue', 'decor', 'catering', 'photo', 'music'];
@@ -41,6 +41,7 @@ function portfolioJson(item: typeof portfolioItems.$inferSelect) {
     location: content.location,
     category: content.category,
     image: content.image,
+    mediaType: content.mediaType || 'image',
     ...(content.imagePublicId ? { imagePublicId: content.imagePublicId } : {}),
     albumId: content.albumId || null,
     isCover: Boolean(content.isCover),
@@ -60,6 +61,8 @@ function serviceJson(item: typeof services.$inferSelect) {
     title: content.title,
     description: content.description,
     icon: content.icon,
+    image: content.image || null,
+    imagePublicId: content.imagePublicId || null,
     sortOrder: content.sortOrder,
     isPublished: item.isPublished,
     hasDraft: Boolean(item.draftData),
@@ -74,6 +77,7 @@ function portfolioValues(item: typeof portfolioItems.$inferSelect): ContentData 
     category: item.category,
     image: item.image,
     imagePublicId: item.imagePublicId,
+    mediaType: item.mediaType,
     albumId: item.albumId,
     isCover: item.isCover,
     featured: item.featured,
@@ -107,6 +111,7 @@ function albumJson(album: typeof portfolioAlbums.$inferSelect, photos: (typeof p
     featuredOrder: content.featuredOrder ?? null,
     sortOrder: content.sortOrder,
     coverPhotoId: (typeof draftCoverId === 'string' ? draftCoverId : null) || photos.find((photo) => photo.isCover)?.id || photos[0]?.id || null,
+    mediaType: (photos.find((photo) => photo.isCover) || photos[0])?.mediaType || 'image',
     isPublished: album.isPublished,
     hasDraft: Boolean(album.draftData),
     photos: photos.map(portfolioJson)
@@ -118,6 +123,8 @@ function serviceValues(item: typeof services.$inferSelect): ContentData {
     title: item.title,
     description: item.description,
     icon: item.icon,
+    image: item.image,
+    imagePublicId: item.imagePublicId,
     sortOrder: item.sortOrder,
     ...(item.draftData || {})
   };
@@ -240,6 +247,38 @@ export async function GET(request: NextRequest, context: Context) {
       emailError: record.emailError,
       createdAt: record.createdAt.toISOString()
     })), { headers: { 'Cache-Control': 'no-store' } });
+  }
+
+  if (segments.length === 1 && segments[0] === 'media') {
+    const photos = await db.select().from(portfolioItems)
+      .orderBy(desc(portfolioItems.createdAt)).limit(400);
+    const records = await db.select().from(siteContent);
+    const items: { url: string; publicId: string | null; mediaType: string; label: string }[] = [];
+    const seen = new Set<string>();
+    const push = (url: unknown, publicId: unknown, mediaType: unknown, label: string) => {
+      if (typeof url !== 'string' || !url.trim()) return;
+      const value = url.trim();
+      if (seen.has(value)) return;
+      seen.add(value);
+      items.push({
+        url: value,
+        publicId: typeof publicId === 'string' && publicId ? publicId : null,
+        mediaType: mediaType === 'video' ? 'video' : 'image',
+        label
+      });
+    };
+    for (const photo of photos) push(photo.image, photo.imagePublicId, photo.mediaType, photo.title || 'Portfolio item');
+    for (const record of records) {
+      const content = (record.publishedContent || record.draftContent) as Record<string, unknown> | null;
+      if (!content) continue;
+      const label = `${record.contentType} · ${record.slug}`;
+      if (typeof content.heroImage === 'string') push(content.heroImage, content.heroImagePublicId, 'image', `${label} · hero`);
+      if (Array.isArray(content.heroImages)) content.heroImages.forEach((url, index) => push(url, null, 'image', `${label} · slide ${index + 1}`));
+      if (typeof content.image === 'string') push(content.image, content.imagePublicId, 'image', `${label} · image`);
+      if (typeof content.coverImage === 'string') push(content.coverImage, content.coverImagePublicId, 'image', `${label} · cover`);
+      if (typeof content.popupImage === 'string') push(content.popupImage, content.popupImagePublicId, 'image', `${label} · pop-up`);
+    }
+    return NextResponse.json(items, { headers: { 'Cache-Control': 'no-store' } });
   }
 
   return failure('Not found.', 404);
@@ -410,12 +449,12 @@ export async function POST(request: NextRequest, context: Context) {
       return failure('Bad request.');
     }
     const files = form.getAll('images').filter((entry): entry is File => entry instanceof File);
-    if (!files.length) return failure('Please choose at least one photo.');
-    if (files.length > 20) return failure('You can upload up to 20 photos at a time.');
+    if (!files.length) return failure('Please choose at least one photo or video.');
+    if (files.length > 20) return failure('You can upload up to 20 files at a time.');
 
-    const stored: Awaited<ReturnType<typeof storeImage>>[] = [];
+    const stored: Awaited<ReturnType<typeof storeMedia>>[] = [];
     try {
-      for (const file of files) stored.push(await storeImage(file));
+      for (const file of files) stored.push(await storeMedia(file));
 
       const submittedLocation = clean(form.get('location'), 60);
       const submittedCategory = clean(form.get('category'), 32);
@@ -485,6 +524,7 @@ export async function POST(request: NextRequest, context: Context) {
             category,
             image: image.image,
             imagePublicId: image.imagePublicId,
+            mediaType: image.mediaType,
             albumId: album?.id || null,
             isCover: Boolean(album && !albumHasCover && index === 0),
             featured,
@@ -505,7 +545,7 @@ export async function POST(request: NextRequest, context: Context) {
         albumId: added[0]?.albumId || null
       });
     } catch (error) {
-      await Promise.all(stored.map((image) => removeStoredImage(image.image, image.imagePublicId)));
+      await Promise.all(stored.map((image) => removeStoredMedia(image.image, image.imagePublicId, image.mediaType)));
       console.error('Portfolio upload failed.', error);
       return failure(error instanceof Error ? error.message : 'Something went wrong.');
     }
@@ -518,18 +558,23 @@ export async function POST(request: NextRequest, context: Context) {
     if (!title || !description) return failure('Please add a title and a description.');
     const iconValue = clean(body?.icon, 32);
     const icon = icons.includes(iconValue) ? iconValue : icons[0];
+    const image = typeof body?.image === 'string' ? clean(body.image, 1000) : '';
+    const imagePublicId = typeof body?.imagePublicId === 'string' ? clean(body.imagePublicId, 300) : '';
     const publish = body?.action === 'publish';
 
     try {
       const [last] = await db.select({ sortOrder: services.sortOrder }).from(services)
         .orderBy(sql`${services.sortOrder} DESC`).limit(1);
+      const sortOrder = (last?.sortOrder ?? -1) + 1;
       const [item] = await db.insert(services).values({
         title,
         description,
         icon,
-        sortOrder: (last?.sortOrder ?? -1) + 1,
+        image: image || null,
+        imagePublicId: imagePublicId || null,
+        sortOrder,
         isPublished: publish,
-        draftData: publish ? null : { title, description, icon, sortOrder: (last?.sortOrder ?? -1) + 1 }
+        draftData: publish ? null : { title, description, icon, image, imagePublicId, sortOrder }
       }).returning();
       return NextResponse.json(serviceJson(item));
     } catch (error) {
@@ -644,6 +689,16 @@ export async function POST(request: NextRequest, context: Context) {
       }
     });
     return NextResponse.json({ ok: true });
+  }
+
+  if (route === 'integrations/instagram/feed') {
+    const body = await readJson(request);
+    try {
+      const result = await saveInstagramFeedUrl(clean(body?.feedUrl, 2000));
+      return NextResponse.json({ ok: true, ...result });
+    } catch (error) {
+      return failure(error instanceof Error ? error.message : 'Could not save the feed URL.');
+    }
   }
 
   if (route === 'integrations/instagram') {
@@ -799,6 +854,8 @@ export async function PUT(request: NextRequest, context: Context) {
       values.category = categories.includes(value) ? value : categories[0];
     }
     if (body.featured !== undefined) values.featured = asBool(body.featured);
+    if (typeof body.image === 'string' && body.image.trim()) values.image = clean(body.image, 1000);
+    if (typeof body.imagePublicId === 'string') values.imagePublicId = clean(body.imagePublicId, 300);
 
     if (body.action === 'unpublish') {
       const [updated] = await db.update(portfolioItems).set({ isPublished: false, draftData: values })
@@ -806,18 +863,24 @@ export async function PUT(request: NextRequest, context: Context) {
       return NextResponse.json(portfolioJson(updated));
     }
     if (body.action === 'publish') {
+      const previousImage = item.image;
+      const previousPublicId = item.imagePublicId;
       const [updated] = await db.update(portfolioItems).set({
         title: String(values.title || item.title),
         location: values.location === null ? null : clean(values.location, 60),
         category: String(values.category || categories[0]),
         image: typeof values.image === 'string' ? values.image : item.image,
         imagePublicId: typeof values.imagePublicId === 'string' ? values.imagePublicId : null,
+        mediaType: typeof values.mediaType === 'string' ? values.mediaType : item.mediaType,
         featured: asBool(values.featured),
         featuredOrder: values.featuredOrder === null || values.featuredOrder === undefined ? null : Number(values.featuredOrder),
         sortOrder: Number(values.sortOrder ?? item.sortOrder),
         isPublished: true,
         draftData: null
       }).where(eq(portfolioItems.id, id)).returning();
+      if (updated.image !== previousImage) {
+        await removeStoredMedia(previousImage, previousPublicId, updated.mediaType);
+      }
       return NextResponse.json(portfolioJson(updated));
     }
 
@@ -837,6 +900,8 @@ export async function PUT(request: NextRequest, context: Context) {
     values.title = title;
     values.description = description;
     values.icon = icons.includes(iconValue) ? iconValue : icons[0];
+    if (typeof body.image === 'string') values.image = clean(body.image, 1000);
+    if (typeof body.imagePublicId === 'string') values.imagePublicId = clean(body.imagePublicId, 300);
 
     if (body.action === 'unpublish') {
       const [updated] = await db.update(services).set({ isPublished: false, draftData: values })
@@ -844,14 +909,21 @@ export async function PUT(request: NextRequest, context: Context) {
       return NextResponse.json(serviceJson(updated));
     }
     if (body.action === 'publish') {
+      const previousImage = item.image;
+      const previousPublicId = item.imagePublicId;
       const [updated] = await db.update(services).set({
         title,
         description,
         icon: String(values.icon),
+        image: typeof values.image === 'string' && values.image ? values.image : null,
+        imagePublicId: typeof values.imagePublicId === 'string' && values.imagePublicId ? values.imagePublicId : null,
         sortOrder: Number(values.sortOrder ?? item.sortOrder),
         isPublished: true,
         draftData: null
       }).where(eq(services.id, id)).returning();
+      if ((updated.image || null) !== (previousImage || null)) {
+        await removeStoredImage(previousImage, previousPublicId);
+      }
       return NextResponse.json(serviceJson(updated));
     }
 
@@ -897,7 +969,7 @@ export async function DELETE(request: NextRequest, context: Context) {
       await transaction.delete(portfolioItems).where(eq(portfolioItems.albumId, albumId));
       await transaction.delete(portfolioAlbums).where(eq(portfolioAlbums.id, albumId));
     });
-    await Promise.all(photos.map((photo) => removeStoredImage(photo.image, photo.imagePublicId)));
+    await Promise.all(photos.map((photo) => removeStoredMedia(photo.image, photo.imagePublicId, photo.mediaType)));
     return NextResponse.json({ ok: true });
   }
 
@@ -908,14 +980,15 @@ export async function DELETE(request: NextRequest, context: Context) {
     const [item] = await db.select().from(portfolioItems).where(eq(portfolioItems.id, id)).limit(1);
     if (!item) return failure('Photo not found.', 404);
     await db.delete(portfolioItems).where(eq(portfolioItems.id, id));
-    await removeStoredImage(item.image, item.imagePublicId);
+    await removeStoredMedia(item.image, item.imagePublicId, item.mediaType);
     return NextResponse.json({ ok: true });
   }
 
   if (resource === 'services') {
-    const [item] = await db.select({ id: services.id }).from(services).where(eq(services.id, id)).limit(1);
+    const [item] = await db.select().from(services).where(eq(services.id, id)).limit(1);
     if (!item) return failure('Service not found.', 404);
     await db.delete(services).where(eq(services.id, id));
+    await removeStoredImage(item.image, item.imagePublicId);
     return NextResponse.json({ ok: true });
   }
 

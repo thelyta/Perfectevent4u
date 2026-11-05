@@ -40,6 +40,7 @@ export async function getPortfolioAlbums() {
       location: album.location,
       category: album.category,
       image: cover.image,
+      mediaType: cover.mediaType,
       featured: album.featured,
       featuredOrder: album.featuredOrder,
       sortOrder: album.sortOrder,
@@ -47,6 +48,7 @@ export async function getPortfolioAlbums() {
         id: photo.id,
         title: photo.title,
         image: photo.image,
+        mediaType: photo.mediaType,
         location: photo.location,
         category: photo.category
       }))
