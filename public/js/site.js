@@ -451,7 +451,8 @@
     '.supplier-name{font-family:"Playfair Display",Georgia,serif;font-size:1.3rem;font-weight:400}',
     '.supplier-desc{color:var(--text-light);line-height:1.7;font-size:.92rem}',
     '.supplier-link{font-size:.68rem;text-transform:uppercase;letter-spacing:.16em;color:inherit;text-decoration:none;border-bottom:1px solid currentColor;align-self:flex-start;margin-top:.5rem}',
-    '.service-icon-img{width:52px;height:52px;object-fit:contain;display:block}',
+    '.service-image{margin-bottom:1.5rem}',
+    '.service-image img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}',
     /* FAQ page */
     '.faq-tools{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:2.5rem}',
     '.faq-chip{font-family:inherit;font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;padding:.5rem 1rem;border:1px solid var(--border);background:transparent;color:inherit;cursor:pointer}',
@@ -870,11 +871,10 @@
     getJSON('/api/services').then(function (items) {
       if (!Array.isArray(items) || !items.length) return;
       services.innerHTML = items.map(function (s) {
-        var icon = s.image
-          ? '<img class="service-icon-img" src="' + esc(publicImageUrl(s.image) || s.image) + '" alt="" loading="lazy">'
-          : window.peIcon(s.icon);
-        return '<div class="service-card fade-in">' +
-          '<div class="service-icon">' + icon + '</div>' +
+        var media = s.image
+          ? '<div class="service-image"><img src="' + esc(publicImageUrl(s.image) || s.image) + '" alt="' + esc(s.title) + '" loading="lazy"></div>'
+          : '<div class="service-icon">' + window.peIcon(s.icon) + '</div>';
+        return '<div class="service-card fade-in">' + media +
           '<h3 class="service-title">' + esc(s.title) + '</h3>' +
           '<p class="service-desc">' + esc(s.description) + '</p>' +
           '</div>';

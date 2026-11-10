@@ -380,7 +380,7 @@
                         </label>
                         <span class="field"><span>Icon</span></span>
                         <div class="icon-picker" id="iconPicker"></div>
-                        <label class="field"><span>Icon image (optional — replaces the icon above)</span>
+                        <label class="field"><span>Service picture (optional — shown large on the card)</span>
                             <div style="display:flex;align-items:center;gap:0.8rem;flex-wrap:wrap">
                                 <img id="svcIconPreview" alt="" style="width:48px;height:48px;object-fit:contain;border:1px solid var(--border);display:none">
                                 <input type="text" id="svcImage" maxlength="1000" placeholder="Image URL" style="flex:1;min-width:200px">
@@ -389,8 +389,8 @@
                             </div>
                         </label>
                         <input type="hidden" id="svcImagePublicId">
-                        <label class="field"><span>Upload an icon image</span><input type="file" id="svcImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
-                        <button class="btn small" type="button" id="svcImageClear" style="margin-bottom:1.1rem">Remove icon image</button>
+                        <label class="field"><span>Upload a service picture</span><input type="file" id="svcImageFile" accept="image/jpeg,image/png,image/webp,image/gif"></label>
+                        <button class="btn small" type="button" id="svcImageClear" style="margin-bottom:1.1rem">Remove service picture</button>
                         <div style="display:flex; gap:0.6rem; flex-wrap:wrap">
                             <button class="btn" type="submit" id="svcSave">Save as draft</button>
                             <button class="btn primary" type="button" id="svcPublish">Publish service</button>
@@ -2841,7 +2841,7 @@
                 $('svcImagePublicId').value = result.imagePublicId || '';
                 $('svcImageFile').value = '';
                 updateServiceIconPreview();
-                toast('Icon image uploaded. Save or publish to apply.');
+                toast('Service picture uploaded. Save or publish to apply.');
             }).catch(fail);
         });
         $('svcImage').addEventListener('input', updateServiceIconPreview);
@@ -2849,7 +2849,7 @@
             openCropper($('svcImage').value.trim(), function (blob) {
                 uploadBlob(blob, 'svcImage', 'svcImagePublicId').then(function () {
                     updateServiceIconPreview();
-                    toast('Icon image cropped. Save or publish to apply.');
+                    toast('Service picture cropped. Save or publish to apply.');
                 }).catch(fail);
             });
         });
@@ -2857,7 +2857,7 @@
             $('svcImage').value = '';
             $('svcImagePublicId').value = '';
             updateServiceIconPreview();
-            toast('Icon image cleared. Save or publish to apply.');
+            toast('Service picture cleared. Save or publish to apply.');
         });
 
         $('svcList').addEventListener('click', function (e) {
