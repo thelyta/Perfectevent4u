@@ -412,7 +412,7 @@
     '.pe-lightbox video{max-width:90vw;max-height:82vh;display:block;background:#000}',
     '.masonry-item video.pe-auto{width:100%;display:block;transition:transform .7s ease}',
     '.pe-modal-grid video{width:100%;height:170px;object-fit:cover;cursor:zoom-in;display:block;background:#000}',
-    '.pe-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.4s ease;filter:blur(3px) brightness(.85)}',
+    '.pe-slide{position:absolute;inset:0;background-size:cover;background-position:center;opacity:0;transition:opacity 1.4s ease;filter:brightness(.9)}',
     '.pe-slide.active{opacity:1}',
     '.pe-lightbox-cap{position:absolute;bottom:1.25rem;left:0;right:0;text-align:center;color:#fff;font-size:.85rem;letter-spacing:.05em;padding:0 1rem}',
     '.pe-lightbox button{position:absolute;background:rgba(255,255,255,.14);color:#fff;border:none;width:3rem;height:3rem;cursor:pointer;font-size:1.5rem;border-radius:50%;line-height:1}',
