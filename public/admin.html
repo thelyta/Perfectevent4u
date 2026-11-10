@@ -560,7 +560,7 @@
             <section id="tab-testimonials" hidden>
                 <div class="panel-card">
                     <h2 id="tsFormTitle">Add a testimonial</h2>
-                    <p class="hint">Testimonials appear on the Testimonials page and in the home page slider. If a review lives elsewhere (Google, Facebook, Hitched), add the link and it becomes a "read the review" button.</p>
+                    <p class="hint">Testimonials appear on the Testimonials page. Tick "Show on home page" for the ones that should rotate in the home slider (choose up to 3). If none are ticked, the first 3 are shown. If a review lives elsewhere (Google, Facebook, Hitched), add the link and it becomes a "read the review" button.</p>
                     <input type="hidden" id="tsSlug">
                     <label class="field"><span>Quote</span><textarea id="tsQuote" maxlength="2000" rows="4"></textarea></label>
                     <div class="row">
@@ -571,6 +571,7 @@
                         <label class="field"><span>Review link (optional)</span><input type="text" id="tsLink" maxlength="1000" placeholder="https://g.page/..."></label>
                         <label class="field"><span>Link label</span><input type="text" id="tsLinkLabel" maxlength="60" placeholder="Read the review"></label>
                     </div>
+                    <label class="check"><input type="checkbox" id="tsFeatured"> Show in the home page slider (choose up to 3)</label>
                     <p class="count" id="tsStatus"></p>
                     <div class="actions">
                         <button class="btn" type="button" id="tsSaveDraft">Save draft</button>
@@ -1792,6 +1793,7 @@
         // ---- Testimonials ---------------------------------------------------
         function resetTestimonialForm() {
             ['tsSlug', 'tsQuote', 'tsAuthor', 'tsRole', 'tsLink', 'tsLinkLabel'].forEach(function (id) { $(id).value = ''; });
+            $('tsFeatured').checked = false;
             $('tsFormTitle').textContent = 'Add a testimonial';
             $('tsUnpublish').hidden = true;
             $('tsStatus').textContent = '';
@@ -1809,7 +1811,8 @@
                 author: author,
                 role: $('tsRole').value.trim(),
                 link: $('tsLink').value.trim(),
-                linkLabel: $('tsLinkLabel').value.trim()
+                linkLabel: $('tsLinkLabel').value.trim(),
+                featured: $('tsFeatured').checked
             };
             api('POST', '/api/admin/content', { type: 'testimonial', slug: slug, action: action, sortOrder: sortOrder, content: content })
                 .then(function (result) {
@@ -1820,7 +1823,8 @@
         }
 
         function renderTestimonialList() {
-            $('tsCount').textContent = testimonialRecords.length + (testimonialRecords.length === 1 ? ' testimonial' : ' testimonials');
+            var featuredCount = testimonialRecords.filter(function (record) { return record.draftContent && record.draftContent.featured; }).length;
+            $('tsCount').textContent = testimonialRecords.length + (testimonialRecords.length === 1 ? ' testimonial' : ' testimonials') + ' · ' + featuredCount + ' on home';
             var list = $('tsList');
             list.replaceChildren();
             if (!testimonialRecords.length) {
@@ -1833,7 +1837,7 @@
                 row.className = 'blog-admin-row';
                 var info = document.createElement('div');
                 var title = document.createElement('h3');
-                title.textContent = content.author || 'Testimonial';
+                title.textContent = (content.author || 'Testimonial') + (content.featured ? ' · Home page' : '');
                 var state = document.createElement('p');
                 state.textContent = (content.quote || '').slice(0, 90) + ((content.quote || '').length > 90 ? '…' : '');
                 info.append(title, state);
@@ -1858,6 +1862,7 @@
             $('tsRole').value = content.role || '';
             $('tsLink').value = content.link || '';
             $('tsLinkLabel').value = content.linkLabel || '';
+            $('tsFeatured').checked = !!content.featured;
             $('tsFormTitle').textContent = 'Edit testimonial';
             $('tsUnpublish').hidden = !record.isPublished;
             $('tsStatus').textContent = record.isPublished ? 'Live content remains unchanged until Publish.' : 'Draft only.';

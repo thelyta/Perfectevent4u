@@ -437,10 +437,21 @@
     '.testimonial-grid{display:grid;grid-template-columns:1fr;gap:2rem}',
     '@media (min-width:768px){.testimonial-grid{grid-template-columns:repeat(2,1fr)}}',
     '.testimonial-card{border:1px solid var(--border);background:#fff;padding:2rem;display:flex;flex-direction:column;gap:1rem}',
-    '.testimonial-card .pe-quote{font-family:"Playfair Display",Georgia,serif;font-size:1.2rem;line-height:1.55;font-style:italic}',
+    '.testimonial-card .pe-quote{font-family:"Lato",sans-serif;font-size:1.05rem;line-height:1.8;font-style:normal;color:var(--text,#202946)}',
+    '.testimonial-card .pe-quote::before{content:"\\201C";font-family:"Playfair Display",Georgia,serif;font-size:1.9rem;line-height:0;vertical-align:-0.25em;margin-right:.12em;color:rgba(32,41,70,.35)}',
     '.testimonial-card .pe-author{font-weight:700;text-transform:uppercase;letter-spacing:.18em;font-size:.75rem}',
     '.testimonial-card .pe-role{font-size:.7rem;text-transform:uppercase;letter-spacing:.15em;color:var(--text-light)}',
     '.testimonial-card .pe-review{font-size:.7rem;text-transform:uppercase;letter-spacing:.16em;color:var(--text);text-decoration:none;border-bottom:1px solid currentColor;align-self:flex-start;margin-top:auto}',
+    /* Home / About testimonial slider: normal flow so the height adapts, and
+       the quote shrinks as it gets longer so it never overlaps other content. */
+    '.testimonial-slider{display:block;position:relative;min-height:0}',
+    '.testimonial-slider .testimonial-item{position:static;opacity:1;width:100%;max-width:800px;margin:0 auto;padding:0 1rem;display:none}',
+    '.testimonial-slider .testimonial-item.active{display:block;animation:pe-testimonial-fade .6s ease}',
+    '@keyframes pe-testimonial-fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}',
+    '.testimonial-slider .testimonial-quote{font-size:clamp(1.15rem,2.4vw,1.9rem)}',
+    '.testimonial-slider .testimonial-item.q-medium .testimonial-quote{font-size:clamp(1.05rem,2vw,1.5rem)}',
+    '.testimonial-slider .testimonial-item.q-long .testimonial-quote{font-size:clamp(.98rem,1.8vw,1.3rem)}',
+    '.testimonial-slider .testimonial-item.q-xlong .testimonial-quote{font-size:clamp(.92rem,1.6vw,1.1rem);line-height:1.7}',
     '.testimonial-read{display:inline-block;margin-top:1.25rem;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:inherit;border-bottom:1px solid currentColor;text-decoration:none}',
     /* preferred suppliers */
     '.supplier-grid{display:grid;grid-template-columns:1fr;gap:2rem}',
@@ -452,7 +463,7 @@
     '.supplier-desc{color:var(--text-light);line-height:1.7;font-size:.92rem}',
     '.supplier-link{font-size:.68rem;text-transform:uppercase;letter-spacing:.16em;color:inherit;text-decoration:none;border-bottom:1px solid currentColor;align-self:flex-start;margin-top:.5rem}',
     '.service-image{margin-bottom:1.5rem}',
-    '.service-image img{width:100%;aspect-ratio:4/3;object-fit:cover;display:block}',
+    '.service-image img{width:100%;aspect-ratio:4/5;object-fit:cover;display:block}',
     /* FAQ page */
     '.faq-tools{display:flex;gap:.5rem;flex-wrap:wrap;justify-content:center;margin-bottom:2.5rem}',
     '.faq-chip{font-family:inherit;font-size:.68rem;text-transform:uppercase;letter-spacing:.14em;padding:.5rem 1rem;border:1px solid var(--border);background:transparent;color:inherit;cursor:pointer}',
@@ -998,10 +1009,20 @@
     return '<a class="pe-review" href="' + esc(String(item.link).trim()) + '" target="_blank" rel="noopener">' + esc(item.linkLabel || 'Read the review') + '</a>';
   }
 
+  function quoteClass(text) {
+    var length = String(text || '').length;
+    if (length > 420) return 'q-xlong';
+    if (length > 260) return 'q-long';
+    if (length > 150) return 'q-medium';
+    return 'q-short';
+  }
+
   function renderTestimonialSlider(container, items) {
     ensureStyles();
-    container.innerHTML = items.map(function (item, index) {
-      return '<div class="testimonial-item' + (index === 0 ? ' active' : '') + '">' +
+    var featured = items.filter(function (item) { return item.featured; });
+    var chosen = (featured.length ? featured : items).slice(0, 3);
+    container.innerHTML = chosen.map(function (item, index) {
+      return '<div class="testimonial-item ' + quoteClass(item.quote) + (index === 0 ? ' active' : '') + '">' +
         '<p class="testimonial-quote">' + esc(item.quote || '') + '</p>' +
         '<p class="testimonial-author">' + esc(item.author || '') + '</p>' +
         (item.role ? '<p class="testimonial-role">' + esc(item.role) + '</p>' : '') +
