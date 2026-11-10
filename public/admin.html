@@ -419,6 +419,7 @@
                             <option value="portfolio">Portfolio</option>
                             <option value="services">Services</option>
                             <option value="contact">Contact</option>
+                            <option value="testimonials">Testimonials</option>
                             <option value="blog">Blog</option>
                             <option value="faqs">FAQs</option>
                         </select>
@@ -989,6 +990,14 @@
                 { key: 'introText', label: 'Journal introduction', value: 'Ideas, thoughtful details, and real celebrations from the Perfectevent4u team.', multiline: true },
                 { key: 'emptyText', label: 'No-posts message', value: 'New stories are coming soon.' },
                 { key: 'footerDescription', label: 'Footer description', value: 'Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.', multiline: true }
+            ],
+            testimonials: [
+                { key: 'introHeading', label: 'Introduction heading', value: 'Loved by our couples and families' },
+                { key: 'introText', label: 'Introduction text', value: 'Every celebration is personal. Here are a few words from the people we have had the honour of planning for.', multiline: true },
+                { key: 'ctaHeading', label: 'Closing heading', value: 'Ready to Create Your Dream Event?' },
+                { key: 'ctaText', label: 'Closing text', value: "Let's discuss how we can bring your vision to life with our bespoke planning and design services.", multiline: true },
+                { key: 'ctaButton', label: 'Closing button', value: 'Start Your Journey' },
+                { key: 'footerDescription', label: 'Footer description', value: 'Creating beautiful celebrations for clients with refined tastes in London, Essex, and throughout the UK.', multiline: true }
             ]
         };
 
@@ -1017,6 +1026,7 @@
                 portfolio: { heroImage: 'wed.jpeg', heroKicker: 'Our Work', heroTitle: 'The Lookbook' },
                 services: { heroImage: 'wed2.webp', heroKicker: 'What We Do', heroTitle: 'Our Services' },
                 contact: { heroImage: 'hall.jpg', heroKicker: 'Get In Touch', heroTitle: 'Begin Your Journey' },
+                testimonials: { heroImage: 'wed2.webp', heroKicker: 'Kind Words', heroTitle: 'Testimonials' },
                 blog: { heroImage: 'wed2.webp', heroKicker: 'Stories & Inspiration', heroTitle: 'The Journal' },
                 faqs: { heroImage: 'wed2.webp', heroKicker: 'Questions', heroTitle: 'Frequently Asked Questions' }
             };
@@ -1088,8 +1098,22 @@
                 $(targetId).value = result.image;
                 $(targetId + 'PublicId').value = result.imagePublicId || '';
                 $(fileId).value = '';
+                warnIfLowRes(result.image, targetId);
                 toast('Image uploaded. Save and publish the content to make it live.');
             }).catch(fail);
+        }
+
+        var headerImageFields = { pageImage: true, hero1: true, hero2: true, hero3: true, hero4: true };
+
+        function warnIfLowRes(url, targetId) {
+            if (!url || !headerImageFields[targetId]) return;
+            var probe = new Image();
+            probe.onload = function () {
+                if (probe.naturalWidth && probe.naturalWidth < 1600) {
+                    toast('That picture is ' + probe.naturalWidth + 'px wide and may look soft on large screens — 2000px or more is ideal for headers.', true);
+                }
+            };
+            probe.src = url;
         }
 
         function uploadBlob(blob, targetId, publicIdId) {
@@ -1098,6 +1122,7 @@
             return api('POST', '/api/admin/upload', form).then(function (result) {
                 $(targetId).value = result.image;
                 if (publicIdId) $(publicIdId).value = result.imagePublicId || '';
+                warnIfLowRes(result.image, targetId);
                 return result;
             });
         }
@@ -1291,6 +1316,7 @@
                 preview.src = item.url;
                 preview.style.display = 'block';
             }
+            warnIfLowRes(item.url, mediaTarget.targetId);
             $('mediaDialog').close();
             toast('Picture selected. Save or publish to apply.');
         });
@@ -2617,6 +2643,7 @@
             api('POST', '/api/admin/upload', form).then(function (result) {
                 $(targetId).value = result.image;
                 $(fileId).value = '';
+                warnIfLowRes(result.image, targetId);
                 toast('Image uploaded. Save and publish to make it live.');
             }).catch(fail);
         }
