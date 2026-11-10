@@ -452,7 +452,8 @@
     '.testimonial-slider .testimonial-item.q-medium .testimonial-quote{font-size:clamp(1.05rem,2vw,1.5rem)}',
     '.testimonial-slider .testimonial-item.q-long .testimonial-quote{font-size:clamp(.98rem,1.8vw,1.3rem)}',
     '.testimonial-slider .testimonial-item.q-xlong .testimonial-quote{font-size:clamp(.92rem,1.6vw,1.1rem);line-height:1.7}',
-    '.testimonial-read{display:inline-block;margin-top:1.25rem;font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:inherit;border-bottom:1px solid currentColor;text-decoration:none}',
+    '.testimonial-read{display:inline-block;margin-top:1.5rem;padding:.85rem 1.75rem;border:1px solid currentColor;color:inherit;text-decoration:none;font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;transition:background .3s ease,color .3s ease}',
+    '.testimonial-read:hover{background:var(--text,#202946);color:var(--bg,#F9F8F6);border-color:var(--text,#202946)}',
     /* preferred suppliers */
     '.supplier-grid{display:grid;grid-template-columns:1fr;gap:2rem}',
     '@media (min-width:768px){.supplier-grid{grid-template-columns:repeat(3,1fr)}}',
