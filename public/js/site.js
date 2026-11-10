@@ -1041,7 +1041,7 @@
       if (dots && dots.children[current]) dots.children[current].classList.add('active');
     }
     if (dots) {
-      dots.innerHTML = items.map(function (item, index) {
+      dots.innerHTML = chosen.map(function (item, index) {
         return '<button class="testimonial-dot' + (index === 0 ? ' active' : '') + '" type="button" aria-label="Testimonial ' + (index + 1) + '"></button>';
       }).join('');
       dots.querySelectorAll('.testimonial-dot').forEach(function (dot, index) {
